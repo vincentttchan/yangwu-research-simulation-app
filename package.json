@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
@@ -20,7 +23,7 @@
     "check:task13-docs": "node tests/task13-docs-check.mjs"
   },
   "devDependencies": {
-    "vite": "^8.0.16"
+    "vite": "^7.3.5"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1"
