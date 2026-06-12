@@ -44,7 +44,17 @@ function invalidParticipantResult() {
   };
 }
 
-function backendErrorResult() {
+function backendErrorResult(stage, error) {
+  if (error) {
+    console.error('[research-login] backend unavailable', {
+      stage,
+      code: error.code || null,
+      message: error.message || null,
+      details: error.details || null,
+      hint: error.hint || null
+    });
+  }
+
   return {
     status: 503,
     body: { error: 'backend_unavailable' }
@@ -85,7 +95,7 @@ export async function resolveLoginResult(body = {}, options = {}) {
     .eq('session_code', sessionCode)
     .maybeSingle();
 
-  if (participantError) return backendErrorResult();
+  if (participantError) return backendErrorResult('participants_lookup', participantError);
 
   if (!participant || participant.consent_status !== 'included') {
     return invalidParticipantResult();
@@ -110,7 +120,7 @@ export async function resolveLoginResult(body = {}, options = {}) {
     .select('session_id, participant_code, app_version, research_cohort, content_map_version')
     .single();
 
-  if (sessionError || !sessionRow?.session_id) return backendErrorResult();
+  if (sessionError || !sessionRow?.session_id) return backendErrorResult('game_sessions_insert', sessionError);
 
   return {
     status: 200,
