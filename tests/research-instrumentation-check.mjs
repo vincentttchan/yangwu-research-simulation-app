@@ -41,6 +41,8 @@ assert.equal(enriched.event_kind, 'city_event');
 assert.equal(enriched.hotspot_id, 'sh-stack');
 assert.ok(enriched.constructs.includes('evidence_use'));
 assert.ok(enriched.constructs.includes('historical_complexity'));
+assert.ok(enriched.complexity_dimensions.includes('technology'), 'Jiangnan/shanghai payload should identify technology exposure');
+assert.ok(enriched.complexity_dimensions.includes('institutions'), 'Jiangnan/shanghai payload should identify institutional exposure');
 assert.equal(enriched.trigger, 'test');
 
 window.__yangwuResearch.logSessionStart({ routeId: 'lihongzhang', isNewGame: true, year: 1861, season: 0 });
@@ -64,5 +66,6 @@ assert.equal(queued[2].payload.hotspot_id, 'sh-stack');
 assert.equal(queued[3].payload.event_kind, 'city_event');
 assert.equal(queued[4].payload.choice_id, 'a');
 assert.equal(queued[4].payload.choice_label, undefined, 'Decision logging should not store visible choice prose');
+assert.ok(queued[4].payload.complexity_dimensions.includes('technology'), 'Decision logs should carry historical complexity dimensions for analysis');
 
 console.log('research instrumentation checks passed');

@@ -32,6 +32,12 @@ export function buildResearchPayload({
     ...(event?.constructs || []),
     ...(evidenceTask?.constructs || [])
   ]);
+  const complexityDimensions = unique([
+    ...(route?.complexityDimensions || []),
+    ...(city?.complexityDimensions || []),
+    ...(event?.complexityDimensions || []),
+    ...(evidenceTask?.complexityDimensions || [])
+  ]);
 
   return compact({
     route_id: routeId,
@@ -41,6 +47,7 @@ export function buildResearchPayload({
     evidence_task_id: evidenceTaskId,
     hotspot_id: evidenceTask?.hotspotId,
     constructs,
+    complexity_dimensions: complexityDimensions,
     research_id_policy: RESEARCH_ID_POLICY.version,
     ...extra
   });

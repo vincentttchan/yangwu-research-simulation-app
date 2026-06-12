@@ -43,6 +43,18 @@ If an ID must be renamed, keep a migration note before collecting research data.
 | `chronology` | Students place events in sequence and connect earlier conditions to later outcomes. |
 | `comparative_perspective` | Students compare Qing Self-Strengthening with Meiji Japan or wider East Asian developments. |
 
+## Historical Complexity Dimensions
+
+| Dimension ID | Meaning in this game |
+|---|---|
+| `technology` | Military, industrial, transport, telegraph, shipbuilding, or machine-related modernisation. |
+| `institutions` | Administrative structures, yamen, arsenals, naval administration, schools, or enterprise governance. |
+| `finance` | Funding, military expenditure, official-enterprise finance, resource constraints, and fiscal weakness. |
+| `court_politics` | Conservative resistance, factional conflict, imperial priorities, and central decision-making. |
+| `public_attitudes` | Social resistance, local beliefs, anti-foreign sentiment, public understanding, and popular support or opposition. |
+| `actor_constraints` | Historical actors' limited information, institutional position, personal networks, and practical trade-offs. |
+| `japan_comparison` | Meiji comparison, Sino-Japanese rivalry, naval expansion, and regional pressure. |
+
 ## Routes
 
 | Route ID | Label | Research focus |
@@ -289,3 +301,18 @@ First implementation scope:
 - still excludes visible choice prose, student free text, names, contact details, and name-to-code linkage.
 
 Task 15 supports dry-run validation. It does not by itself mean formal research data collection is ready.
+
+## Task 16 Research Dataset QA
+
+Task 16 adds the first research-facing dataset QA layer.
+
+First implementation scope:
+
+- adds `docs/research-data-dictionary.md`;
+- adds `docs/supabase-research-qa-queries.sql`;
+- adds `docs/task-16-research-dataset-qa.md`;
+- adds `check:research-data`;
+- emits `complexity_dimensions` from gameplay instrumentation;
+- keeps interpretation guardrails clear: event logs show engagement/exposure patterns, not direct proof of learning outcomes.
+
+Task 16 supports dry-run and pilot validation. It does not by itself mean formal research data collection is ready.

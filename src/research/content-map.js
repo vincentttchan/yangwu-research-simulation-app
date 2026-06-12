@@ -7,6 +7,16 @@ export const RESEARCH_CONSTRUCTS = Object.freeze({
   COMPARATIVE_PERSPECTIVE: 'comparative_perspective'
 });
 
+export const RESEARCH_COMPLEXITY_DIMENSIONS = Object.freeze({
+  TECHNOLOGY: 'technology',
+  INSTITUTIONS: 'institutions',
+  FINANCE: 'finance',
+  COURT_POLITICS: 'court_politics',
+  PUBLIC_ATTITUDES: 'public_attitudes',
+  ACTOR_CONSTRAINTS: 'actor_constraints',
+  JAPAN_COMPARISON: 'japan_comparison'
+});
+
 export const RESEARCH_ID_POLICY = Object.freeze({
   version: 'content-freeze-lite-v0.1',
   freezesIdsOnly: true,
@@ -16,49 +26,50 @@ export const RESEARCH_ID_POLICY = Object.freeze({
 });
 
 const C = RESEARCH_CONSTRUCTS;
+const D = RESEARCH_COMPLEXITY_DIMENSIONS;
 
 function entriesToMap(entries) {
   return Object.freeze(Object.fromEntries(entries.map((entry) => [entry.id, Object.freeze(entry)])));
 }
 
-function route(id, label, perspective) {
-  return { id, label, perspective, constructs: [C.HISTORICAL_EMPATHY, C.HISTORICAL_COMPLEXITY] };
+function route(id, label, perspective, complexityDimensions = [D.ACTOR_CONSTRAINTS]) {
+  return { id, label, perspective, constructs: [C.HISTORICAL_EMPATHY, C.HISTORICAL_COMPLEXITY], complexityDimensions };
 }
 
-function city(id, label, focus, constructs = [C.HISTORICAL_COMPLEXITY, C.EVIDENCE_USE]) {
-  return { id, label, focus, constructs };
+function city(id, label, focus, constructs = [C.HISTORICAL_COMPLEXITY, C.EVIDENCE_USE], complexityDimensions = []) {
+  return { id, label, focus, constructs, complexityDimensions };
 }
 
-function event(id, cityId, eventKind, constructs) {
-  return { id, cityId, eventKind, constructs };
+function event(id, cityId, eventKind, constructs, complexityDimensions = []) {
+  return { id, cityId, eventKind, constructs, complexityDimensions };
 }
 
-function evidenceTask(id, constructs = [C.EVIDENCE_USE, C.HISTORICAL_COMPLEXITY]) {
+function evidenceTask(id, constructs = [C.EVIDENCE_USE, C.HISTORICAL_COMPLEXITY], complexityDimensions = []) {
   const [cityId, hotspotId] = id.split(':');
-  return { id, cityId, hotspotId, constructs };
+  return { id, cityId, hotspotId, constructs, complexityDimensions };
 }
 
 export const RESEARCH_CONTENT_MAP = Object.freeze({
   routes: entriesToMap([
-    route('free', '自由書記', 'Cross-route witness perspective'),
-    route('lihongzhang', '李鴻章', 'Material self-strengthening and regional power'),
-    route('rongheng', '容閎', 'Education, overseas learning, and intellectual change'),
-    route('yixin', '奕訢', 'Court politics, diplomacy, and institutional constraint')
+    route('free', '自由書記', 'Cross-route witness perspective', [D.ACTOR_CONSTRAINTS]),
+    route('lihongzhang', '李鴻章', 'Material self-strengthening and regional power', [D.TECHNOLOGY, D.INSTITUTIONS, D.FINANCE, D.ACTOR_CONSTRAINTS]),
+    route('rongheng', '容閎', 'Education, overseas learning, and intellectual change', [D.INSTITUTIONS, D.PUBLIC_ATTITUDES, D.ACTOR_CONSTRAINTS]),
+    route('yixin', '奕訢', 'Court politics, diplomacy, and institutional constraint', [D.COURT_POLITICS, D.INSTITUTIONS, D.ACTOR_CONSTRAINTS])
   ]),
 
   cities: entriesToMap([
-    city('beijing', '北京', 'Court politics, diplomacy, and conservative resistance', [C.HISTORICAL_COMPLEXITY, C.HISTORICAL_EMPATHY, C.ARGUMENTATION]),
-    city('fuzhou', '福州', 'Shipbuilding, naval education, and maritime defence', [C.EVIDENCE_USE, C.HISTORICAL_COMPLEXITY, C.CHRONOLOGY]),
-    city('guangzhou', '廣州', 'Treaty ports, trade, and the end of the Canton system'),
-    city('hongkong', '香港', 'Western learning, print culture, and overseas education', [C.EVIDENCE_USE, C.HISTORICAL_EMPATHY, C.HISTORICAL_COMPLEXITY]),
-    city('japan', '日本', 'Meiji comparison and regional pressure', [C.COMPARATIVE_PERSPECTIVE, C.HISTORICAL_COMPLEXITY, C.ARGUMENTATION]),
-    city('kaiping', '開平', 'Coal mining, railway development, and social resistance'),
-    city('korea', '朝鮮', 'Sino-Japanese rivalry and the East Asian crisis', [C.CHRONOLOGY, C.HISTORICAL_COMPLEXITY, C.COMPARATIVE_PERSPECTIVE]),
-    city('nanjing', '南京', 'Post-rebellion reconstruction and regional military industry'),
-    city('shanghai', '上海', 'Treaty-port industry, arsenals, shipping, and knowledge circulation'),
-    city('tianjin', '天津', 'Beiyang military administration, telegraphy, and diplomacy'),
-    city('weihaiwei', '威海', 'Beiyang Fleet, naval defence, and war failure', [C.CHRONOLOGY, C.HISTORICAL_COMPLEXITY, C.ARGUMENTATION]),
-    city('wuhan', '武漢', 'Late Self-Strengthening industry and official enterprise limits')
+    city('beijing', '北京', 'Court politics, diplomacy, and conservative resistance', [C.HISTORICAL_COMPLEXITY, C.HISTORICAL_EMPATHY, C.ARGUMENTATION], [D.COURT_POLITICS, D.INSTITUTIONS, D.ACTOR_CONSTRAINTS]),
+    city('fuzhou', '福州', 'Shipbuilding, naval education, and maritime defence', [C.EVIDENCE_USE, C.HISTORICAL_COMPLEXITY, C.CHRONOLOGY], [D.TECHNOLOGY, D.INSTITUTIONS, D.ACTOR_CONSTRAINTS]),
+    city('guangzhou', '廣州', 'Treaty ports, trade, and the end of the Canton system', [C.HISTORICAL_COMPLEXITY, C.EVIDENCE_USE], [D.INSTITUTIONS, D.PUBLIC_ATTITUDES]),
+    city('hongkong', '香港', 'Western learning, print culture, and overseas education', [C.EVIDENCE_USE, C.HISTORICAL_EMPATHY, C.HISTORICAL_COMPLEXITY], [D.INSTITUTIONS, D.PUBLIC_ATTITUDES, D.ACTOR_CONSTRAINTS]),
+    city('japan', '日本', 'Meiji comparison and regional pressure', [C.COMPARATIVE_PERSPECTIVE, C.HISTORICAL_COMPLEXITY, C.ARGUMENTATION], [D.JAPAN_COMPARISON, D.INSTITUTIONS, D.TECHNOLOGY]),
+    city('kaiping', '開平', 'Coal mining, railway development, and social resistance', [C.HISTORICAL_COMPLEXITY, C.EVIDENCE_USE], [D.TECHNOLOGY, D.FINANCE, D.PUBLIC_ATTITUDES]),
+    city('korea', '朝鮮', 'Sino-Japanese rivalry and the East Asian crisis', [C.CHRONOLOGY, C.HISTORICAL_COMPLEXITY, C.COMPARATIVE_PERSPECTIVE], [D.JAPAN_COMPARISON, D.COURT_POLITICS, D.ACTOR_CONSTRAINTS]),
+    city('nanjing', '南京', 'Post-rebellion reconstruction and regional military industry', [C.HISTORICAL_COMPLEXITY, C.EVIDENCE_USE], [D.TECHNOLOGY, D.INSTITUTIONS, D.FINANCE]),
+    city('shanghai', '上海', 'Treaty-port industry, arsenals, shipping, and knowledge circulation', [C.HISTORICAL_COMPLEXITY, C.EVIDENCE_USE], [D.TECHNOLOGY, D.INSTITUTIONS, D.FINANCE]),
+    city('tianjin', '天津', 'Beiyang military administration, telegraphy, and diplomacy', [C.HISTORICAL_COMPLEXITY, C.EVIDENCE_USE], [D.TECHNOLOGY, D.INSTITUTIONS, D.COURT_POLITICS]),
+    city('weihaiwei', '威海', 'Beiyang Fleet, naval defence, and war failure', [C.CHRONOLOGY, C.HISTORICAL_COMPLEXITY, C.ARGUMENTATION], [D.TECHNOLOGY, D.FINANCE, D.ACTOR_CONSTRAINTS]),
+    city('wuhan', '武漢', 'Late Self-Strengthening industry and official enterprise limits', [C.HISTORICAL_COMPLEXITY, C.EVIDENCE_USE], [D.TECHNOLOGY, D.INSTITUTIONS, D.FINANCE])
   ]),
 
   events: entriesToMap([
