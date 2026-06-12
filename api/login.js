@@ -45,6 +45,14 @@ function invalidParticipantResult() {
 }
 
 function backendErrorResult(stage, error) {
+  const diagnostic = error
+    ? {
+        stage,
+        code: error.code || null,
+        message: error.message || null
+      }
+    : { stage, code: null, message: null };
+
   if (error) {
     console.error('[research-login] backend unavailable', {
       stage,
@@ -57,7 +65,10 @@ function backendErrorResult(stage, error) {
 
   return {
     status: 503,
-    body: { error: 'backend_unavailable' }
+    body: {
+      error: 'backend_unavailable',
+      diagnostic
+    }
   };
 }
 
