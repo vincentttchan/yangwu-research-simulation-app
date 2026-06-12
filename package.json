@@ -1,0 +1,28 @@
+{
+  "name": "yangwu-historical-simulation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "check:syntax": "node --check src/intro.js && node --check src/motion.js && node --check src/main.js && node --check src/research/login-gate.js && node --check api/_supabase.js && node --check api/login.js && node --check api/logs-batch.js",
+    "check:stability": "node tests/stability-checks.mjs",
+    "check:assets": "node tests/asset-reference-check.mjs",
+    "check:research-map": "node tests/research-content-map-check.mjs",
+    "check:instrumentation": "node tests/research-instrumentation-check.mjs",
+    "check:backend-boundary": "node tests/research-backend-boundary-check.mjs",
+    "check:login-ui": "node tests/research-login-ui-check.mjs",
+    "check:supabase-env": "node tests/supabase-env-check.mjs",
+    "check:supabase-dryrun": "node tests/supabase-dryrun-login-check.mjs",
+    "check:live-dryrun": "node tests/live-dryrun-qa-check.mjs",
+    "check:task13-docs": "node tests/task13-docs-check.mjs"
+  },
+  "devDependencies": {
+    "vite": "^8.0.16"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.1"
+  }
+}

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自強三十年 · 踏遍九州之旅</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700;900&family=Noto+Sans+TC:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <!-- 繁體正字書法體（霞鶩文楷 TC，unicode-range 分塊載入）：用於引文/章節/印記，避免簡體異體與缺字 -->
+  <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-tc-webfont@1.2.0/lxgwwenkaitc-regular.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-tc-webfont@1.2.0/lxgwwenkaitc-bold.css" rel="stylesheet">
+
+  <!-- 預載入關鍵圖片 -->
+  <link rel="preload" as="image" href="assets/sketches/yuanmingyuan-engraving.webp">
+  <link rel="preload" as="image" href="assets/sketches/rabbit-head.webp">
+
+</head>
+<body>
+
+  <!-- 三層氛圍背景（全域） -->
+  <div class="bg-engraving" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="paper-edge" aria-hidden="true"></div>
+
+  <!-- 載入序列：圓明園背景 + 年份跳動 + 進度線 -->
+  <div class="loader" id="loader" aria-label="loading">
+    <div class="loader-bg" aria-hidden="true"></div>
+    <div class="loader-content">
+      <div class="loader-year" id="loaderYear">1860</div>
+      <div class="loader-progress" aria-hidden="true">
+        <div class="loader-progress-fill" id="loaderProgress"></div>
+      </div>
+      <div class="loader-label">自 強 三 十 年</div>
+    </div>
+  </div>
+
+  <!-- 自訂游標 -->
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+  <!-- 雙屏舞台 -->
+  <main class="stage" id="stage" aria-hidden="true">
+
+    <!-- ============ Screen 1 · 序章 ============ -->
+    <section class="screen screen--intro" id="screen1">
+
+      <header class="chrome-top">
+        <span class="vertical-year reveal-item" data-reveal="0">
+          <span>咸</span><span>豐</span>
+          <span>同</span><span>治</span>
+          <span>光</span><span>緒</span>
+        </span>
+        <span class="coord-stamp reveal-item" data-reveal="0">
+          <span class="line">大 清 · 一 八 六 一 — 一 八 九 五</span>
+          <span class="line">DSE 中 國 歷 史 · 洋 務 運 動</span>
+        </span>
+      </header>
+
+      <!-- 左側直幅：印徽 · 四句綱領 · SCROLL -->
+      <div class="intro-ribbon reveal-item" data-reveal="0" aria-hidden="true">
+        <span class="era-axis">盛 世 餘 暉 · 危 局 漸 現 · 求 強 圖 存 · 新 局 未 竟</span>
+      </div>
+
+      <section class="intro-stage">
+
+        <!-- 題詞（引文）→ 作品名（主角）→ 副標 -->
+        <div class="quote-multi">
+          <p class="intro-epigraph reveal-item" data-reveal="1">
+            「此 三 千 年 未 有 之 大 變 局，而 吾 輩 適 逢 其 會」
+            <span class="epi-src">—— 李 鴻 章 · 籌 議 海 防 摺 · 1874</span>
+          </p>
+          <h1 class="game-title reveal-item" data-reveal="2">自&nbsp;強&nbsp;三&nbsp;十&nbsp;年</h1>
+          <p class="game-subtitle reveal-item" data-reveal="3">
+            <span class="gs-zh">踏 遍 九 州 之 旅</span>
+          </p>
+          <p class="intro-lede reveal-item" data-reveal="3">局 勢 已 動，請 擇 一 條 自 強 之 路。</p>
+        </div>
+
+        <!-- 主選單：電影式直列（流程保留，入口不變） -->
+        <nav class="intro-menu reveal-item" data-reveal="5" aria-label="主選單">
+          <button class="im-item im-item--primary" id="btnOpen" data-magnetic aria-label="入局啟程">
+            <span class="im-mark" aria-hidden="true"></span>
+            <span class="im-zh">入 局 啟 程</span>
+          </button>
+          <button class="im-item" id="introAchv" type="button">
+            <span class="im-mark" aria-hidden="true"></span>
+            <span class="im-zh">功 業 簿</span>
+          </button>
+          <button class="im-item" id="introPersons" type="button">
+            <span class="im-mark" aria-hidden="true"></span>
+            <span class="im-zh">人 物 冊</span>
+          </button>
+          <a class="im-item im-item--link" href="https://ziqiang-game.vercel.app/" target="_blank" rel="noopener">
+            <span class="im-mark" aria-hidden="true"></span>
+            <span class="im-zh">續 篇 · 自強之路</span>
+          </a>
+        </nav>
+
+      </section>
+
+      <!-- 底部綱領花邊 -->
+      <div class="intro-motto reveal-item" data-reveal="6" aria-hidden="true">
+        <span class="im-orn">❮❮</span> 探 索 · 學 習 · 抉 擇 · 改 變 <span class="im-orn">❯❯</span>
+      </div>
+
+    </section>
+
+    <!-- ============ Screen 2 · 擇路 ============ -->
+    <section class="screen screen--selection" id="screen2" aria-hidden="true">
+
+      <!-- 持續存在的引文提醒 -->
+      <header class="quote-persistent">
+        <button class="back-link" id="btnBack" type="button">
+          <span class="back-arrow">◂</span>
+          <span class="back-text">序章</span>
+        </button>
+        <p class="qp-text">
+          <span class="qp-main">此 三 千 年 未 有 之 大 變 局</span>
+          <em class="qp-attr">李 鴻 章 · 1874</em>
+        </p>
+      </header>
+
+      <!-- 擇路 -->
+      <section class="selection-stage">
+        <h2 class="selection-title">
+          擇&nbsp;一&nbsp;位&nbsp;見&nbsp;證&nbsp;者
+                  </h2>
+
+        <!-- 旋轉木馬：JS 渲染 -->
+        <div class="s2-carousel" id="s2Carousel" aria-roledescription="carousel">
+          <button class="s2c-arrow s2c-arrow--prev" id="s2cPrev" type="button" aria-label="上一位">‹</button>
+          <div class="s2c-stage" id="s2cStage"><!-- slides injected by JS --></div>
+          <button class="s2c-arrow s2c-arrow--next" id="s2cNext" type="button" aria-label="下一位">›</button>
+          <div class="s2c-dots" id="s2cDots" role="tablist"><!-- dots injected by JS --></div>
+        </div>
+
+      </section>
+
+      <!-- 啟程確認欄（初始隱藏，選定路線後滑出） -->
+      <div class="s2-confirm-bar" id="s2ConfirmBar" aria-hidden="true">
+        <span class="s2cb-name" id="s2cbName">—</span>
+        <button class="s2cb-start" id="s2cbStart" type="button">
+          <span class="s2cb-start-label">啟&nbsp;程&nbsp;入&nbsp;局</span>
+          <span class="s2cb-start-arrow">→</span>
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ============ Screen 3 · 入職過場 + 九州地圖 ============ -->
+    <section class="screen screen--map" id="screen3" aria-hidden="true" data-phase="0">
+
+      <!-- 過場舞台：6 個 phase 期間覆蓋於地圖之上 -->
+      <div class="transition-stage" aria-hidden="true">
+
+        <!-- 灰燼粒子 -->
+        <div class="ash-particles" id="ashParticles"></div>
+
+        <!-- 路線確認 -->
+        <div class="route-confirm">
+          <h1 class="rc-confirm-name" id="confirmName">你 — </h1>
+          <p class="rc-confirm-quote" id="confirmQuote"></p>
+        </div>
+
+        <!-- 年份鎖定（從中央巨字 → 縮至左上 HUD） -->
+        <div class="year-lock" id="yearLock">1861</div>
+
+      </div>
+
+      <!-- 地圖舞台 -->
+      <div class="map-stage" aria-hidden="true">
+        <div class="map-pan" id="mapPan">
+          <img class="map-bg-img" src="assets/map/east-asia-historical.webp" alt="">
+          <!-- 視差霧氣層（呼吸感） -->
+          <div class="map-haze" aria-hidden="true"></div>
+          <svg class="map-overlay" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <!-- 旅程線：水墨筆觸串連走過的城（渲染於印章之後，置於底層） -->
+            <g class="journey-line" id="journeyLine"></g>
+            <!-- 城市印章標籤群組（CSS-styled placeholders, 方案 A） -->
+            <g class="city-seals" id="citySeals">
+              <!-- 由 JS 注入 -->
+            </g>
+            <!-- 當前城市脈衝（朱砂） -->
+            <g class="city-pulse" id="cityPulse" transform="translate(832 300)">
+              <circle class="pulse-ring" cx="0" cy="0" r="5"/>
+              <circle class="pulse-ring" cx="0" cy="0" r="5"/>
+              <circle class="pulse-dot" cx="0" cy="0" r="3"/>
+            </g>
+          </svg>
+        </div>
+        <!-- 右側暗角：壓低日本視覺重量 -->
+        <div class="map-vignette-right" aria-hidden="true"></div>
+      </div>
+
+      <!-- 城市 hover 展品標籤卡 -->
+      <div class="city-hovercard" id="cityHoverCard" aria-hidden="true">
+        <span class="chc-name" id="chcName"></span>
+        <span class="chc-desc" id="chcDesc"></span>
+        <span class="chc-status" id="chcStatus"></span>
+      </div>
+
+      <!-- ═══════════ 地圖 UI 層（phase 6 後浮現） ═══════════ -->
+
+      <!-- 頂部提示條 -->
+      <header class="map-topbar" aria-hidden="true">
+        <span class="topbar-year" id="topbarYear">大清 咸豐十年 · 庚申 · 春</span>
+        <span class="topbar-hint" id="topbarHint">點 擊 城 市 前 往</span>
+        <span class="topbar-side" id="topbarSide" hidden></span>
+      </header>
+
+      <!-- 右上四章印按鈕 -->
+      <!-- 靜音：左下角小圖示 -->
+      <button class="ambient-toggle ambient-corner" id="ambientToggle" type="button" aria-pressed="false" aria-label="背景音樂">
+        <span class="ambient-on" aria-hidden="true">聲</span>
+        <span class="ambient-off" aria-hidden="true">靜</span>
+      </button>
+      <!-- 重看教學 -->
+      <button class="coach-replay" id="cmReplay" type="button" aria-label="重看教學" data-tip="重 看 教 學" onclick="window.__replayCoach&&window.__replayCoach()">？</button>
+
+      <!-- 左側事件列表（可收摺成書籤頁籤） -->
+      <aside class="map-events" id="mapEvents" aria-label="歷史事件">
+        <button class="events-collapse" id="eventsCollapse" type="button" aria-label="收摺史事欄" aria-expanded="true" data-tip="收 摺">‹</button>
+        <div class="events-head">
+          <div>
+            <h2 class="events-title">史 · 事</h2>
+            <em class="events-sub">待 證 之 史</em>
+          </div>
+          <button class="seal-btn events-journal" data-panel="juan" type="button" aria-label="日誌" data-tip="手 卷 · 旅程日誌">
+            <span class="seal-char">卷</span>
+          </button>
+        </div>
+        <ol class="events-list" id="eventsList">
+          <!-- 由 JS 注入 -->
+        </ol>
+        <button class="events-tab" id="eventsTab" type="button" aria-label="展開史事欄" aria-expanded="true"><span class="et-label">史 事</span><span class="et-arrow">›</span></button>
+      </aside>
+
+      <!-- 右側常駐數值：四方阻力 ＋ 見識三軸（直列） -->
+      <aside class="map-stats" id="mapStats" aria-label="四方阻力與見識">
+        <div class="ms-group">
+          <h3 class="ms-title">四 方 阻 力</h3>
+          <div class="ms-row"><span class="ms-name">聖 眷</span><span class="ms-bar"><span class="ms-fill" id="mres-favor"></span></span><span class="ms-num" id="mresn-favor">55</span></div>
+          <div class="ms-row"><span class="ms-name">清 議</span><span class="ms-bar"><span class="ms-fill" id="mres-opinion"></span></span><span class="ms-num" id="mresn-opinion">50</span></div>
+          <div class="ms-row"><span class="ms-name">民 情</span><span class="ms-bar"><span class="ms-fill" id="mres-populace"></span></span><span class="ms-num" id="mresn-populace">50</span></div>
+          <div class="ms-row"><span class="ms-name">餉 源</span><span class="ms-bar"><span class="ms-fill" id="mres-funds"></span></span><span class="ms-num" id="mresn-funds">45</span></div>
+        </div>
+        <div class="ms-group">
+          <h3 class="ms-title">見 識</h3>
+          <div class="ms-row ms-row--axis"><span class="ms-name">器 物</span><span class="ms-count"><em id="axisMaterial">0</em><span class="ms-slash">/</span>30</span></div>
+          <div class="ms-row ms-row--axis"><span class="ms-name">制 度</span><span class="ms-count"><em id="axisSystem">0</em><span class="ms-slash">/</span>25</span></div>
+          <div class="ms-row ms-row--axis"><span class="ms-name">思 想</span><span class="ms-count"><em id="axisThought">0</em><span class="ms-slash">/</span>20</span></div>
+        </div>
+        <div class="ms-group ms-group--network">
+          <h3 class="ms-title">舊 友 新 知</h3>
+          <div class="mn-body" id="networkList">
+            <p class="panel-empty">尚未結識任何人。</p>
+            <p class="panel-empty-en">your journey has yet to begin</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ═══════════ 四個章印面板（預設隱藏） ═══════════ -->
+
+      <div class="seal-panel" id="panel-zhi" data-panel-id="zhi" hidden>
+        <div class="panel-card">
+          <button class="panel-close" type="button" data-close aria-label="關閉">✕</button>
+          <header class="panel-head">
+            <h2 class="panel-title">見 識</h2>
+            <em class="panel-sub">三 軸 之 學</em>
+          </header>
+          <div class="panel-body">
+            <p class="panel-axis-line"><span class="pal-name">器物</span><span class="pal-bar"><span class="pal-bar-fill" style="width:0%"></span></span><span class="pal-num">0 / 30</span></p>
+            <p class="panel-axis-line"><span class="pal-name">制度</span><span class="pal-bar"><span class="pal-bar-fill" style="width:0%"></span></span><span class="pal-num">0 / 25</span></p>
+            <p class="panel-axis-line"><span class="pal-name">思想</span><span class="pal-bar"><span class="pal-bar-fill" style="width:0%"></span></span><span class="pal-num">0 / 20</span></p>
+            <p class="panel-note">每個事件提供三種觀察視角，所學內容自動歸入相應之軸。三軸分佈將影響你之最終評語。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="seal-panel" id="panel-yin" data-panel-id="yin" hidden>
+        <div class="panel-card">
+          <button class="panel-close" type="button" data-close aria-label="關閉">✕</button>
+          <header class="panel-head">
+            <h2 class="panel-title">時 局</h2>
+            <em class="panel-sub">朝 野 四 方</em>
+          </header>
+          <div class="panel-body">
+            <p class="panel-note panel-note--top">洋務四面受阻——須在朝廷、士林、民間與財力之間周旋。任一崩壞，便有反撲。</p>
+            <p class="res-line"><span class="res-name">聖 眷</span><em class="res-sub">朝廷信任</em><span class="res-bar"><span class="res-fill" id="res-favor-fill"></span></span><span class="res-num" id="res-favor-num">55</span></p>
+            <p class="res-line"><span class="res-name">清 議</span><em class="res-sub">士林輿論</em><span class="res-bar"><span class="res-fill" id="res-opinion-fill"></span></span><span class="res-num" id="res-opinion-num">50</span></p>
+            <p class="res-line"><span class="res-name">民 情</span><em class="res-sub">民間人心</em><span class="res-bar"><span class="res-fill" id="res-populace-fill"></span></span><span class="res-num" id="res-populace-num">50</span></p>
+            <p class="res-line"><span class="res-name">餉 源</span><em class="res-sub">財力</em><span class="res-bar"><span class="res-fill" id="res-funds-fill"></span></span><span class="res-num" id="res-funds-num">45</span></p>
+            <div class="panel-toggle-row">
+              <span class="ptr-label">環 境 音</span>
+              <button class="ptr-toggle" type="button" id="btnBgmToggle" aria-pressed="false">
+                <span class="ptr-state ptr-on">開</span>
+                <span class="ptr-state ptr-off">關</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="seal-panel" id="panel-juan" data-panel-id="juan" hidden>
+        <div class="panel-card">
+          <button class="panel-close" type="button" data-close aria-label="關閉">✕</button>
+          <header class="panel-head">
+            <h2 class="panel-title">手 卷</h2>
+            <em class="panel-sub">旅 程 所 記</em>
+          </header>
+          <div class="panel-body">
+            <div class="juan-summary" id="juanSummary">
+              <p><span>所 到</span><em>0 城</em></p>
+              <p><span>證 據</span><em>0 件</em></p>
+              <p><span>任 務</span><em>0 件</em></p>
+            </div>
+
+            <div class="juan-section">
+              <h4 class="juan-h">證 據 簿</h4>
+              <em class="juan-sub">證 據 簿</em>
+              <div id="juanEvidenceList" class="juan-evidence-list">
+                <p class="panel-empty">尚 未 收 錄 證 據</p>
+              </div>
+            </div>
+
+            <div class="juan-section">
+              <h4 class="juan-h">城 中 任 務</h4>
+              <em class="juan-sub">本 城 要 務</em>
+              <div id="juanTaskList" class="juan-task-list">
+                <p class="panel-empty">尚 未 入 城</p>
+              </div>
+            </div>
+
+            <div class="juan-section">
+              <h4 class="juan-h">旅 程 提 示</h4>
+              <em class="juan-sub">下 一 里 程</em>
+              <div id="juanNextStep" class="juan-next">
+                <p class="panel-empty">尚 在 路 上</p>
+              </div>
+            </div>
+
+            <div class="panel-footer-actions">
+              <button class="panel-action" type="button" id="btnRetire">
+                致 仕 · 結 算
+                <em class="pa-en">retire &amp; review your thirty years</em>
+              </button>
+              <button class="panel-action panel-action--danger" type="button" id="btnRestartRoute">
+                重 新 擇 路
+                <em class="pa-en">restart · reset progress</em>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ 城市場景頁 overlay ═══════════ -->
+      <div class="city-scene" id="cityScene" hidden>
+
+        <!-- 加載過場 -->
+        <div class="city-loader" id="cityLoader" aria-hidden="true">
+          <div class="cl-dust" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="cl-name" id="cityLoaderName">上海</div>
+          <div class="cl-steps" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="cl-progress">
+            <div class="cl-progress-fill" id="cityLoaderFill"></div>
+          </div>
+          <div class="cl-year" id="cityLoaderYear"></div>
+        </div>
+
+        <!-- 場景主畫面 -->
+        <div class="city-stage" id="cityStage" aria-hidden="true">
+
+          <!-- 頂部標題列 -->
+          <header class="city-topbar">
+            <button class="city-back" id="cityBack" type="button">
+              <span class="cb-arrow">◂</span>
+              <span class="cb-text">返回地圖</span>
+            </button>
+            <div class="city-title">
+              <span class="ct-zh" id="ctZh">上 海</span>
+              <span class="ct-sep">·</span>
+              <span class="ct-en" id="ctEn">Shanghai</span>
+              <span class="ct-sep">·</span>
+              <span class="ct-year" id="ctYear">咸豐十年（1860）春</span>
+            </div>
+            <p class="city-tagline" id="cityTagline">「通商口岸、洋務新興之地」</p>
+          </header>
+
+          <!-- 場景畫布（含佔位與熱點） -->
+          <div class="city-canvas" id="cityCanvas">
+            <img class="city-bg" id="cityBg" alt="" aria-hidden="true">
+            <div class="city-placeholder">
+              <span class="cp-zh" id="cpZh">上海</span>
+              <span class="cp-en" id="cpEn">Shanghai</span>
+              <span class="cp-stub">[ 場 景 圖 待 補 ]</span>
+            </div>
+            <div class="city-hotspots" id="cityHotspots">
+              <!-- 由 JS 注入 -->
+            </div>
+            <div class="hotspot-observation" id="hotspotObservation" hidden>
+              <span class="ho-name" id="hoName"></span>
+              <p id="hoText"></p>
+            </div>
+            <div class="city-facilities" id="cityFacilities">
+              <!-- 由 JS 注入（四角設施） -->
+            </div>
+          </div>
+
+          <!-- 底部任務面板：手機/iPad richer sheet -->
+          <footer class="city-actions city-mission-sheet" id="cityMissionSheet" data-expanded="false" aria-label="城市任務面板">
+            <button class="city-mission-toggle" id="cityMissionToggle" type="button" aria-expanded="false" aria-controls="cityMissionDetails">
+              <span class="cms-grip" aria-hidden="true"></span>
+              <span class="cms-kicker">當 前 任 務</span>
+              <span class="cms-objective" id="cityMissionObjective">進城尋找線索</span>
+              <span class="cms-next" id="cityMissionNext">點選朱砂熱點</span>
+            </button>
+            <div class="city-mission-progress" aria-label="證據收集進度">
+              <span class="cec-icon">◐</span>
+              <span class="cec-label">證 據</span>
+              <em id="exploreCount">0</em>
+              <span class="cec-slash">/</span>
+              <em id="exploreTotal">5</em>
+            </div>
+            <div class="city-mission-feedback" id="cityMissionFeedback" aria-live="polite"></div>
+            <div class="city-mission-details" id="cityMissionDetails">
+              <div class="city-actions-list" id="cityActionsList">
+                <!-- 由 JS 注入 -->
+              </div>
+              <div class="city-time-controls">
+                <button class="ca-advance ca-advance--skip" type="button" id="cityAdvanceNext">
+                  <span class="cs-text">推 至 要 事</span>
+                </button>
+              </div>
+            </div>
+          </footer>
+
+        </div>
+
+      </div>
+
+      <!-- ═══════════ 事件 modal（鐵釘全屏 / 自由小卡）— 放在 city-scene 外，地圖也能彈 ═══════════ -->
+      <div class="event-modal" id="eventModal" hidden>
+        <div class="em-card" role="dialog" aria-labelledby="emTitle">
+          <!-- 上半：setup 階段 -->
+          <div class="em-setup">
+            <figure class="em-image" id="emImage" hidden>
+              <img id="emImg" src="" alt="" draggable="false">
+            </figure>
+            <span class="em-chapter" id="emChapter">第 1-1 章</span>
+            <h2 class="em-title" id="emTitle">圓 明 園</h2>
+            <em class="em-en" id="emEn">Burning of the Summer Palace</em>
+            <div class="em-divider" aria-hidden="true"></div>
+            <p class="em-setup-text" id="emSetup">事件敘述…</p>
+            <div class="em-divider em-divider--soft" aria-hidden="true"></div>
+            <div class="em-choices" id="emChoices">
+              <!-- 由 JS 注入 -->
+            </div>
+          </div>
+
+          <!-- 下半：payoff 階段 -->
+          <div class="em-payoff">
+            <span class="em-chapter em-chapter--echo" id="emChapterEcho"></span>
+            <p class="em-choice-label" id="emChoiceLabel">你 · 選擇 · </p>
+            <div class="em-divider" aria-hidden="true"></div>
+            <p class="em-payoff-text" id="emPayoff">…</p>
+            <span class="em-axis-badge" id="emAxisBadge" data-axis="material">+ 1 見聞</span>
+            <div class="em-divider em-divider--soft" aria-hidden="true"></div>
+            <button class="em-continue" type="button" id="emContinue">繼 續</button>
+            <span class="em-chapter-end" id="emChapterEnd">— 章 終 —</span>
+          </div>
+
+          <!-- 考驗階段 -->
+          <div class="em-challenge">
+            <div class="em-challenge-frame" id="emChallengeFrame">
+              <span class="em-challenge-kicker" id="emChallengeKicker">幕 僚 追 問</span>
+              <p class="em-challenge-q" id="emChallengeQ">…</p>
+              <div class="em-challenge-options" id="emChallengeOptions"><!-- JS 注入 --></div>
+              <span class="em-challenge-note">擇 一 回 應 · 只 可 定 奪 一 次</span>
+            </div>
+          </div>
+
+          <!-- 考驗結果階段 -->
+          <div class="em-result">
+            <div class="em-result-frame" id="emResultFrame">
+              <span class="em-result-mark" id="emResultMark" data-correct="true">所 斷 可 取</span>
+              <span class="em-axis-badge" id="emResultBadge" data-axis="material">+ 2 見聞</span>
+              <div class="em-divider" aria-hidden="true"></div>
+              <p class="em-result-explain" id="emResultExplain">…</p>
+              <div class="em-divider em-divider--soft" aria-hidden="true"></div>
+              <button class="em-continue" type="button" id="emResultContinue">繼 續</button>
+              <span class="em-chapter-end">— 章 終 —</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 熱點 / 設施 mini-modal -->
+      <div class="hotspot-modal" id="hotspotModal" hidden>
+        <div class="hm-card">
+          <button class="hm-close" type="button" data-close aria-label="關閉">✕</button>
+          <figure class="hm-image" id="hmImage" hidden>
+            <img id="hmImg" src="" alt="" draggable="false">
+          </figure>
+          <h3 class="hm-name" id="hmName">煙囪</h3>
+          <p class="hm-desc" id="hmDesc">說明文字</p>
+          <span class="hm-axis" id="hmAxis">+1 見聞</span>
+          <button class="hm-action" id="hmAction" type="button" hidden>探 訪 →</button>
+        </div>
+      </div>
+
+      <!-- 輕量證據任務 modal -->
+      <div class="evidence-task-modal" id="evidenceTaskModal" hidden>
+        <div class="et-card" role="dialog" aria-labelledby="etTitle" aria-modal="true" aria-describedby="etPrompt etInstruction etFeedback">
+          <button class="et-close" type="button" id="etClose" aria-label="關閉">✕</button>
+          <span class="et-kicker">證 據 任 務</span>
+          <h3 class="et-title" id="etTitle">任務名稱</h3>
+          <p class="et-prompt" id="etPrompt">任務描述</p>
+          <p class="et-instruction" id="etInstruction">操作提示</p>
+          <div class="et-banner" id="etBanner" hidden><img class="et-banner-img" id="etBannerImg" alt="" aria-hidden="true"></div>
+          <div class="et-body" id="etBody"></div>
+          <div class="et-feedback" id="etFeedback" aria-live="polite"></div>
+          <button class="et-submit" type="button" id="etSubmit" disabled>收 錄 證 據 →</button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ============ D 過場：第二次鴉片戰爭背景 + 人物起點 ============ -->
+  <div id="cutscene" class="cutscene" aria-hidden="true" role="dialog" aria-modal="true">
+
+    <!-- 第一頁：純文字背景卡 -->
+    <div class="cs-page cs-page--text is-active" data-page="1">
+      <div class="cs-text-card">
+        <div class="cs-year">1856 – 1860</div>
+        <div class="cs-title">第二次鴉片戰爭</div>
+        <div class="cs-body">英法的火輪船溯海而上，沿岸炮台一座座沉默。大沽失守，天津洞開，聯軍的腳步已踏入直隸——這一次，戰火不再止於南方口岸，而是直逼天子腳下。</div>
+        <div class="cs-subtitle">割地、賠款、開埠……但真正崩塌的，是「天朝無所不能」的信念。</div>
+      </div>
+    </div>
+
+    <!-- 第二頁：圓明園焚毀 -->
+    <div class="cs-page cs-page--image" data-page="2">
+      <div class="cs-image-wrap">
+        <img src="assets/sketches/yuanmingyuan-burning-background.webp" alt="圓明園焚毀" draggable="false" onerror="this.onerror=null;this.src='assets/sketches/yuanmingyuan-engraving.webp';">
+      </div>
+      <div class="cs-caption">
+        <span class="cs-cap-year">1860 · 庚申</span>
+        <span class="cs-cap-title">圓 明 園 · 焚 毀</span>
+        <span class="cs-cap-body">咸豐十年冬，聯軍闖入京西御苑。三日大火，百餘年的亭台樓閣化為焦土，煙塵蔽日，二十里外猶見。燒去的不只是園林，更是天朝最後的體面——劫灰之中，「自強」二字第一次無法迴避。</span>
+      </div>
+    </div>
+
+    <!-- 第三頁：鐵甲艦差距（複用現有圖） -->
+    <div class="cs-page cs-page--image" data-page="3">
+      <div class="cs-image-wrap">
+        <img src="assets/sketches/ironclad-warship.webp" alt="鐵甲艦" draggable="false">
+      </div>
+      <div class="cs-caption">
+        <span class="cs-cap-year">器 物 之 差</span>
+        <span class="cs-cap-title">木 帆 船 對 鐵 甲 艦</span>
+        <span class="cs-cap-body">江面上，木製戰船的風帆，抵不過鐵甲艦的蒸汽與重炮。差距不在勇氣，而在鋼鐵、火藥與機器——是整個時代的落後。若要不再挨打，得先造得出敵人手裡的東西。</span>
+      </div>
+    </div>
+
+    <!-- 第四頁：人物起點（portrait 由 JS 注入） -->
+    <div class="cs-page cs-page--character" data-page="4">
+      <div class="cs-portrait-wrap">
+        <img id="csPortrait" src="" alt="" draggable="false">
+      </div>
+      <div class="cs-char-text">
+        <div class="cs-char-name" id="csCharName"></div>
+        <div class="cs-char-quote" id="csCharQuote"></div>
+        <div class="cs-char-source" id="csCharSource"></div>
+        <div class="cs-char-begin" id="csCharBegin"></div>
+      </div>
+    </div>
+
+    <!-- 導航 -->
+    <button id="csNext" class="cs-btn-next" type="button">
+      <span id="csNextLabel">繼 續</span>
+      <span class="cs-arrow">→</span>
+    </button>
+
+    <!-- 頁碼指示點 -->
+    <div class="cs-dots" aria-hidden="true">
+      <span class="cs-dot is-active" data-dot="1"></span>
+      <span class="cs-dot" data-dot="2"></span>
+      <span class="cs-dot" data-dot="3"></span>
+      <span class="cs-dot" data-dot="4"></span>
+    </div>
+
+  </div>
+
+  <!-- 結算畫面（1895 / 致仕） -->
+  <!-- 結局轉場：甲午幻滅 → 體諒收口（點擊可推進/略過） -->
+  <div class="ending-cinema" id="endingCinema" hidden>
+    <div class="ec-beat" data-beat="0">
+      <span class="ec-year">乙 未 · 一 八 九 五</span>
+      <span class="ec-line">三 十 年 了。</span>
+    </div>
+    <div class="ec-beat ec-beat--img" data-beat="1">
+      <img src="assets/events/e_yellow_sea_battle.webp" alt="">
+      <span class="ec-cap">黃 海 一 役 · 北 洋 盡 墨</span>
+    </div>
+    <div class="ec-beat ec-beat--img" data-beat="2">
+      <img src="assets/events/e_shimonoseki_treaty.webp" alt="">
+      <span class="ec-cap">春 帆 樓 上 · 一 紙 馬 關</span>
+    </div>
+    <div class="ec-beat ec-beat--img" data-beat="3">
+      <img src="assets/cinema/ending-cost.webp" alt="">
+      <span class="ec-cap">割 台 灣、賠 銀 二 萬 萬 兩<br>自 強 三 十 年，一 朝 盡 喪</span>
+    </div>
+    <div class="ec-beat ec-beat--img" data-beat="4">
+      <img src="assets/cinema/ending-question.webp" alt="">
+      <span class="ec-cap">可 敗 的，真 的 只 是 一 支 艦 隊 麼？<br>船 炮 可 買，人 心 與 制 度 ——<br>三 十 年 來，竟 無 人 敢 動</span>
+    </div>
+    <div class="ec-beat ec-beat--img" data-beat="5">
+      <img src="assets/cinema/ending-seed.webp" alt="">
+      <span class="ec-cap" id="ecSeedCap">然 這 條 路，沒 有 白 走 ——</span>
+    </div>
+    <div class="ec-beat ec-beat--img ec-beat--finale" data-beat="6">
+      <img src="assets/cinema/ending-dawn.webp" alt="">
+      <p class="ec-close">自 強 未 成，啟 蒙 已 始。<br>甲 午 之 痛，喚 醒 了 維 新 與 革 命 的 前 夜。<br>三 十 年 不 是 終 點，是 中 國 走 向 現 代 的 第 一 步。</p>
+    </div>
+    <span class="ec-skip" id="ecSkip">▸ 按 此 繼 續</span>
+  </div>
+
+  <!-- 人物詳情卡 -->
+  <div class="person-modal" id="personModal" hidden>
+    <div class="pm-backdrop" id="pmBackdrop"></div>
+    <div class="pm-card" role="dialog" aria-labelledby="pmName">
+      <button class="pm-close" id="pmClose" type="button" aria-label="關閉">×</button>
+      <div class="pm-portrait-wrap">
+        <img class="pm-portrait" id="pmPortrait" alt="">
+        <span class="pm-seal" id="pmSeal" aria-hidden="true"></span>
+      </div>
+      <h3 class="pm-name" id="pmName"></h3>
+      <p class="pm-rel" id="pmRel"></p>
+      <p class="pm-bio" id="pmBio"></p>
+    </div>
+  </div>
+
+  <div class="settlement" id="settlement" hidden>
+    <div class="stl-scroll" role="dialog" aria-labelledby="stlTitle">
+      <span class="stl-kicker">三 十 年 回 顧</span>
+      <h2 class="stl-title" id="stlTitle">致 仕 之 日</h2>
+      <div class="stl-range">咸豐十一年（1861） ——— <span id="stlEndYear">光緒二十一年（1895）</span></div>
+      <div class="stl-timeline" id="stlTimeline" aria-hidden="true"></div>
+      <div class="stl-stats" id="stlStats"></div>
+      <div class="stl-res" id="stlRes"></div>
+      <div class="stl-verdict">
+        <span class="stlv-label">評 語</span>
+        <p class="stlv-text" id="stlVerdict"></p>
+      </div>
+      <div class="stl-motto">
+        <p class="stl-motto-line"><span>歷 史 不 可 改</span><span>理 解 可 更 深</span></p>
+        <p class="stl-motto-sub">甲午的結局，無人能改寫；但你踏過的城、結識的人、看懂的器物制度思想，是你獨有的這一遍。</p>
+        <p class="stl-motto-sub stl-motto-sub--last">再走一程 —— 不為改變結局，只為看得更透。</p>
+      </div>
+      <div class="stl-epilogue" id="stlEpilogue" hidden>
+        <span class="stl-epi-label">他 們 後 來 如 何</span>
+        <div class="stl-epi-list" id="stlEpiList"></div>
+      </div>
+      <div class="stl-achv-wrap" id="stlAchvWrap">
+        <span class="stl-achv-label">本 局 解 鎖</span>
+        <div class="stl-achv-list" id="stlAchvList"></div>
+      </div>
+      <div class="stl-actions">
+        <button class="stl-btn stl-btn--review" type="button" id="stlReview">學 習 回 收</button>
+        <button class="stl-btn stl-btn--ghost" type="button" id="stlGallery">查 看 功 業 簿</button>
+        <button class="stl-btn" type="button" id="stlRestart">重 新 啟 程 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 學習回收（DSE 重點 ＋ 錯題回顧 ＋ 複習本局考點） -->
+  <div class="dse-review" id="dseReview" hidden>
+    <div class="dr-card" role="dialog" aria-labelledby="drTitle">
+      <button class="dr-close" type="button" id="drClose" aria-label="關閉">✕</button>
+      <span class="dr-kicker">學 習 回 收</span>
+      <h2 class="dr-title" id="drTitle">本 局 所 學</h2>
+      <div class="dr-section">
+        <h3 class="dr-h">本 局 DSE 重 點</h3>
+        <ul class="dr-points" id="drPoints"></ul>
+      </div>
+      <div class="dr-section dr-fail">
+        <h3 class="dr-h">洋 務 何 以 未 竟 · 成 敗 評 價</h3>
+        <p class="dr-fail-intro">走完三十年，這場自強運動的結構性局限，正是 DSE 最常考的「成敗評價」：</p>
+        <ul class="dr-fail-list" id="drFail"></ul>
+      </div>
+      <div class="dr-section" id="drWrongWrap">
+        <h3 class="dr-h">錯 題 回 顧</h3>
+        <div class="dr-wrong" id="drWrong"></div>
+      </div>
+      <button class="dr-toggle" type="button" id="drReviewAll">複 習 本 局 考 點 ▾</button>
+      <div class="dr-all" id="drAll" hidden></div>
+    </div>
+  </div>
+
+  <!-- 功業簿（成就頁面） -->
+  <div class="achv-gallery" id="achievementGallery" hidden>
+    <div class="achv-card" role="dialog" aria-labelledby="achvTitle">
+      <button class="achv-close" type="button" id="achvClose" aria-label="關閉">✕</button>
+      <span class="achv-kicker">功 業 簿</span>
+      <h2 class="achv-title" id="achvTitle">成 就</h2>
+      <div class="achv-progress" id="achvProgress"></div>
+      <div class="achv-grid" id="achvGrid"></div>
+    </div>
+  </div>
+
+  <!-- 人物冊（跨局永久畫廊） -->
+  <div class="achv-gallery pg-gallery" id="personGallery" hidden>
+    <div class="achv-card pg-card" role="dialog" aria-labelledby="pgTitle">
+      <button class="achv-close" type="button" id="pgClose" aria-label="關閉">✕</button>
+      <span class="achv-kicker">人 物 冊</span>
+      <h2 class="achv-title" id="pgTitle">旅 途 所 遇</h2>
+      <div class="achv-progress" id="pgProgress"></div>
+      <div class="pg-grid" id="pgGrid"></div>
+    </div>
+  </div>
+
+  <!-- 阻力反撲（軟懲罰 modal） -->
+  <div class="setback-modal" id="setbackModal" hidden>
+    <div class="sb-card" role="dialog" aria-labelledby="sbTitle">
+      <span class="sb-kicker">阻 力 反 撲</span>
+      <h3 class="sb-title" id="sbTitle"></h3>
+      <p class="sb-body" id="sbBody"></p>
+      <div class="sb-penalty" id="sbPenalty"></div>
+      <p class="sb-dse" id="sbDse"></p>
+      <button class="sb-ok" type="button" id="sbOk">受 教 →</button>
+    </div>
+  </div>
+
+  <!-- 丙·動態小事件（不耗行動的過場插曲） -->
+  <div class="interlude-modal" id="interludeModal" hidden>
+    <div class="il-card" role="dialog" aria-labelledby="ilTitle">
+      <figure class="il-img" id="ilImg" hidden><img id="ilImgEl" src="" alt="" draggable="false"></figure>
+      <span class="il-kicker" id="ilKicker">時 局 一 隅</span>
+      <h3 class="il-title" id="ilTitle"></h3>
+      <p class="il-text" id="ilText"></p>
+      <p class="il-dse" id="ilDse" hidden></p>
+      <div class="il-options" id="ilOptions"></div>
+    </div>
+  </div>
+
+  <!-- 書信引線（信箋 modal） -->
+  <div class="letter-modal" id="letterModal" hidden>
+    <div class="lt-paper" role="dialog" aria-labelledby="ltFrom">
+      <div class="lt-head">
+        <span class="lt-kicker">有 信 至</span>
+        <span class="lt-date" id="ltDate"></span>
+      </div>
+      <div class="lt-content">
+        <div class="lt-sign">
+          <span class="lt-from" id="ltFrom"></span>
+          <span class="lt-seal" aria-hidden="true">印</span>
+        </div>
+        <div class="lt-body" id="ltBody"></div>
+      </div>
+      <div class="lt-point" id="ltPointWrap">
+        <span class="lt-point-label">所 指</span>
+        <span class="lt-point-val" id="ltPoint"></span>
+      </div>
+      <div class="lt-actions">
+        <button class="lt-begin" type="button" id="ltBegin">領 命 · 記 下 →</button>
+        <button class="lt-store" type="button" id="ltStore" hidden>收 入 手 卷</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 季節過場（全屏，advanceSeason 觸發） -->
+  <div class="season-transition" id="seasonTransition" data-season="0" aria-hidden="true">
+    <div class="st-particles" id="stParticles" aria-hidden="true"></div>
+    <div class="st-content">
+      <div class="st-season" id="stSeason">春</div>
+      <div class="st-year" id="stYear">大清 同治四年 · 乙丑</div>
+    </div>
+  </div>
+
+  <!-- 篇章轉場（年份門檻觸發；純電影過場） -->
+  <div class="part-transition" id="partTransition" aria-hidden="true">
+    <div class="pt-bg" id="ptBg" aria-hidden="true"></div>
+    <div class="pt-inner">
+      <span class="pt-no" id="ptNo">第 二 篇</span>
+      <h2 class="pt-name" id="ptName">求 強</h2>
+      <div class="pt-rule" aria-hidden="true"></div>
+      <p class="pt-sub" id="ptSub">師夷長技以自強</p>
+      <span class="pt-hint">點 擊 繼 續</span>
+    </div>
+  </div>
+
+  <!-- Dev 印記 -->
+  <div class="dev-stamp">v3.0 · day 1</div>
+
+  <!-- SUNO 地圖配樂槽（缺檔則退回程序生成底床；受 靜/聲 鈕控制）-->
+  <audio id="mapTheme" src="assets/audio/map-theme.mp3" loop preload="auto"></audio>
+
+  <!-- 新手引導 coachmark（首玩自動·分步·可略過） -->
+  <div class="coachmark" id="coachmark" hidden aria-hidden="true">
+    <div class="cm-spot" id="cmSpot"></div>
+    <div class="cm-bubble" id="cmBubble" role="dialog" aria-label="新手引導">
+      <h3 class="cm-title" id="cmTitle"></h3>
+      <p class="cm-text" id="cmText"></p>
+      <div class="cm-foot">
+        <button class="cm-skip" id="cmSkip" type="button">略 過 教 學</button>
+        <span class="cm-step" id="cmStep"></span>
+        <button class="cm-next" id="cmNext" type="button">下 一 步 →</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>座標校準工具 · Coordinate Calibrator</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #14110d; color: #e8deca;
+    font-family: "Noto Serif TC", serif; }
+  header { padding: 12px 18px; background: #1d1812; border-bottom: 1px solid #3a3026;
+    display: flex; gap: 16px; align-items: center; flex-wrap: wrap; position: sticky; top: 0; z-index: 5; }
+  h1 { font-size: 15px; letter-spacing: 0.2em; margin: 0; color: #d8c79a; }
+  select, input { background: #2a2218; color: #e8deca; border: 1px solid #4a3d2c;
+    padding: 6px 10px; font-size: 13px; font-family: inherit; border-radius: 3px; }
+  input { width: 220px; }
+  .hint { font-size: 12px; color: #9a8a6a; }
+  .stage { position: relative; display: inline-block; margin: 18px; }
+  .stage img { display: block; max-width: calc(100vw - 360px); max-height: calc(100vh - 80px);
+    border: 1px solid #3a3026; }
+  .wrap { display: flex; align-items: flex-start; }
+  .marker { position: absolute; transform: translate(-50%, -50%); pointer-events: none;
+    width: 14px; height: 14px; border-radius: 50%; border: 2px solid; }
+  .marker.exist { border-color: #4ea3ff; background: rgba(78,163,255,0.25); }
+  .marker.exist::after { content: attr(data-label); position: absolute; left: 16px; top: -4px;
+    font-size: 11px; color: #8fc3ff; white-space: nowrap; text-shadow: 0 0 4px #000; }
+  .marker.live { border-color: #ff5a4e; background: rgba(255,90,78,0.3); width: 16px; height: 16px;
+    box-shadow: 0 0 0 1px #000, 0 0 10px rgba(255,90,78,0.7); }
+  .crosshair { position: absolute; background: rgba(255,90,78,0.5); pointer-events: none; }
+  .panel { width: 320px; padding: 18px; background: #1a160f; min-height: 100vh;
+    border-left: 1px solid #3a3026; position: sticky; top: 0; }
+  .readout { font-family: "JetBrains Mono", monospace; font-size: 14px; line-height: 1.9;
+    background: #0f0c08; padding: 12px; border-radius: 4px; border: 1px solid #3a3026; color: #ffd; }
+  .readout b { color: #ff8a7e; }
+  .panel h2 { font-size: 12px; letter-spacing: 0.2em; color: #9a8a6a; margin: 18px 0 6px; }
+  textarea { width: 100%; height: 200px; background: #0f0c08; color: #cfc2a0;
+    border: 1px solid #3a3026; border-radius: 4px; font-family: "JetBrains Mono", monospace;
+    font-size: 11px; padding: 8px; resize: vertical; }
+  button { background: #3a2d1c; color: #e8deca; border: 1px solid #5a4730; padding: 7px 12px;
+    font-family: inherit; font-size: 12px; border-radius: 3px; cursor: pointer; margin-top: 6px; }
+  button:hover { background: #4a3a24; }
+  .legend { font-size: 11px; color: #8a7a5a; margin-top: 10px; line-height: 1.7; }
+  .legend .blue { color: #4ea3ff; } .legend .red { color: #ff5a4e; }
+</style>
+</head>
+<body>
+<header>
+  <h1>座標校準工具</h1>
+  <label class="hint">圖片：
+    <select id="picker"></select>
+  </label>
+  <label class="hint">或自訂路徑：<input id="custom" placeholder="assets/city/city-xxx.webp"></label>
+  <span class="hint" id="dims"></span>
+</header>
+<div class="wrap">
+  <div class="stage" id="stage">
+    <img id="img" alt="">
+    <div class="crosshair" id="chV" style="width:1px;top:0;bottom:0;display:none;"></div>
+    <div class="crosshair" id="chH" style="height:1px;left:0;right:0;display:none;"></div>
+    <div class="marker live" id="live" style="display:none;"></div>
+  </div>
+  <div class="panel">
+    <h2>點擊讀數</h2>
+    <div class="readout" id="readout">點擊圖片任一處 …</div>
+    <div class="legend">
+      <span class="blue">●</span> 藍點＝現有座標　<span class="red">●</span> 紅點＝你剛點的位置<br>
+      地圖模式同時給出 viewBox(1600×1000) 數值，可直接填入 CITIES。
+    </div>
+    <h2>點擊紀錄（可複製）</h2>
+    <textarea id="log" readonly></textarea>
+    <button id="clear">清空紀錄</button>
+  </div>
+</div>
+<script>
+// 現有座標（藍點）
+const MAPW = 1600, MAPH = 1000;
+const TARGETS = {
+  'map (九州地圖 · viewBox 1600×1000)': {
+    src: 'assets/map/east-asia-historical.webp', mode: 'map',
+    markers: [
+      ['beijing',551,191],['tianjin',601,247],['kaiping',636,203],['weihaiwei',748,288],
+      ['nanjing',688,470],['shanghai',740,502],['wuhan',511,480],['fuzhou',660,657],
+      ['guangzhou',516,774],['hongkong',530,803],['korea',853,220],['japan',1250,443]
+    ].map(([n,x,y])=>({label:n, xp:x/MAPW*100, yp:y/MAPH*100}))
+  },
+  'city-japan (日本城景 · %)': {
+    src: 'assets/city/city-japan.webp', mode: 'pct',
+    markers: [['jp-meiji',40,40],['jp-navy',62,55],['jp-tairiku',30,66]].map(([l,x,y])=>({label:l,xp:x,yp:y}))
+  },
+  'city-korea (朝鮮城景 · %)': {
+    src: 'assets/city/city-korea.webp', mode: 'pct',
+    markers: [['kr-palace',46,40]].map(([l,x,y])=>({label:l,xp:x,yp:y}))
+  },
+  'city-tianjin (天津城景 · %)': {
+    src: 'assets/city/city-tianjin.webp', mode: 'pct',
+    markers: [['tj-advisor',46,44],['tj-telegraph',73,30]].map(([l,x,y])=>({label:l,xp:x,yp:y}))
+  },
+  'city-weihaiwei (威海城景 · %)': {
+    src: 'assets/city/city-weihaiwei.webp', mode: 'pct',
+    markers: [['whw-harbor',54,52],['whw-ding',30,44]].map(([l,x,y])=>({label:l,xp:x,yp:y}))
+  }
+};
+const picker = document.getElementById('picker');
+Object.keys(TARGETS).forEach(k => { const o=document.createElement('option'); o.value=k; o.textContent=k; picker.appendChild(o); });
+const img = document.getElementById('img'), stage = document.getElementById('stage');
+const readout = document.getElementById('readout'), logEl = document.getElementById('log');
+const live = document.getElementById('live'), chV = document.getElementById('chV'), chH = document.getElementById('chH');
+const dims = document.getElementById('dims');
+let mode = 'map';
+
+function clearMarkers(){ [...stage.querySelectorAll('.marker.exist')].forEach(m=>m.remove()); }
+function load(target){
+  mode = target.mode;
+  img.src = target.src + '?cb=' + Date.now();
+  img.onload = () => {
+    dims.textContent = img.naturalWidth + '×' + img.naturalHeight + ' px';
+    clearMarkers();
+    (target.markers||[]).forEach(mk=>{
+      const d=document.createElement('div'); d.className='marker exist';
+      d.dataset.label=mk.label; d.style.left=mk.xp+'%'; d.style.top=mk.yp+'%';
+      stage.appendChild(d);
+    });
+  };
+  img.onerror = () => { dims.textContent = '⚠ 圖片載入失敗：'+target.src; clearMarkers(); };
+}
+picker.addEventListener('change', ()=>load(TARGETS[picker.value]));
+document.getElementById('custom').addEventListener('change', e=>{
+  const v=e.target.value.trim(); if(!v) return;
+  load({src:v, mode: v.includes('/map/')?'map':'pct', markers:[]});
+});
+stage.addEventListener('click', e=>{
+  const r = img.getBoundingClientRect();
+  const xf = (e.clientX - r.left) / r.width, yf = (e.clientY - r.top) / r.height;
+  if (xf<0||xf>1||yf<0||yf>1) return;
+  const xp = xf*100, yp = yf*100;
+  live.style.display='block'; live.style.left=xp+'%'; live.style.top=yp+'%';
+  chV.style.display='block'; chV.style.left=xp+'%';
+  chH.style.display='block'; chH.style.top=yp+'%';
+  let txt, logLine;
+  if (mode==='map'){
+    const vx=Math.round(xf*MAPW), vy=Math.round(yf*MAPH);
+    txt = '<b>百分比</b><br>x: '+xp.toFixed(1)+'%　y: '+yp.toFixed(1)+'%<br><br><b>viewBox (CITIES)</b><br>{ x: '+vx+', y: '+vy+' }';
+    logLine = 'x:'+vx+', y:'+vy+'   ('+xp.toFixed(1)+'%, '+yp.toFixed(1)+'%)';
+  } else {
+    txt = "<b>百分比 (hotspot)</b><br>x: '"+xp.toFixed(1)+"%', y: '"+yp.toFixed(1)+"%'";
+    logLine = "x: '"+xp.toFixed(1)+"%', y: '"+yp.toFixed(1)+"%'";
+  }
+  readout.innerHTML = txt;
+  logEl.value = logLine + '\n' + logEl.value;
+});
+document.getElementById('clear').addEventListener('click', ()=>{ logEl.value=''; });
+load(TARGETS[picker.value]);
+</script>
+</body>
+</html>
