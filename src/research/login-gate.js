@@ -68,6 +68,19 @@ function closeGate(gate) {
   window.dispatchEvent(new CustomEvent(LOGIN_PASSED_EVENT));
 }
 
+async function flushQueuedLogs(session) {
+  try {
+    const [{ flushQueuedResearchEvents }, { submitLogBatch }] = await Promise.all([
+      import('./logger.js'),
+      import('./api.js')
+    ]);
+    const result = await flushQueuedResearchEvents(session, submitLogBatch);
+    document.documentElement.dataset.researchLogFlush = result.flushed ? 'ok' : 'pending';
+  } catch (error) {
+    document.documentElement.dataset.researchLogFlush = 'pending';
+  }
+}
+
 function focusFirstEmpty(participantInput, sessionInput) {
   const target = !participantInput.value.trim() ? participantInput : sessionInput;
   window.setTimeout(() => target.focus(), 0);
@@ -92,7 +105,10 @@ async function submitLogin({ participantInput, sessionInput, messageNode, gate, 
 
     if (result.ok && result.data?.session) {
       const saved = saveResearchSession(result.data.session);
-      if (saved) closeGate(gate);
+      if (saved) {
+        flushQueuedLogs(saved);
+        closeGate(gate);
+      }
       else setMessage(messageNode, COPY.networkError, 'error');
       return;
     }
@@ -196,6 +212,7 @@ function renderGate() {
 
   if (existingSession) {
     setMessage(message, COPY.returning, 'neutral');
+    flushQueuedLogs(existingSession);
     window.setTimeout(() => closeGate(gate), 650);
     return;
   }

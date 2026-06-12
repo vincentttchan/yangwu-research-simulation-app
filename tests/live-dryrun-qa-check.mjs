@@ -81,10 +81,27 @@ let validSession = null;
 {
   const result = await postJson('/api/logs-batch', {
     session: validSession,
-    events: []
+    events: [{
+      client_event_id: `live-qa-${Date.now()}`,
+      event_type: 'live_dryrun_qa',
+      payload: {
+        route_id: 'qa',
+        city_id: 'qa',
+        source: 'live-dryrun-qa',
+        choice_id: 'qa',
+        choice_label: 'must be removed by server sanitizer'
+      },
+      constructs: ['historical_complexity', 'evidence_use', 'historical_complexity'],
+      complexity_dimensions: ['technology', 'institutions'],
+      client_time: new Date().toISOString(),
+      app_version: 'dev-v0.1',
+      research_cohort: 'lkkc-may-june-2026',
+      content_map_version: 'content-freeze-lite-v0.1'
+    }]
   });
-  assert.equal(result.status, 501, 'Log batch should remain disconnected during Task 12');
-  assert.equal(result.data.error, 'supabase_not_connected');
+  assert.equal(result.status, 200, 'Log batch should accept a safe dry-run event');
+  assert.equal(result.data.accepted, true);
+  assert.equal(result.data.inserted_count, 1);
 }
 
 console.log(`live dry-run QA checks passed for ${normaliseBaseUrl(baseUrl)}`);

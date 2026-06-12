@@ -272,3 +272,20 @@ Task 7 wires low-risk flow logging into the live game. These events are local-on
 | `session_end` | Player reaches settlement | `route_id`, `year`, `season`, `completed_events_count`, `cities_visited_count`, `evidence_count`, `challenge_correct`, `constructs` |
 
 Choice text, payoff text, student free-text responses, names, emails, phone numbers, and other directly identifying information are intentionally excluded from Task 7 logging.
+
+## Task 15 Event Logs Supabase Dry-run
+
+Task 15 enables server-side dry-run submission from `yangwu_research_event_queue_v1` to Supabase `event_logs`.
+
+First implementation scope:
+
+- keeps the frontend free of Supabase SDK imports and server secrets;
+- writes logs only through `POST /api/logs-batch`;
+- enables writes only when `RESEARCH_BACKEND_ENABLED=dry_run`;
+- sanitizes event payloads through a server-side allowlist;
+- submits queued events only after a valid limited research session exists;
+- clears the local queue only after a successful accepted response;
+- keeps queued events for retry when the backend is unavailable;
+- still excludes visible choice prose, student free text, names, contact details, and name-to-code linkage.
+
+Task 15 supports dry-run validation. It does not by itself mean formal research data collection is ready.

@@ -10,7 +10,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "check:syntax": "node --check src/intro.js && node --check src/motion.js && node --check src/main.js && node --check src/research/login-gate.js && node --check api/_supabase.js && node --check api/login.js && node --check api/logs-batch.js",
+    "check:syntax": "node --check src/intro.js && node --check src/motion.js && node --check src/main.js && node --check src/research/logger.js && node --check src/research/login-gate.js && node --check api/_supabase.js && node --check api/login.js && node --check api/logs-batch.js",
     "check:stability": "node tests/stability-checks.mjs",
     "check:assets": "node tests/asset-reference-check.mjs",
     "check:research-map": "node tests/research-content-map-check.mjs",
@@ -19,6 +19,7 @@
     "check:login-ui": "node tests/research-login-ui-check.mjs",
     "check:supabase-env": "node tests/supabase-env-check.mjs",
     "check:supabase-dryrun": "node tests/supabase-dryrun-login-check.mjs",
+    "check:supabase-logs": "node tests/supabase-dryrun-logs-check.mjs && node tests/research-log-flush-check.mjs",
     "check:live-dryrun": "node tests/live-dryrun-qa-check.mjs",
     "check:task13-docs": "node tests/task13-docs-check.mjs"
   },

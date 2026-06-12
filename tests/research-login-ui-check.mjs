@@ -52,6 +52,9 @@ assert.match(loginGate, /開發試玩/, 'Login gate should include localhost-onl
 });
 
 assert.match(loginGate, /import\(['"]\.\/api\.js['"]\)/, 'Login gate should dynamically import API helper only when needed');
+assert.match(loginGate, /import\(['"]\.\/logger\.js['"]\)/, 'Login gate should dynamically import logger helper only when flushing queued events');
+assert.match(loginGate, /flushQueuedResearchEvents/, 'Login gate should flush queued research events after a valid session exists');
+assert.match(loginGate, /submitLogBatch/, 'Login gate should submit queued research events through the API helper');
 assert.doesNotMatch(loginGate, /import\s+\{[^}]*loginWithParticipantCode[^}]*\}\s+from\s+['"]\.\/api\.js['"]/, 'Login gate should not statically import API helper');
 assert.match(loginGate, /saveResearchSession/, 'Login gate should save successful limited session through session helper');
 assert.match(loginGate, /loadResearchSession/, 'Login gate should detect an existing session');

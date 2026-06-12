@@ -82,7 +82,10 @@ assert.match(serverSupabase, /SUPABASE_SECRET_KEY/, 'Server Supabase helper shou
 assert.match(serverSupabase, /persistSession:\s*false/, 'Server Supabase helper should disable session persistence');
 assert.match(loginApi, /supabase_not_connected/, 'Login API should keep a disconnected fallback when dry-run is not enabled');
 assert.match(loginApi, /RESEARCH_BACKEND_ENABLED[^]*dry_run/, 'Login API should only connect when RESEARCH_BACKEND_ENABLED is dry_run');
-assert.match(logsBatchApi, /supabase_not_connected/, 'Log batch API should remain disconnected in Task 10 environment setup');
+assert.match(logsBatchApi, /supabase_not_connected/, 'Log batch API should keep a disconnected fallback when dry-run is not enabled');
+assert.match(logsBatchApi, /RESEARCH_BACKEND_ENABLED[^]*dry_run/, 'Log batch API should only connect when RESEARCH_BACKEND_ENABLED is dry_run');
+assert.match(logsBatchApi, /from\(['"]event_logs['"]\)/, 'Log batch API should write accepted dry-run events to event_logs');
+assert.match(logsBatchApi, /SAFE_PAYLOAD_KEYS/, 'Log batch API should sanitize payload fields before insert');
 
 function listFiles(dir) {
   const entries = readdirSync(dir, { withFileTypes: true });

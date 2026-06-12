@@ -35,7 +35,11 @@ assert.match(loginApi, /resolveLoginResult/, 'Login API should expose a testable
 assert.match(loginApi, /RESEARCH_BACKEND_ENABLED[^]*dry_run/, 'Login API should only connect in dry_run mode');
 assert.match(loginApi, /participant_code/, 'Login API should name participant_code');
 assert.match(loginApi, /session_code/, 'Login API should name session_code');
-assert.match(logsBatchApi, /supabase_not_connected/, 'Log batch API should remain a Supabase-disconnected stub in Task 8B');
+assert.match(logsBatchApi, /supabase_not_connected/, 'Log batch API should keep the disabled-backend fallback');
+assert.match(logsBatchApi, /resolveLogBatchResult/, 'Log batch API should expose a testable dry-run log flow');
+assert.match(logsBatchApi, /RESEARCH_BACKEND_ENABLED[^]*dry_run/, 'Log batch API should only connect in dry_run mode');
+assert.match(logsBatchApi, /from\(['"]event_logs['"]\)/, 'Log batch API should write accepted events to event_logs');
+assert.match(logsBatchApi, /SAFE_PAYLOAD_KEYS/, 'Log batch API should sanitize payload fields before insert');
 assert.match(logsBatchApi, /events/, 'Log batch API should name events');
 assert.match(logsBatchApi, /session/, 'Log batch API should name session');
 assert.match(serverSupabase, /@supabase\/supabase-js/, 'Server helper should own the Supabase SDK import');
@@ -56,6 +60,8 @@ assert.match(frontendApi, /session_code/, 'Frontend API helper should submit ses
 assert.match(frontendApi, /app_version/, 'Frontend API helper should include app_version for login');
 assert.match(frontendApi, /research_cohort/, 'Frontend API helper should include research_cohort for login');
 assert.match(loginGate, /import\(['"]\.\/api\.js['"]\)/, 'Login gate may call API helper through dynamic import');
+assert.match(loginGate, /import\(['"]\.\/logger\.js['"]\)/, 'Login gate should dynamically import logger helper when flushing logs');
+assert.match(loginGate, /flushQueuedResearchEvents/, 'Login gate should flush queued logs only after a valid session exists');
 assert.doesNotMatch(main, /research\/api\.js/, 'main.js should still avoid direct backend API helper references');
 assert.match(main, /import '\.\/research\/login-gate\.js';/, 'main.js should load login gate as the controlled frontend boundary');
 

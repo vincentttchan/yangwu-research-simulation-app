@@ -19,7 +19,7 @@ The Vercel connector can read the project, but cannot write environment variable
 ## What Is Already Ready In Code
 
 - `POST /api/login` supports dry-run Supabase login.
-- `POST /api/logs-batch` remains disabled.
+- `POST /api/logs-batch` now accepts sanitized dry-run event batches when `RESEARCH_BACKEND_ENABLED=dry_run`.
 - `@supabase/supabase-js` is installed for server-side API routes only.
 - Frontend code does not import Supabase SDK or read `SUPABASE_SECRET_KEY`.
 - `check:live-dryrun` can test a deployed URL once env vars are configured.
@@ -66,7 +66,7 @@ Expected:
 - `YW-001` succeeds;
 - `YW-999` is rejected;
 - wrong session code is rejected;
-- `POST /api/logs-batch` remains `supabase_not_connected`.
+- `POST /api/logs-batch` accepts one safe dry-run test event after a valid login.
 
 ## Current Blocker
 

@@ -47,10 +47,43 @@ export function clearQueuedResearchEvents() {
   writeQueue([]);
 }
 
+export async function flushQueuedResearchEvents(session, submitLogBatch) {
+  const queue = readQueue();
+  if (!queue.length) {
+    return { flushed: true, inserted_count: 0 };
+  }
+
+  if (!session?.session_id || !session?.participant_code || typeof submitLogBatch !== 'function') {
+    return { flushed: false, error: 'missing_session_or_submitter' };
+  }
+
+  try {
+    const result = await submitLogBatch(queue, session);
+    if (result?.ok && result.data?.accepted) {
+      clearQueuedResearchEvents();
+      return {
+        flushed: true,
+        inserted_count: Number(result.data.inserted_count || 0)
+      };
+    }
+
+    return {
+      flushed: false,
+      error: result?.data?.error || 'log_flush_failed'
+    };
+  } catch (error) {
+    return {
+      flushed: false,
+      error: 'log_flush_failed'
+    };
+  }
+}
+
 window.__researchLog = {
   log: logResearchEvent,
   queued: getQueuedResearchEvents,
-  clear: clearQueuedResearchEvents
+  clear: clearQueuedResearchEvents,
+  flush: flushQueuedResearchEvents
 };
 
 document.documentElement.dataset.researchLogger = 'local-v1';
