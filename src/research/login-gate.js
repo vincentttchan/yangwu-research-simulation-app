@@ -2,6 +2,7 @@ import { loadResearchSession, saveResearchSession } from './session.js';
 
 const MODE_RESEARCH = 'research';
 const MODE_DEV = 'dev';
+const LOGIN_PASSED_EVENT = 'yangwu:research-login-passed';
 
 const COPY = {
   heading: '研究登記',
@@ -64,6 +65,7 @@ function closeGate(gate) {
   gate.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('has-research-login-gate');
   setMarker('passed');
+  window.dispatchEvent(new CustomEvent(LOGIN_PASSED_EVENT));
 }
 
 function focusFirstEmpty(participantInput, sessionInput) {
@@ -194,6 +196,8 @@ function renderGate() {
 
   if (existingSession) {
     setMessage(message, COPY.returning, 'neutral');
+    window.setTimeout(() => closeGate(gate), 650);
+    return;
   }
 
   panel.addEventListener('submit', (event) => {
@@ -234,6 +238,7 @@ initResearchLoginGate();
 export const __researchLoginGateForTests = {
   MODE_RESEARCH,
   MODE_DEV,
+  LOGIN_PASSED_EVENT,
   COPY,
   getMode,
   isLocalhost

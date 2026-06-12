@@ -18,13 +18,15 @@
   const stage    = document.getElementById('stage');
   const START = 1860, END = 1895;
   const DURATION = 3200;
+  const RESEARCH_LOGIN_PASSED_EVENT = 'yangwu:research-login-passed';
   const now = () => (typeof window.performance !== 'undefined' && typeof window.performance.now === 'function')
     ? window.performance.now()
     : Date.now();
   const requestFrame = (callback) => (typeof window.requestAnimationFrame !== 'undefined' && typeof window.requestAnimationFrame === 'function')
     ? window.requestAnimationFrame(callback)
     : window.setTimeout(() => callback(now()), 16);
-  const startTime = now();
+  let loaderStartTime = now();
+  let loaderStarted = false;
   const MANAGED_MODAL_IDS = [
     'eventModal',
     'evidenceTaskModal',
@@ -131,8 +133,8 @@
 
   function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
-  function tickYear(now) {
-    const t = Math.min(1, (now - startTime) / DURATION);
+  function tickYear(frameTime) {
+    const t = Math.min(1, (frameTime - loaderStartTime) / DURATION);
     const eased = easeOutCubic(t);
     const v = Math.round(START + (END - START) * eased);
     if (yearEl) yearEl.textContent = v;
@@ -143,13 +145,34 @@
       setTimeout(finishLoader, 420);
     }
   }
-  window.setTimeout(() => {
-    if (loader && document.body.contains(loader)) finishLoader();
-  }, DURATION + 900);
-  try {
-    requestFrame(tickYear);
-  } catch (e) {
-    finishLoader();
+
+  function isResearchMode() {
+    return new URLSearchParams(window.location.search).get('mode') === 'research';
+  }
+
+  function startLoaderAfterGate() {
+    if (loaderStarted) return;
+    loaderStarted = true;
+    loaderStartTime = now();
+    window.setTimeout(() => {
+      if (loader && document.body.contains(loader)) finishLoader();
+    }, DURATION + 900);
+    try {
+      requestFrame(tickYear);
+    } catch (e) {
+      finishLoader();
+    }
+  }
+
+  if (isResearchMode() && document.documentElement.dataset.researchLoginGate !== 'passed') {
+    document.documentElement.dataset.introLoader = 'waiting-research-login';
+    window.addEventListener(RESEARCH_LOGIN_PASSED_EVENT, () => {
+      document.documentElement.dataset.introLoader = 'running';
+      startLoaderAfterGate();
+    }, { once: true });
+  } else {
+    document.documentElement.dataset.introLoader = 'running';
+    startLoaderAfterGate();
   }
 
   function finishLoader() {

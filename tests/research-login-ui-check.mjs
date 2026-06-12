@@ -19,6 +19,7 @@ Object.entries(files).forEach(([label, file]) => {
 const loginGate = readFileSync(files.loginGate, 'utf8');
 const main = readFileSync(files.main, 'utf8');
 const css = readFileSync(files.css, 'utf8');
+const intro = readFileSync(join(root, 'src', 'intro.js'), 'utf8');
 
 assert.match(loginGate, /MODE_RESEARCH\s*=\s*'research'/, 'Login gate should define research mode explicitly');
 assert.match(loginGate, /MODE_DEV\s*=\s*'dev'/, 'Login gate should define dev mode explicitly');
@@ -54,6 +55,8 @@ assert.match(loginGate, /import\(['"]\.\/api\.js['"]\)/, 'Login gate should dyna
 assert.doesNotMatch(loginGate, /import\s+\{[^}]*loginWithParticipantCode[^}]*\}\s+from\s+['"]\.\/api\.js['"]/, 'Login gate should not statically import API helper');
 assert.match(loginGate, /saveResearchSession/, 'Login gate should save successful limited session through session helper');
 assert.match(loginGate, /loadResearchSession/, 'Login gate should detect an existing session');
+assert.match(loginGate, /LOGIN_PASSED_EVENT\s*=\s*'yangwu:research-login-passed'/, 'Login gate should define a shared passed event');
+assert.match(loginGate, /dispatchEvent\(new CustomEvent\(LOGIN_PASSED_EVENT\)\)/, 'Login gate should notify the intro loader after successful research login');
 assert.match(loginGate, /supabase_not_connected/, 'Login gate should handle backend-not-connected stub state');
 assert.match(loginGate, /result\.status\s*===\s*404/, 'Login gate should treat missing local API route as a backend-not-connected dev state');
 assert.match(loginGate, /invalid_or_excluded_participant/, 'Login gate should handle invalid/excluded participant state');
@@ -61,6 +64,11 @@ assert.match(loginGate, /暫時未能連接登入服務/, 'Login gate should han
 
 assert.match(main, /import '\.\/research\/login-gate\.js';/, 'main.js should load research login gate module');
 assert.doesNotMatch(main, /research\/api\.js/, 'main.js should not import or reference research API helper directly');
+
+assert.match(intro, /RESEARCH_LOGIN_PASSED_EVENT\s*=\s*'yangwu:research-login-passed'/, 'Intro should listen for the shared research login passed event');
+assert.match(intro, /function startLoaderAfterGate\(\)/, 'Intro loader should be startable after the research login gate passes');
+assert.match(intro, /dataset\.introLoader\s*=\s*'waiting-research-login'/, 'Research mode should hold the intro loader before login is complete');
+assert.match(intro, /addEventListener\(RESEARCH_LOGIN_PASSED_EVENT[\s\S]*startLoaderAfterGate\(\)/, 'Research mode should start the loader only after login passes');
 
 assert.match(css, /Research Login Gate/, 'CSS should include a named research login gate section');
 assert.match(css, /\.research-login-gate/, 'CSS should style the research login gate');
