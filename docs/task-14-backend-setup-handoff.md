@@ -55,7 +55,7 @@ Redeploy Preview after environment variables are changed.
 
 ## Live QA Command
 
-After Preview redeploy:
+After Preview or Production redeploy:
 
 ```bash
 DRYRUN_QA_BASE_URL="https://your-preview-url.vercel.app" npm run check:live-dryrun
@@ -81,3 +81,16 @@ The current Codex session can inspect the Vercel project and deployments, but it
 ## Research Boundary
 
 Completing this backend setup only proves dry-run login readiness. It does not mean formal research data collection is ready.
+
+## 2026-06-12 Production Dry-run Note
+
+Production environment variables were added manually in Vercel for dry-run verification:
+
+- `SUPABASE_SCHEMA=public`
+- `RESEARCH_BACKEND_ENABLED=dry_run`
+- `RESEARCH_COHORT=lkkc-may-june-2026`
+- `APP_VERSION=dev-v0.1`
+- `SUPABASE_URL`
+- `SUPABASE_SECRET_KEY`
+
+The next Production deployment should be checked with the live dry-run QA command before any classroom use.
