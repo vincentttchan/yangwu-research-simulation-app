@@ -316,3 +316,18 @@ First implementation scope:
 - keeps interpretation guardrails clear: event logs show engagement/exposure patterns, not direct proof of learning outcomes.
 
 Task 16 supports dry-run and pilot validation. It does not by itself mean formal research data collection is ready.
+
+## Task 17 Researcher Export / Dashboard Planning
+
+Task 17 converts the Task 16 data dictionary into a researcher-facing export and dashboard plan.
+
+First implementation scope:
+
+- adds `docs/researcher-export-dashboard-plan.md`;
+- adds `docs/supabase-research-export-queries.sql`;
+- adds `docs/task-17-researcher-export-dashboard-planning.md`;
+- adds `check:research-export`;
+- defines export packages for session summary, event-log long data, complexity exposure, and assessment scores;
+- defines private researcher dashboard sections, KPI cards, charts, filters, tables, export readiness rules, and interpretation guardrails.
+
+Task 17 is a planning/export layer. It does not create a public dashboard and does not make formal research data collection ready.

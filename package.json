@@ -21,6 +21,7 @@
     "check:supabase-dryrun": "node tests/supabase-dryrun-login-check.mjs",
     "check:supabase-logs": "node tests/supabase-dryrun-logs-check.mjs && node tests/research-log-flush-check.mjs",
     "check:research-data": "node tests/task16-research-data-check.mjs",
+    "check:research-export": "node tests/task17-export-dashboard-check.mjs",
     "check:live-dryrun": "node tests/live-dryrun-qa-check.mjs",
     "check:task13-docs": "node tests/task13-docs-check.mjs"
   },
