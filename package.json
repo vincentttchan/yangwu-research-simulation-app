@@ -34,6 +34,7 @@
     "check:deployment-live-row-qa": "node tests/task23b-deployment-live-row-qa-check.mjs",
     "check:deployment-live-row-results": "node tests/task23b-results-check.mjs",
     "check:pilot-export-handoff": "node tests/task24-pilot-export-handoff-check.mjs",
+    "check:frontend-ui-dryrun": "node tests/task25-frontend-ui-dryrun-check.mjs",
     "check:live-dryrun": "node tests/live-dryrun-qa-check.mjs",
     "check:task13-docs": "node tests/task13-docs-check.mjs"
   },

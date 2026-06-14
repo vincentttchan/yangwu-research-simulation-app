@@ -504,3 +504,19 @@ First implementation scope:
 - keeps the name-to-code mapping outside Supabase and outside export files.
 
 Task 24 closes the export-pipeline rehearsal for the dry-run path. It does not approve formal research analysis, replace HEA/HNET/Transfer Task/PAQ scoring, replace focus group evidence, or clear Task 22 device and school-network QA.
+
+## Task 25 Front-End UI Evidence / Checkpoint Dry-Run
+
+Task 25 tests whether the Task 23A event coverage can be generated from the production UI rather than API-only insertion.
+
+Dry-run scope:
+
+- uses `https://yangwu-research-simulation-app.vercel.app/?mode=research`;
+- uses `YW-001` and `LKKC-2026-DRYRUN`;
+- uses `lkkc-pilot-v1.0`, `lkkc-may-june-2026`, and `content-freeze-lite-v0.1`;
+- confirms that opening the Beijing `bj-wall` hotspot evidence task sends `source_opened`;
+- confirms that submitting the Beijing `bj-zongli` facility challenge sends `checkpoint_submitted`;
+- confirms the production API can return `200` with `inserted_count = 1` for a UI-generated log batch;
+- records a deployment-environment finding: the checked Supabase project `yangwu-research-lkkc-2026` returned `0 row` for the Task 25 session in `research_event_log_long_export` and raw `event_logs`.
+
+Task 25 therefore confirms front-end event generation but does not yet clear the intended Supabase export-visibility gate. Before formal student data collection, Vercel Production environment variables must be aligned with the intended Supabase project and the same Task 25 verification must be repeated.
