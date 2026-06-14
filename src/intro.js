@@ -3680,32 +3680,35 @@
     });
 
     if (summary) {
-      summary.innerHTML =
-        '<p><span>所 到</span><em>' + visited + ' 城</em></p>' +
-        '<p><span>證 據</span><em>' + evidence.length + ' 件</em></p>' +
-        '<p><span>任 務</span><em>' + freeTasks + ' 件</em></p>';
+      summary.textContent = '所到 ' + visited + ' 城 · 證據 ' + evidence.length + ' · 任務 ' + freeTasks;
     }
     if (!list) return;
     if (!evidence.length) {
-      list.innerHTML = '<p class="panel-empty">尚 未 收 錄 證 據</p>';
+      list.innerHTML = '<p class="panel-empty">尚 未 收 錄 證 據 —— 入 城 查 訪 紅 點 線 索，便 會 在 此 逐 年 記 下。</p>';
       renderJournalTasks();
       return;
     }
-    list.innerHTML = evidence.slice().reverse().map((e) => {
-      const cityName = (CITIES[e.city]?.name || e.city || '').replace(/\s+/g, '');
-      const axis = AXIS_NAMES[e.axis] || e.axis || '見識';
-      const season = SEASON_NAMES[e.season] || '';
-      const ev = e.unlocks ? EVENTS[e.unlocks] : null;
-      const task = ev ? ev.title : '城市觀察';
-      const evidenceText = e.evidenceText || '';
-      return '<article class="jv-item">' +
-        '<span class="jv-city">' + escapeHTML(cityName) + '</span>' +
-        '<span class="jv-name">' + escapeHTML(e.name) + '</span>' +
-        '<em class="jv-meta">' + escapeHTML(e.year + ' · ' + season + ' · ' + axis) + '</em>' +
-        '<span class="jv-task">' + escapeHTML('對應任務 · ' + task) + '</span>' +
-        (evidenceText ? '<span class="jv-evidence">' + escapeHTML(stripDseTag(evidenceText)) + '</span>' : '') +
-      '</article>';
-    }).join('');
+    // 書記日誌：依年份分組，由上而下（早→晚）縱向時間軸
+    const byYear = {};
+    evidence.forEach((e) => { (byYear[e.year] = byYear[e.year] || []).push(e); });
+    const years = Object.keys(byYear).map(Number).sort((a, b) => a - b);
+    list.innerHTML = years.map((yr) => {
+      const label = YEAR_LABELS[yr] || ('大清 · ' + yr);
+      const rows = byYear[yr].map((e) => {
+        const cityName = (CITIES[e.city]?.name || e.city || '').replace(/\s+/g, '');
+        const axis = AXIS_NAMES[e.axis] || e.axis || '見識';
+        const season = SEASON_NAMES[e.season] || '';
+        const evidenceText = stripDseTag(e.evidenceText || '');
+        return '<article class="ej-entry">' +
+          '<div class="ej-row"><span class="ej-name">' + escapeHTML(e.name) + '</span>' +
+          '<span class="ej-meta"><span class="ej-city">' + escapeHTML(cityName) + '</span>' +
+          (season ? '<span class="ej-season">' + escapeHTML(season) + '</span>' : '') + '</span></div>' +
+          (evidenceText ? '<p class="ej-text">' + escapeHTML(evidenceText) + '</p>' : '') +
+          '<span class="ej-axis">' + escapeHTML(axis) + '</span>' +
+          '</article>';
+      }).join('');
+      return '<h3 class="ej-year">' + escapeHTML(label) + '</h3>' + rows;
+    }).join('') + '<p class="ej-end">—— 日 誌 未 完 · 路 仍 在 走 ——</p>';
     renderJournalTasks();
   }
 
@@ -6048,14 +6051,14 @@
   function showAchievementGallery() {
     const unlocked = loadAchievements();
     const prog = document.getElementById('achvProgress');
-    if (prog) prog.textContent = unlocked.length + ' / ' + ACHIEVEMENTS.length + ' 已 解 鎖';
+    if (prog) prog.textContent = '已 立 ' + unlocked.length + ' / ' + ACHIEVEMENTS.length + ' 功';
     const grid = document.getElementById('achvGrid');
     if (grid) grid.innerHTML = ACHIEVEMENTS.map((a) => {
       const got = unlocked.indexOf(a.id) !== -1;
-      return '<div class="achv-item ' + (got ? 'is-got' : 'is-locked') + '">' +
-        '<span class="achv-seal' + (got ? ' achv-seal--got' : '') + '">' + (got ? (ACHV_ICON[a.id] || '✦') : '·') + '</span>' +
-        '<span class="achv-name">' + (got ? a.name : '？ ？ ？') + '</span>' +
-        '<span class="achv-desc">' + a.desc + '</span></div>';
+      const sealName = (a.name || '').replace(/\s+/g, '');   // 印面刻名（CSS 自動 2x2 排）
+      return '<div class="achv-item ' + (got ? 'is-got' : 'is-locked') + '" title="' + escapeHTML(a.desc || '') + '">' +
+        '<span class="achv-seal' + (got ? ' achv-seal--got' : '') + '">' + (got ? escapeHTML(sealName) : '待 立') + '</span>' +
+        '<span class="achv-name">' + (got ? escapeHTML(a.name) : '？ ？ ？') + '</span></div>';
     }).join('');
     openManagedModal('achievementGallery', { keep: ['settlement'] });
   }
@@ -6076,22 +6079,22 @@
     const keys = Object.keys(PERSON_BIO);
     const gotCount = keys.filter((k) => seen[k]).length;
     const prog = document.getElementById('pgProgress');
-    if (prog) prog.textContent = gotCount + ' / ' + keys.length + ' 已 結 識';
+    if (prog) prog.textContent = '已 識 ' + gotCount + ' / ' + keys.length + ' 人';
     const grid = document.getElementById('pgGrid');
     if (grid) grid.innerHTML = keys.map((k) => {
       const s = seen[k];
       if (!s) {
-        return '<div class="pg-item is-locked"><span class="pg-portrait pg-portrait--locked">？</span>' +
-          '<span class="pg-name">？ ？ ？</span></div>';
+        return '<div class="pg-item is-locked"><span class="pg-portrait pg-portrait--locked">緣</span>' +
+          '<span class="pg-info"><span class="pg-name">未 識</span><span class="pg-rel">緣 慳 一 面</span></span></div>';
       }
       const initial = (s.name || '？').trim().charAt(0);
-      return '<div class="pg-item is-got">' +
+      return '<div class="pg-item is-got" title="' + escapeHTML(PERSON_BIO[k] || '') + '">' +
         '<span class="pg-portrait"><img src="assets/portrait/' + k + '.webp" alt="" draggable="false" ' +
         'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
         '<span class="pg-seal" style="display:none">' + initial + '</span></span>' +
-        '<span class="pg-name">' + escapeHTML(s.name || '') + '</span>' +
+        '<span class="pg-info"><span class="pg-name">' + escapeHTML(s.name || '') + '</span>' +
         (s.relation ? '<span class="pg-rel">' + escapeHTML(s.relation) + '</span>' : '') +
-        '<span class="pg-bio">' + escapeHTML(PERSON_BIO[k] || '') + '</span></div>';
+        '</span></div>';
     }).join('');
     openManagedModal('personGallery', { keep: ['settlement'] });
   }

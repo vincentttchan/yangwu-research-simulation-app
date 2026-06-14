@@ -306,53 +306,37 @@
 
 
       <div class="seal-panel" id="panel-juan" data-panel-id="juan" hidden>
-        <div class="panel-card">
+        <div class="panel-card panel-card--juan">
           <button class="panel-close" type="button" data-close aria-label="關閉">✕</button>
-          <header class="panel-head">
-            <h2 class="panel-title">手 卷</h2>
-            <em class="panel-sub">旅 程 所 記</em>
+          <header class="panel-head juan-head2">
+            <h2 class="panel-title">手 卷 · 書 記 日 誌</h2>
+            <span class="juan-stat" id="juanSummary"></span>
           </header>
-          <div class="panel-body">
-            <div class="juan-summary" id="juanSummary">
-              <p><span>所 到</span><em>0 城</em></p>
-              <p><span>證 據</span><em>0 件</em></p>
-              <p><span>任 務</span><em>0 件</em></p>
-            </div>
-
-            <div class="juan-section">
-              <h4 class="juan-h">證 據 簿</h4>
-              <em class="juan-sub">證 據 簿</em>
-              <div id="juanEvidenceList" class="juan-evidence-list">
-                <p class="panel-empty">尚 未 收 錄 證 據</p>
-              </div>
-            </div>
-
-            <div class="juan-section">
-              <h4 class="juan-h">城 中 任 務</h4>
-              <em class="juan-sub">本 城 要 務</em>
+          <div class="panel-body juan-body2">
+            <!-- 當前要務（城中任務 + 下一站，置頂精簡） -->
+            <div class="juan-now">
+              <span class="juan-now-label">當 前 要 務</span>
               <div id="juanTaskList" class="juan-task-list">
                 <p class="panel-empty">尚 未 入 城</p>
               </div>
-            </div>
-
-            <div class="juan-section">
-              <h4 class="juan-h">旅 程 提 示</h4>
-              <em class="juan-sub">下 一 里 程</em>
               <div id="juanNextStep" class="juan-next">
                 <p class="panel-empty">尚 在 路 上</p>
               </div>
             </div>
 
-            <div class="panel-footer-actions">
-              <button class="panel-action" type="button" id="btnRetire">
-                致 仕 · 結 算
-                <em class="pa-en">retire &amp; review your thirty years</em>
-              </button>
-              <button class="panel-action panel-action--danger" type="button" id="btnRestartRoute">
-                重 新 擇 路
-                <em class="pa-en">restart · reset progress</em>
-              </button>
+            <!-- 書記日誌（證據縱向時間軸，主體） -->
+            <div class="juan-section juan-journal">
+              <h4 class="juan-h">所 見 所 據</h4>
+              <div id="juanEvidenceList" class="ej-tl">
+                <p class="panel-empty">尚 未 收 錄 證 據</p>
+              </div>
             </div>
+          </div>
+
+          <div class="panel-footer-actions">
+            <button class="panel-action panel-action--primary" type="button" id="btnRetire">致 仕 · 結 算 →</button>
+            <button class="panel-action panel-action--danger" type="button" id="btnRestartRoute">重 新 擇 路</button>
+          </div>
           </div>
         </div>
       </div>

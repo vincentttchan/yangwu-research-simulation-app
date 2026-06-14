@@ -6946,38 +6946,35 @@ body:has(.city-scene:not([hidden])) .dev-stamp {
   letter-spacing: 0.2em;
   color: rgba(166, 58, 42, 0.8);
 }
+/* 功業簿 · 印譜（已立鈐朱印刻名／未立淡墨空印格待立） */
 .achv-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  text-align: left;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: 18px 14px;
+  text-align: center;
 }
 .achv-item {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto auto;
-  column-gap: 12px;
-  padding: 14px 16px;
-  border: 1px solid rgba(48,65,67,0.14);
-  border-radius: 4px;
-  background: rgba(255,255,255,0.25);
+  display: flex; flex-direction: column; align-items: center; gap: 9px;
+  padding: 0; border: none; border-radius: 0; background: none;
 }
-.achv-item.is-locked { opacity: 0.55; }
 .achv-seal {
-  grid-row: 1 / 3;
-  align-self: center;
-  width: 2em; height: 2em;
+  width: 72px; height: 72px; padding: 6px;
   display: grid; place-items: center;
-  border-radius: 50%;
-  font-family: var(--font-zh);
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-family: var(--font-chapter), 'Noto Serif TC', serif;
+  font-size: 1.35rem; font-weight: 400; line-height: 1.08; letter-spacing: 0.04em;
+  border-radius: 5px;
 }
-.achv-item.is-got .achv-seal { background: var(--vermillion,#A63A2A); color: #f5ece0; border-radius: 5px; box-shadow: 0 1px 4px rgba(166,58,42,0.4); }   /* 朱印方章 */
-.achv-item.is-locked .achv-seal { background: rgba(48,65,67,0.14); color: rgba(48,65,67,0.5); }
-.achv-name { font-family: var(--font-zh); font-size: 1rem; letter-spacing: 0.1em; color: rgba(40,45,50,0.92); }
-.achv-item.is-locked .achv-name { letter-spacing: 0.3em; color: rgba(48,65,67,0.55); }
-.achv-desc { font-family: var(--font-zh); font-size: 0.78rem; line-height: 1.5; color: rgba(48,65,67,0.62); }
+.achv-item.is-got .achv-seal {
+  background: var(--vermillion,#A63A2A); color: #f6ead6;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25); transform: rotate(-2deg);
+}
+.achv-item.is-got:nth-child(even) .achv-seal { transform: rotate(1.6deg); }
+.achv-item.is-locked .achv-seal {
+  background: transparent; border: 1.5px dashed rgba(120,90,55,0.4);
+  color: rgba(120,90,55,0.42); font-size: 0.86rem; letter-spacing: 0.1em;
+}
+.achv-name { font-family: var(--font-zh); font-size: 0.82rem; letter-spacing: 0.08em; line-height: 1.5; color: rgba(40,33,20,0.9); }
+.achv-item.is-locked .achv-name { letter-spacing: 0.2em; color: rgba(60,52,38,0.4); }
 @media (max-width: 640px) {
   .stl-stats, .achv-grid { grid-template-columns: 1fr; }
 }
@@ -7593,16 +7590,21 @@ body:has(.city-scene:not([hidden])) .dev-stamp {
    #2 人物冊（跨局永久畫廊）
    ============================================================ */
 .pg-card { max-width: min(880px, 94vw); }
-.pg-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 14px; max-height: 66vh; overflow-y: auto; padding: 4px 6px 6px 0; }
-.pg-item { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px; padding: 16px 12px; border: 1px solid rgba(120,90,55,0.28); border-radius: 6px; background: rgba(243,236,220,0.5); }
-.pg-item.is-locked { background: rgba(60,55,48,0.06); border-style: dashed; opacity: 0.7; }
-.pg-portrait { width: 76px; height: 76px; border-radius: 50%; overflow: hidden; border: 2px solid rgba(120,90,55,0.4); background: #ddd2ba; flex: 0 0 auto; }
+/* 人物冊 · 名帖冊（已識＝肖像名帖；未識＝緣慳一面空帖） */
+.pg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; max-height: 66vh; overflow-y: auto; padding: 4px 6px 6px 0; }
+.pg-item { display: flex; flex-direction: row; align-items: center; text-align: left; gap: 14px; padding: 13px 16px; border: 1px solid rgba(120,90,55,0.22); border-left: 3px solid var(--vermillion, #A63A2A); border-radius: 0; background: rgba(255,252,244,0.5); }
+.pg-item.is-locked { border-left-color: rgba(120,90,55,0.3); background: rgba(255,252,244,0.2); opacity: 1; border-style: solid; }
+.pg-portrait { width: 56px; height: 56px; border-radius: 4px; overflow: hidden; border: 1px solid rgba(120,90,55,0.35); background: #ddd2ba; flex: 0 0 auto; }
 .pg-portrait img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.22) contrast(0.96); }
-.pg-seal { width: 100%; height: 100%; align-items: center; justify-content: center; font-family: var(--font-zh); font-size: 38px; color: rgba(166,58,42,0.85); background: radial-gradient(circle at 50% 40%, #efe6d3, #d8cbb0); }
-.pg-portrait--locked { display: flex; align-items: center; justify-content: center; font-family: var(--font-zh); font-size: 34px; color: rgba(80,70,55,0.4); }
-.pg-name { font-family: var(--font-zh); font-size: 1.05rem; letter-spacing: 0.14em; color: rgba(40,30,20,0.92); }
-.pg-rel { font-family: var(--font-zh); font-size: 0.72rem; letter-spacing: 0.04em; color: rgba(166,58,42,0.82); }
-.pg-bio { font-family: var(--font-zh); font-size: 0.8rem; line-height: 1.7; letter-spacing: 0.01em; color: rgba(40,45,50,0.78); margin-top: 4px; text-align: left; }
+.pg-seal { width: 100%; height: 100%; align-items: center; justify-content: center; font-family: var(--font-chapter), serif; font-size: 26px; color: #f6ead6; background: var(--vermillion, #A63A2A); transform: rotate(-3deg); }
+.pg-portrait--locked { display: flex; align-items: center; justify-content: center; font-family: var(--font-chapter), serif; font-size: 20px; color: rgba(120,90,55,0.42); background: transparent; border: 1.5px dashed rgba(120,90,55,0.4); border-radius: 4px; }
+.pg-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pg-name { font-family: var(--font-chapter), serif; font-size: 1.12rem; letter-spacing: 0.12em; color: #2c2114; }
+.pg-item.is-locked .pg-name { color: rgba(60,52,38,0.4); }
+.pg-rel { font-family: var(--font-zh); font-size: 0.74rem; line-height: 1.5; letter-spacing: 0.03em; color: rgba(60,52,38,0.66); }
+.pg-item.is-locked .pg-rel { color: rgba(60,52,38,0.34); }
+.pg-bio { display: none; }
+@media (max-width: 640px) { .pg-grid { grid-template-columns: 1fr; } }
 
 /* #2b 路線漸進解鎖：未解鎖路線的鎖定態 */
 .s2c-slide.is-locked .s2c-portrait { filter: grayscale(0.85) brightness(0.6); }
@@ -9280,3 +9282,38 @@ body:has(.city-scene:not([hidden])) .dev-stamp {
 .il-img { margin: -8px 0 16px; width: 100%; aspect-ratio: 16 / 7; overflow: hidden; border: 1px solid rgba(120,90,55,0.28); }
 .il-img[hidden] { display: none; }
 .il-img img { width: 100%; height: 100%; object-fit: cover; display: block; filter: sepia(0.2) contrast(0.96) brightness(0.94); }
+
+/* ============================================================
+   手卷 · 書記日誌（縱向時間軸；要務置頂、動作列置底）
+   ============================================================ */
+.panel-card--juan { display: flex; flex-direction: column; max-height: 88vh; }
+.juan-head2 { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-shrink: 0; }
+.juan-stat { font-family: var(--font-data), 'Noto Sans TC', sans-serif; font-weight: 300; font-size: 0.78rem; letter-spacing: 0.12em; color: rgba(60,52,38,0.6); white-space: nowrap; }
+.juan-body2 { flex: 1; overflow-y: auto; min-height: 0; }
+/* 當前要務（置頂精簡） */
+.juan-now { padding: 12px 14px; margin-bottom: 18px; background: rgba(166,58,42,0.06); border-left: 3px solid rgba(166,58,42,0.55); }
+.juan-now-label { display: block; font-family: var(--font-zh); font-size: 0.74rem; letter-spacing: 0.3em; color: #a6382a; margin-bottom: 8px; }
+.juan-now .panel-empty { margin: 2px 0; }
+/* 書記日誌時間軸 */
+.juan-journal .juan-h { font-family: var(--font-zh); font-size: 0.86rem; letter-spacing: 0.24em; color: #a6382a; margin: 0 0 14px; }
+.ej-tl { position: relative; padding-left: 28px; }
+.ej-tl::before { content: ''; position: absolute; left: 8px; top: 6px; bottom: 14px; width: 2px; background: linear-gradient(180deg, rgba(166,58,42,0.55), rgba(166,58,42,0.18)); }
+.ej-year { position: relative; margin: 0 0 10px; font-family: var(--font-chapter), serif; font-size: 1.02rem; letter-spacing: 0.12em; color: #8a2e1c; }
+.ej-year::before { content: ''; position: absolute; left: -25px; top: 6px; width: 10px; height: 10px; background: #a6382a; transform: rotate(45deg); }
+.ej-entry { position: relative; margin: 0 0 14px; padding: 11px 14px; background: rgba(255,252,244,0.55); border: 1px solid rgba(120,90,55,0.18); }
+.ej-entry::before { content: ''; position: absolute; left: -23px; top: 16px; width: 6px; height: 6px; border-radius: 50%; background: #caa766; border: 1px solid rgba(40,28,14,0.4); }
+.ej-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 5px; }
+.ej-name { font-family: var(--font-chapter), serif; font-size: 1.04rem; letter-spacing: 0.06em; color: #2c2114; }
+.ej-meta { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+.ej-city { font-family: var(--font-zh); font-size: 10px; letter-spacing: 0.16em; color: #f2e3d0; background: #a6382a; padding: 2px 7px; }
+.ej-season { font-family: var(--font-data), sans-serif; font-weight: 300; font-size: 10px; color: rgba(60,52,38,0.55); }
+.ej-text { font-family: var(--font-zh); font-size: 0.84rem; line-height: 1.85; color: rgba(44,33,20,0.82); margin: 0 0 7px; }
+.ej-axis { display: inline-block; font-family: var(--font-zh); font-size: 10px; letter-spacing: 0.15em; color: #8a5a18; border: 1px solid rgba(176,141,79,0.5); padding: 1px 7px; }
+.ej-end { font-family: var(--font-chapter), serif; font-size: 0.84rem; letter-spacing: 0.2em; color: rgba(120,90,55,0.5); text-align: center; margin: 6px 0 0; }
+/* 頁尾動作列（固定） */
+.panel-card--juan .panel-footer-actions { flex-shrink: 0; display: flex; gap: 10px; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(120,90,55,0.2); }
+.panel-card--juan .panel-action { flex: 1; padding: 12px; font-family: var(--font-zh); font-size: 0.95rem; letter-spacing: 0.22em; text-indent: 0.22em; border-radius: 2px; cursor: pointer; text-align: center; }
+.panel-action--primary { background: var(--vermillion,#A63A2A); color: #f5ece0; border: none; }
+.panel-action--primary:hover { background: #8f2f20; }
+.panel-card--juan .panel-action--danger { background: transparent; color: rgba(60,52,38,0.6); border: 1px solid rgba(60,52,38,0.28); flex: 0 0 38%; }
+.panel-card--juan .panel-action--danger:hover { color: #a6382a; border-color: rgba(166,58,42,0.5); }
