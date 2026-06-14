@@ -66,21 +66,22 @@ select
   el.payload ->> 'city_id' as city_id,
   el.payload ->> 'event_id' as event_id,
   el.payload ->> 'event_kind' as event_kind,
-  el.payload ->> 'source' as source,
   el.payload ->> 'evidence_task_id' as evidence_task_id,
   el.payload ->> 'hotspot_id' as hotspot_id,
-  el.payload ->> 'task_type' as task_type,
   el.payload ->> 'choice_id' as choice_id,
   nullif(el.payload ->> 'choice_index', '')::integer as choice_index,
   el.payload ->> 'choice_axis' as choice_axis,
-  el.payload ->> 'checkpoint_type' as checkpoint_type,
-  nullif(el.payload ->> 'checkpoint_correct', '')::boolean as checkpoint_correct,
-  nullif(el.payload ->> 'attempt_index', '')::integer as attempt_index,
   el.constructs,
   el.complexity_dimensions,
   el.app_version,
   el.research_cohort,
-  el.content_map_version
+  el.content_map_version,
+  -- Task 23A columns are appended to preserve CREATE OR REPLACE VIEW compatibility.
+  el.payload ->> 'source' as source,
+  el.payload ->> 'task_type' as task_type,
+  el.payload ->> 'checkpoint_type' as checkpoint_type,
+  nullif(el.payload ->> 'checkpoint_correct', '')::boolean as checkpoint_correct,
+  nullif(el.payload ->> 'attempt_index', '')::integer as attempt_index
 from event_logs el
 join participants p on p.participant_code = el.participant_code
 where el.event_type <> 'live_dryrun_qa'

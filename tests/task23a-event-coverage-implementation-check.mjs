@@ -47,6 +47,11 @@ assert.match(text.logsBatch, /checkpoint_correct/, 'Server allowlist should incl
 assert.match(text.logsBatch, /attempt_index/, 'Server allowlist should include attempt_index');
 assert.match(text.exportSql, /checkpoint_correct/, 'Export SQL should expose checkpoint_correct');
 assert.match(text.exportSql, /task_type/, 'Export SQL should expose task_type');
+assert.match(
+  text.exportSql,
+  /evidence_task_id[\s\S]*hotspot_id[\s\S]*choice_id[\s\S]*content_map_version[\s\S]*source[\s\S]*task_type[\s\S]*checkpoint_type[\s\S]*checkpoint_correct[\s\S]*attempt_index/,
+  'Task 23A export columns should be appended after the original event-log view columns to keep CREATE OR REPLACE VIEW compatible'
+);
 assert.match(text.csvQa, /checkpoint_type/, 'CSV QA should require checkpoint_type');
 assert.match(text.manifest, /attempt_index/, 'CSV manifest should include attempt_index');
 assert.match(text.idMap, /Task 23A Source And Checkpoint Event Coverage/i, 'Research ID map should reference Task 23A');
