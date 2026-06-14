@@ -68,7 +68,7 @@ function rowParticipant(calls) {
 const baseBody = {
   participant_code: ' YW-001 ',
   session_code: ' LKKC-2026-DRYRUN ',
-  app_version: 'dev-v0.1',
+  app_version: 'lkkc-pilot-v1.0',
   research_cohort: 'lkkc-may-june-2026',
   content_map_version: 'content-freeze-lite-v0.1',
   device: {
@@ -121,7 +121,7 @@ const baseBody = {
   assert.equal(result.body.session.participant_code, 'YW-001');
   assert.equal(result.body.session.class_id, 'LKKC-S4A');
   assert.equal(result.body.session.condition, 'scaffolded');
-  assert.equal(result.body.session.app_version, 'dev-v0.1');
+  assert.equal(result.body.session.app_version, 'lkkc-pilot-v1.0');
   assert.equal(result.body.session.research_cohort, 'lkkc-may-june-2026');
   assert.equal(result.body.session.content_map_version, 'content-freeze-lite-v0.1');
   assert.equal(Object.hasOwn(result.body.session, 'session_code'), false);

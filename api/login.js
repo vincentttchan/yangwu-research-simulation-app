@@ -104,7 +104,7 @@ export async function resolveLoginResult(body = {}, options = {}) {
   const device = cleanDevice(body.device);
   const sessionInsert = {
     participant_code: participant.participant_code,
-    app_version: cleanText(body.app_version) || env.APP_VERSION || 'dev-v0.1',
+    app_version: cleanText(body.app_version) || env.APP_VERSION || 'lkkc-pilot-v1.0',
     research_cohort: cleanText(body.research_cohort) || env.RESEARCH_COHORT || 'lkkc-may-june-2026',
     content_map_version: cleanText(body.content_map_version),
     device_category: device.device_category,

@@ -3312,6 +3312,16 @@
     if (!modal || !ch) return;
     const correct = !!(ch.options[pickedIdx] && ch.options[pickedIdx].correct);
     if (correct) gameState.challengeCorrect = (gameState.challengeCorrect || 0) + 1;
+    window.__yangwuResearch?.logCheckpointSubmitted({
+      routeId: currentRoute,
+      cityId: gameState.currentCity,
+      checkpointType: 'facility_challenge',
+      choiceAxis: ch.axis || f.gain?.axis,
+      checkpointCorrect: correct,
+      attemptIndex: 0,
+      year: gameState.currentYear,
+      season: gameState.currentSeason
+    });
     btns.forEach((b, i) => { b.disabled = true; if (ch.options[i].correct) b.classList.add('is-correct'); });
     if (!correct) btns[pickedIdx] && btns[pickedIdx].classList.add('is-wrong');
     // 學習不罰：判斷得宜才加見識
@@ -3814,6 +3824,17 @@
     taskRuntime = { selections: {}, selected: null, sequenceIndex: 0 };
     modal.dataset.taskType = task.type;
     modal.dataset.phase = 'task';
+    window.__yangwuResearch?.logSourceOpened({
+      routeId: currentRoute,
+      cityId: cityKey,
+      hotspotId: hs.id,
+      evidenceTaskId: taskKey(cityKey, hs.id),
+      eventId: hs.unlocks,
+      taskType: task.type,
+      source: 'hotspot',
+      year: gameState.currentYear,
+      season: gameState.currentSeason
+    });
 
     const setText = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
     setText('etTitle', task.title);
@@ -4581,6 +4602,17 @@
     const axis = ch.axis;
     const delta = correct ? 2 : -1;
     if (correct) gameState.challengeCorrect = (gameState.challengeCorrect || 0) + 1;
+    window.__yangwuResearch?.logCheckpointSubmitted({
+      routeId: currentRoute,
+      cityId: ev.city,
+      eventId: ev.id,
+      checkpointType: 'event_challenge',
+      choiceAxis: axis,
+      checkpointCorrect: correct,
+      attemptIndex: 0,
+      year: gameState.currentYear,
+      season: gameState.currentSeason
+    });
 
     // 鎖定所有選項並標示對錯
     btns.forEach((b, i) => {
@@ -5041,6 +5073,8 @@
   function clampRes(v) { return Math.max(0, Math.min(100, Math.round(v))); }
 
   function renderResources() {
+    const statsTabSummary = document.getElementById('mapStatsTabSummary');
+    if (statsTabSummary) statsTabSummary.textContent = RES_KEYS.map((k) => gameState.res[k]).join(' · ');
     RES_KEYS.forEach((k) => {
       const v = gameState.res[k];
       const danger = v <= SETBACK_THRESHOLD;   // 告急（紅色脈動）
@@ -6429,15 +6463,68 @@
     const btnTab = document.getElementById('eventsTab');
     if (!aside || !btnCollapse || !btnTab) return;
     const KEY = 'yangwu_events_collapsed';
-    function apply(collapsed) {
+    const mobileQuery = window.matchMedia ? window.matchMedia('(max-width: 700px)') : null;
+    function apply(collapsed, persist) {
       aside.classList.toggle('is-collapsed', collapsed);
       btnCollapse.setAttribute('aria-expanded', String(!collapsed));
       btnTab.setAttribute('aria-expanded', String(!collapsed));
-      try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch (e) {}
+      if (persist) {
+        try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch (e) {}
+      }
     }
-    try { if (localStorage.getItem(KEY) === '1') apply(true); } catch (e) {}
-    btnCollapse.addEventListener('click', () => apply(true));
-    btnTab.addEventListener('click', () => apply(false));
+    let saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    let hasSavedPreference = saved === '0' || saved === '1';
+    const collapsed = hasSavedPreference ? saved === '1' : !!(mobileQuery && mobileQuery.matches);
+    apply(collapsed, false);
+    const onMobileChange = (event) => {
+      if (!hasSavedPreference) apply(event.matches, false);
+    };
+    if (mobileQuery) {
+      if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', onMobileChange);
+      else if (mobileQuery.addListener) mobileQuery.addListener(onMobileChange);
+    }
+    btnCollapse.addEventListener('click', () => {
+      hasSavedPreference = true;
+      apply(true, true);
+    });
+    btnTab.addEventListener('click', () => {
+      hasSavedPreference = true;
+      apply(false, true);
+    });
+  })();
+
+  (function bindMobileStatsDrawer() {
+    const panel = document.getElementById('mapStats');
+    const tab = document.getElementById('mapStatsTab');
+    if (!panel || !tab) return;
+    const mobileQuery = window.matchMedia ? window.matchMedia('(max-width: 700px)') : null;
+    const isMobile = () => !!(mobileQuery && mobileQuery.matches);
+    function apply(open) {
+      panel.classList.toggle('is-mobile-open', open);
+      tab.setAttribute('aria-expanded', String(open));
+    }
+    apply(isMobile() && panel.classList.contains('is-mobile-open'));
+    const onMobileChange = (event) => {
+      if (!event.matches) apply(false);
+    };
+    if (mobileQuery) {
+      if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', onMobileChange);
+      else if (mobileQuery.addListener) mobileQuery.addListener(onMobileChange);
+    }
+    tab.addEventListener('click', () => {
+      if (!isMobile()) {
+        apply(false);
+        return;
+      }
+      apply(!panel.classList.contains('is-mobile-open'));
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') apply(false);
+    });
+    panel.addEventListener('click', (e) => {
+      if (isMobile() && e.target === panel) apply(false);
+    });
   })();
 
   if (btnBgmToggle) {

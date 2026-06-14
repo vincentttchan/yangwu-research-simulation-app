@@ -22,7 +22,7 @@ export const RESEARCH_ID_POLICY = Object.freeze({
   freezesIdsOnly: true,
   freezesWordingOrVisuals: false,
   loggerQueueKey: 'yangwu_research_event_queue_v1',
-  appVersionBaseline: 'dev-v0.1'
+  appVersionBaseline: 'lkkc-pilot-v1.0'
 });
 
 const C = RESEARCH_CONSTRUCTS;

@@ -1,7 +1,7 @@
 # Research ID Map / Content Freeze Lite
 
 Version: `content-freeze-lite-v0.1`  
-App baseline: `dev-v0.1`  
+App baseline: `lkkc-pilot-v1.0`  
 Logger queue: `yangwu_research_event_queue_v1`  
 Updated: 2026-06-10
 
@@ -331,3 +331,158 @@ First implementation scope:
 - defines private researcher dashboard sections, KPI cards, charts, filters, tables, export readiness rules, and interpretation guardrails.
 
 Task 17 is a planning/export layer. It does not create a public dashboard and does not make formal research data collection ready.
+
+## Task 18 Supabase Export Implementation / Researcher CSV Export QA
+
+Task 18 turns the Task 17 export plan into an applied researcher export workflow.
+
+First implementation scope:
+
+- updates `docs/supabase-research-export-queries.sql` for Supabase view implementation;
+- adds `docs/task-18-supabase-export-implementation-qa.md`;
+- adds `docs/researcher-csv-export-manifest.md`;
+- adds `scripts/research-csv-export-qa.mjs`;
+- adds `check:research-export-implementation`;
+- adds `check:research-csv-export`;
+- defines expected researcher CSV filenames and required columns;
+- checks that `live_dryrun_qa` rows, privacy exception rows, non-included consent rows, and disallowed identity columns are not present in analysis exports.
+
+Task 18 supports dry-run and pilot export QA. It does not by itself mean formal research data collection is ready.
+
+## Task 19 Pilot Data Capture / First Real Research Dry-run
+
+Task 19 defines the first end-to-end pilot data capture rehearsal.
+
+First implementation scope:
+
+- adds `docs/task-19-pilot-data-capture-dry-run.md`;
+- adds `docs/task-19-pilot-dryrun-results-template.md`;
+- adds `tests/task19-pilot-dryrun-check.mjs`;
+- adds `check:pilot-dryrun`;
+- uses `?mode=research` with dry-run participant codes `YW-001` and `YW-002`;
+- expects gameplay coverage for `session_start`, `city_entered`, `evidence_task_completed`, `event_opened`, `decision_selected`, and, where feasible, `session_end`;
+- requires Supabase row QA and six-file CSV re-export after the browser run;
+- keeps RQ1, RQ2, and RQ3 interpretation boundaries explicit;
+- keeps real students, personal identifiers, and name-to-code matching outside the dry-run.
+
+Task 19 validates the data-capture cycle. It does not by itself mean formal research data collection is ready.
+
+## Task 20 Student Pilot Readiness / Research Freeze Gate
+
+Task 20 turns the working dry-run pipeline into a student-pilot readiness gate.
+
+First implementation scope:
+
+- adds `docs/task-20-student-pilot-readiness-gate.md`;
+- adds `docs/task-20-student-pilot-readiness-signoff-template.md`;
+- adds `tests/task20-student-pilot-readiness-check.mjs`;
+- adds `check:student-pilot-readiness`;
+- checks research and ethics readiness before real student use;
+- checks `APP_VERSION`, `RESEARCH_COHORT`, and `content_map_version` as pilot freeze markers;
+- checks that stable research IDs are not casually renamed during the pilot;
+- checks login, Supabase `game_sessions`, Supabase `event_logs`, export views, CSV QA, and privacy exception readiness;
+- checks iPad, phone, desktop/laptop, school network, and backup instruction readiness;
+- requires a decision of `approved for limited pilot`, `approved with conditions`, or `not approved`.
+
+Task 20 is a governance and readiness layer. It does not create new gameplay features, approve formal research collection automatically, or permit deployment beyond the agreed school and research context.
+
+## Task 20.2 Pilot APP_VERSION Freeze / Final Rehearsal Prep
+
+Task 20.2 freezes the app version marker for the LKKC pilot cycle.
+
+First implementation scope:
+
+- sets `APP_VERSION` to `lkkc-pilot-v1.0`;
+- keeps `RESEARCH_COHORT` as `lkkc-may-june-2026`;
+- keeps `content_map_version` as `content-freeze-lite-v0.1`;
+- updates app code, server fallback defaults, `.env.example`, active QA tests, CSV fixtures, and research-facing baseline docs;
+- adds `docs/task-20-2-pilot-version-freeze-final-rehearsal-prep.md`;
+- adds `tests/task20-2-pilot-version-freeze-check.mjs`;
+- adds `check:pilot-version-freeze`;
+- requires Vercel env update, redeployment, Supabase row verification, privacy QA, and CSV re-export before real student use.
+
+Task 20.2 fixes the versioning layer only. It does not replace device QA, consent confirmation, classroom runbook preparation, real participant/session code setup, or final student-pilot sign-off.
+
+## Task 20.3 Vercel Redeploy / Live Row Verification
+
+Task 20.3 verifies that the deployed Vercel app and Supabase rows use the frozen pilot app version.
+
+First implementation result:
+
+- Vercel was redeployed after `APP_VERSION` was updated to `lkkc-pilot-v1.0`;
+- `npm run check:live-dryrun` passed against the production deployment;
+- production `/api/login` returned a valid `YW-001` dry-run session with `app_version = 'lkkc-pilot-v1.0'`;
+- researcher confirmed latest Supabase `game_sessions` and `event_logs` rows show `app_version = 'lkkc-pilot-v1.0'`;
+- `research_cohort` remains `lkkc-may-june-2026`;
+- `content_map_version` remains `content-freeze-lite-v0.1`.
+
+Task 20.3 clears the pilot-version deployment gate. It does not clear device QA, school network QA, real participant/session code preparation, consent confirmation, classroom runbook, privacy QA re-export, or final student-pilot sign-off.
+
+## Task 21 Teacher / Classroom Pilot Runbook
+
+Task 21 prepares the classroom-facing operational runbook for a limited student pilot.
+
+First implementation scope:
+
+- adds `docs/task-21-teacher-classroom-pilot-runbook.md`;
+- adds `tests/task21-classroom-runbook-check.mjs`;
+- adds `check:classroom-runbook`;
+- documents teacher, researcher, student, and technical-helper roles;
+- documents pre-lesson research, technical, device, and school-network checks;
+- provides student-facing board instructions in English and Chinese;
+- provides a teacher opening script in English and Chinese;
+- defines classroom timing, support rules, fallback actions, and stop conditions;
+- defines post-lesson Supabase row checks, privacy QA, CSV export, and field-note procedure.
+
+Task 21 closes the classroom-procedure planning gap. It does not clear final iPad/phone/school-network QA, real participant/session code preparation, consent confirmation, privacy QA re-export, CSV export QA, or final student-pilot sign-off.
+
+## Task 22 Device / School Network QA
+
+Task 22 prepares the formal device and school-network QA gate before a limited student pilot.
+
+First implementation scope:
+
+- adds `docs/task-22-device-school-network-qa.md`;
+- adds `docs/task-22-device-school-network-qa-results-template.md`;
+- adds `tests/task22-device-network-qa-check.mjs`;
+- adds `check:device-network-qa`;
+- defines minimum desktop/laptop, iPad, phone, school Wi-Fi, and hotspot-fallback checks;
+- defines login, city, evidence task, event, decision, journal, event-modal, and map-label checks;
+- defines Supabase row verification for `lkkc-pilot-v1.0`, `lkkc-may-june-2026`, and `content-freeze-lite-v0.1`;
+- defines privacy QA through `research_privacy_exception_export`;
+- defines pass, partial, and fail criteria for device/network readiness.
+
+Task 22 clears the device/network QA gate only after the results template is completed and reviewed. It does not clear real participant/session code preparation, consent confirmation, final CSV export QA, or final student-pilot sign-off.
+
+## Task 23 More Event Coverage
+
+Task 23 reviews whether the research logger should capture additional low-risk gameplay events beyond the current core flow.
+
+First implementation scope:
+
+- adds `docs/task-23-more-event-coverage-plan.md`;
+- adds `tests/task23-more-event-coverage-plan-check.mjs`;
+- adds `check:more-event-coverage-plan`;
+- documents current active events: `session_start`, `city_entered`, `evidence_task_completed`, `event_opened`, `decision_selected`, and `session_end`;
+- recommends `source_opened` and `checkpoint_submitted` as the first additional events;
+- conditionally recommends `journal_opened` for navigation/support and mobile QA interpretation;
+- defers `technical_recovery` until device/network QA shows whether technical disruption is common;
+- keeps the privacy boundary explicit: no visible prose, free-text answers, real names, student IDs, contact details, or name-to-code data.
+
+Task 23 is a design and approval gate. It does not implement new event logging until the recommended coverage set is approved.
+
+## Task 23A Source And Checkpoint Event Coverage
+
+Task 23A implements the approved minimal event coverage expansion.
+
+First implementation scope:
+
+- adds `source_opened` when an evidence/hotspot task opens;
+- adds `checkpoint_submitted` when an event challenge or facility study challenge is submitted;
+- adds instrumentation helpers for both events;
+- expands the server allowlist only for controlled fields such as `checkpoint_type`, `checkpoint_correct`, `attempt_index`, and `task_type`;
+- adds explicit researcher export columns for `source`, `task_type`, `checkpoint_type`, `checkpoint_correct`, and `attempt_index`;
+- updates CSV manifest, CSV QA, fixtures, and tests;
+- keeps visible prompt text, option labels, written responses, names, student IDs, emails, phones, and name-to-code data out of event logs.
+
+Task 23A improves RQ2 process coverage. It does not implement `journal_opened` or `technical_recovery`, and it does not change RQ1 outcome scoring.

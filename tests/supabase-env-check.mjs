@@ -39,7 +39,7 @@ const logsBatchApi = readFileSync(requiredFiles.logsBatchApi, 'utf8');
   'SUPABASE_SCHEMA=public',
   'RESEARCH_BACKEND_ENABLED=false',
   'RESEARCH_COHORT=lkkc-may-june-2026',
-  'APP_VERSION=dev-v0.1'
+  'APP_VERSION=lkkc-pilot-v1.0'
 ].forEach((line) => {
   assert.match(envExample, new RegExp(`^${line}$`, 'm'), `.env.example should contain ${line}`);
 });

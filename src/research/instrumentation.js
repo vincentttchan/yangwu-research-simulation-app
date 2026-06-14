@@ -102,6 +102,32 @@ export function logEvidenceTaskCompleted({
   });
 }
 
+export function logSourceOpened({
+  routeId,
+  cityId,
+  hotspotId,
+  evidenceTaskId,
+  eventId,
+  taskType,
+  source,
+  year,
+  season
+} = {}) {
+  return logMappedEvent(EVENT_TYPES.SOURCE_OPENED, {
+    routeId,
+    cityId,
+    eventId,
+    evidenceTaskId,
+    extra: {
+      hotspot_id: hotspotId,
+      task_type: taskType,
+      source,
+      year,
+      season
+    }
+  });
+}
+
 export function logEventOpened({ routeId, cityId, eventId, source, year, season } = {}) {
   return logMappedEvent(EVENT_TYPES.EVENT_OPENED, {
     routeId,
@@ -137,6 +163,32 @@ export function logDecisionSelected({
   });
 }
 
+export function logCheckpointSubmitted({
+  routeId,
+  cityId,
+  eventId,
+  checkpointType,
+  choiceAxis,
+  checkpointCorrect,
+  attemptIndex,
+  year,
+  season
+} = {}) {
+  return logMappedEvent(EVENT_TYPES.CHECKPOINT_SUBMITTED, {
+    routeId,
+    cityId,
+    eventId,
+    extra: {
+      checkpoint_type: checkpointType,
+      choice_axis: choiceAxis,
+      checkpoint_correct: checkpointCorrect,
+      attempt_index: attemptIndex,
+      year,
+      season
+    }
+  });
+}
+
 export function logSessionEnd({
   routeId,
   year,
@@ -162,9 +214,11 @@ export function logSessionEnd({
 window.__yangwuResearch = {
   logSessionStart,
   logCityEntered,
+  logSourceOpened,
   logEvidenceTaskCompleted,
   logEventOpened,
   logDecisionSelected,
+  logCheckpointSubmitted,
   logSessionEnd,
   buildResearchPayload
 };

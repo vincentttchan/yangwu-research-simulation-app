@@ -24,7 +24,7 @@ function loginPayload(participantCode, sessionCode) {
   return {
     participant_code: participantCode,
     session_code: sessionCode,
-    app_version: 'dev-v0.1',
+    app_version: 'lkkc-pilot-v1.0',
     research_cohort: 'lkkc-may-june-2026',
     content_map_version: 'content-freeze-lite-v0.1',
     device: {
@@ -94,7 +94,7 @@ let validSession = null;
       constructs: ['historical_complexity', 'evidence_use', 'historical_complexity'],
       complexity_dimensions: ['technology', 'institutions'],
       client_time: new Date().toISOString(),
-      app_version: 'dev-v0.1',
+      app_version: 'lkkc-pilot-v1.0',
       research_cohort: 'lkkc-may-june-2026',
       content_map_version: 'content-freeze-lite-v0.1'
     }]

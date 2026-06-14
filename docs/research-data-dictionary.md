@@ -1,7 +1,7 @@
 # Yangwu Research Data Dictionary
 
 Version: `task-16-dataset-qa-v0.1`  
-App baseline: `dev-v0.1`  
+App baseline: `lkkc-pilot-v1.0`  
 Content map baseline: `content-freeze-lite-v0.1`  
 Formal research data collection status: not ready
 
@@ -69,12 +69,21 @@ The name-to-code matching list, if needed for consent or withdrawal, remains out
 |---|---|---|
 | `session_start` | Student enters a playable route/map. | Exposure and session sequence start. |
 | `city_entered` | Student enters a city scene. | Route breadth and location coverage. |
+| `source_opened` | Student opens an evidence/hotspot task or source-like inspection panel. | Attempted source/evidence exposure, including cases not completed. |
 | `evidence_task_completed` | Student completes a city hotspot evidence task. | Evidence engagement and source exposure. |
 | `event_opened` | Student opens a city, pinned, comparison, or terminal event. | Historical content exposure. |
 | `decision_selected` | Student chooses an event option. | Decision timing and decision-after-evidence indicators. |
+| `checkpoint_submitted` | Student submits an in-game challenge or reasoning checkpoint. | Process trace for scaffold/checkpoint response opportunities. |
 | `session_end` | Student reaches ending/settlement. | Completion and summary indicators. |
 
-Other taxonomy labels such as `checkpoint_submitted` and `transfer_submitted` are reserved for later approved instrument/scaffold logging.
+Other taxonomy labels such as `transfer_submitted` are reserved for later approved instrument/scaffold logging.
+
+Task 23A implements two additional low-risk process events:
+
+- `source_opened`: evidence/source panel opened, used to distinguish attempted exposure from completed evidence tasks.
+- `checkpoint_submitted`: in-event or facility challenge submitted, used as a process trace rather than an assessment score.
+
+`journal_opened` and `technical_recovery` remain possible later additions. These events must follow the same privacy boundary as existing event logs.
 
 ## Historical Complexity Dimensions
 

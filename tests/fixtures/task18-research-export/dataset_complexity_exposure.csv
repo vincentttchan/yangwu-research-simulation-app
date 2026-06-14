@@ -1,0 +1,2 @@
+participant_code,session_id,class_id,condition,distinct_complexity_dimensions_encountered,dimensions_encountered,evidence_tasks_completed_total,decision_count,decisions_after_evidence,evidence_before_decision_ratio,japan_comparison_exposure,institutional_political_financial_exposure,completed_intervention_session
+YW-001,00000000-0000-0000-0000-000000000001,4A,scaffolded,2,"{institutions,technology}",1,1,1,1,0,1,1

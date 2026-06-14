@@ -1,0 +1,2 @@
+participant_code,session_id,class_id,condition,consent_status,app_version,research_cohort,content_map_version,device_category,viewport_width,viewport_height,browser_family,started_at,ended_at,completion_status,event_count,first_event_time,last_event_time,completed_intervention_session
+YW-001,00000000-0000-0000-0000-000000000001,4A,scaffolded,included,lkkc-pilot-v1.0,lkkc-may-june-2026,content-freeze-lite-v0.1,desktop,1280,720,chrome,2026-06-13T08:00:00Z,2026-06-13T08:30:00Z,completed,5,2026-06-13T08:00:01Z,2026-06-13T08:29:59Z,1

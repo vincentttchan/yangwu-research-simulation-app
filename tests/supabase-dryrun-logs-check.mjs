@@ -32,7 +32,7 @@ function createMockSupabase({ insertError = null } = {}) {
 const session = {
   session_id: 'session-dryrun-001',
   participant_code: 'YW-001',
-  app_version: 'dev-v0.1',
+  app_version: 'lkkc-pilot-v1.0',
   research_cohort: 'lkkc-may-june-2026',
   content_map_version: 'content-freeze-lite-v0.1'
 };
@@ -42,7 +42,7 @@ const events = [
     client_event_id: 'client-event-001',
     event_type: 'decision_selected',
     client_time: '2026-06-12T08:00:00.000Z',
-    app_version: 'dev-v0.1',
+    app_version: 'lkkc-pilot-v1.0',
     research_cohort: 'lkkc-may-june-2026',
     payload: {
       route_id: 'lihongzhang',
@@ -51,6 +51,11 @@ const events = [
       choice_id: 'a',
       choice_index: 0,
       choice_axis: 'material',
+      source: 'hotspot',
+      task_type: 'pick',
+      checkpoint_type: 'event_challenge',
+      checkpoint_correct: true,
+      attempt_index: 0,
       constructs: ['evidence_use', 'historical_complexity', 'evidence_use'],
       complexity_dimensions: ['technology', 'institutions'],
       choice_label: 'This visible prose must not be stored',
@@ -107,13 +112,18 @@ const events = [
   assert.equal(row.participant_code, 'YW-001');
   assert.equal(row.client_event_id, 'client-event-001');
   assert.equal(row.event_type, 'decision_selected');
-  assert.equal(row.app_version, 'dev-v0.1');
+  assert.equal(row.app_version, 'lkkc-pilot-v1.0');
   assert.equal(row.research_cohort, 'lkkc-may-june-2026');
   assert.equal(row.content_map_version, 'content-freeze-lite-v0.1');
   assert.deepEqual(row.constructs, ['evidence_use', 'historical_complexity']);
   assert.deepEqual(row.complexity_dimensions, ['technology', 'institutions']);
   assert.equal(row.payload.choice_id, 'a');
   assert.equal(row.payload.choice_index, 0);
+  assert.equal(row.payload.source, 'hotspot');
+  assert.equal(row.payload.task_type, 'pick');
+  assert.equal(row.payload.checkpoint_type, 'event_challenge');
+  assert.equal(row.payload.checkpoint_correct, true);
+  assert.equal(row.payload.attempt_index, 0);
   assert.equal(row.payload.choice_label, undefined);
   assert.equal(row.payload.response_text, undefined);
 }

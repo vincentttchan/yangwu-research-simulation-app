@@ -20,9 +20,11 @@ logger.clearQueuedResearchEvents();
 assert.equal(document.documentElement.dataset.researchInstrumentation, 'local-flow-v1', 'Instrumentation should expose a browser-readable QA marker');
 assert.equal(typeof window.__yangwuResearch.logSessionStart, 'function', 'Instrumentation should expose session logger');
 assert.equal(typeof window.__yangwuResearch.logCityEntered, 'function', 'Instrumentation should expose city logger');
+assert.equal(typeof window.__yangwuResearch.logSourceOpened, 'function', 'Instrumentation should expose source-open logger');
 assert.equal(typeof window.__yangwuResearch.logEvidenceTaskCompleted, 'function', 'Instrumentation should expose evidence logger');
 assert.equal(typeof window.__yangwuResearch.logEventOpened, 'function', 'Instrumentation should expose event logger');
 assert.equal(typeof window.__yangwuResearch.logDecisionSelected, 'function', 'Instrumentation should expose decision logger');
+assert.equal(typeof window.__yangwuResearch.logCheckpointSubmitted, 'function', 'Instrumentation should expose checkpoint logger');
 assert.equal(typeof window.__yangwuResearch.logSessionEnd, 'function', 'Instrumentation should expose session end logger');
 
 const enriched = instrumentation.buildResearchPayload({
@@ -47,25 +49,35 @@ assert.equal(enriched.trigger, 'test');
 
 window.__yangwuResearch.logSessionStart({ routeId: 'lihongzhang', isNewGame: true, year: 1861, season: 0 });
 window.__yangwuResearch.logCityEntered({ routeId: 'lihongzhang', cityId: 'shanghai', year: 1861, season: 0, travelSeasons: 0 });
+window.__yangwuResearch.logSourceOpened({ routeId: 'lihongzhang', cityId: 'shanghai', hotspotId: 'sh-stack', evidenceTaskId: 'shanghai:sh-stack', eventId: 'e_jiangnan', taskType: 'pick', source: 'hotspot', year: 1861, season: 0 });
 window.__yangwuResearch.logEvidenceTaskCompleted({ routeId: 'lihongzhang', cityId: 'shanghai', hotspotId: 'sh-stack', evidenceTaskId: 'shanghai:sh-stack', eventId: 'e_jiangnan', newlyCollected: true });
 window.__yangwuResearch.logEventOpened({ routeId: 'lihongzhang', cityId: 'shanghai', eventId: 'e_jiangnan', source: 'city' });
 window.__yangwuResearch.logDecisionSelected({ routeId: 'lihongzhang', cityId: 'shanghai', eventId: 'e_jiangnan', choiceId: 'a', choiceIndex: 0, choiceAxis: 'material' });
+window.__yangwuResearch.logCheckpointSubmitted({ routeId: 'lihongzhang', cityId: 'shanghai', eventId: 'e_jiangnan', checkpointType: 'event_challenge', choiceAxis: 'material', checkpointCorrect: true, attemptIndex: 0, year: 1861, season: 0 });
 window.__yangwuResearch.logSessionEnd({ routeId: 'lihongzhang', year: 1895, completedEventsCount: 3, citiesVisitedCount: 2 });
 
 const queued = logger.getQueuedResearchEvents();
 assert.deepEqual(queued.map((event) => event.event_type), [
   'session_start',
   'city_entered',
+  'source_opened',
   'evidence_task_completed',
   'event_opened',
   'decision_selected',
+  'checkpoint_submitted',
   'session_end'
 ]);
-assert.equal(queued[2].payload.evidence_task_id, 'shanghai:sh-stack');
-assert.equal(queued[2].payload.hotspot_id, 'sh-stack');
-assert.equal(queued[3].payload.event_kind, 'city_event');
-assert.equal(queued[4].payload.choice_id, 'a');
-assert.equal(queued[4].payload.choice_label, undefined, 'Decision logging should not store visible choice prose');
-assert.ok(queued[4].payload.complexity_dimensions.includes('technology'), 'Decision logs should carry historical complexity dimensions for analysis');
+assert.equal(queued[2].payload.source, 'hotspot');
+assert.equal(queued[2].payload.task_type, 'pick');
+assert.equal(queued[3].payload.evidence_task_id, 'shanghai:sh-stack');
+assert.equal(queued[3].payload.hotspot_id, 'sh-stack');
+assert.equal(queued[4].payload.event_kind, 'city_event');
+assert.equal(queued[5].payload.choice_id, 'a');
+assert.equal(queued[5].payload.choice_label, undefined, 'Decision logging should not store visible choice prose');
+assert.ok(queued[5].payload.complexity_dimensions.includes('technology'), 'Decision logs should carry historical complexity dimensions for analysis');
+assert.equal(queued[6].payload.checkpoint_type, 'event_challenge');
+assert.equal(queued[6].payload.checkpoint_correct, true);
+assert.equal(queued[6].payload.attempt_index, 0);
+assert.equal(queued[6].payload.response_text, undefined, 'Checkpoint logging should not store written responses');
 
 console.log('research instrumentation checks passed');

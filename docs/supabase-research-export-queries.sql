@@ -1,9 +1,11 @@
--- Task 17 Researcher Export Queries
+-- Task 18 Researcher Export Queries
 -- These queries are designed as export/view definitions for researcher use.
 -- Run after Task 16 QA queries. Do not include live_dryrun_qa rows in formal exports.
+-- Views use security_invoker=true so future API usage respects underlying table RLS.
 
 -- Session-level export: one row per participant/session.
-create or replace view research_session_summary_export as
+create or replace view research_session_summary_export
+with (security_invoker = true) as
 select
   gs.participant_code,
   gs.session_id,
@@ -49,7 +51,8 @@ group by
   gs.completion_status;
 
 -- Event-level long export: one row per valid process event.
-create or replace view research_event_log_long_export as
+create or replace view research_event_log_long_export
+with (security_invoker = true) as
 select
   el.log_id,
   el.participant_code,
@@ -63,11 +66,16 @@ select
   el.payload ->> 'city_id' as city_id,
   el.payload ->> 'event_id' as event_id,
   el.payload ->> 'event_kind' as event_kind,
+  el.payload ->> 'source' as source,
   el.payload ->> 'evidence_task_id' as evidence_task_id,
   el.payload ->> 'hotspot_id' as hotspot_id,
+  el.payload ->> 'task_type' as task_type,
   el.payload ->> 'choice_id' as choice_id,
   nullif(el.payload ->> 'choice_index', '')::integer as choice_index,
   el.payload ->> 'choice_axis' as choice_axis,
+  el.payload ->> 'checkpoint_type' as checkpoint_type,
+  nullif(el.payload ->> 'checkpoint_correct', '')::boolean as checkpoint_correct,
+  nullif(el.payload ->> 'attempt_index', '')::integer as attempt_index,
   el.constructs,
   el.complexity_dimensions,
   el.app_version,
@@ -79,7 +87,8 @@ where el.event_type <> 'live_dryrun_qa'
   and p.consent_status = 'included';
 
 -- Complexity/process indicator export: one row per participant/session.
-create or replace view research_complexity_exposure_export as
+create or replace view research_complexity_exposure_export
+with (security_invoker = true) as
 with valid_events as (
   select *
   from event_logs
@@ -166,7 +175,8 @@ left join event_summary es on es.session_id = gs.session_id
 where p.consent_status = 'included';
 
 -- Assessment/scores export: will be sparse until approved instruments and coding are entered.
-create or replace view research_assessment_scores_export as
+create or replace view research_assessment_scores_export
+with (security_invoker = true) as
 select
   rs.participant_code,
   p.class_id,
@@ -187,7 +197,8 @@ left join assessment_responses ar on ar.response_id = rs.response_id
 where p.consent_status = 'included';
 
 -- Dashboard overview export: compact monitoring surface.
-create or replace view research_dashboard_overview_export as
+create or replace view research_dashboard_overview_export
+with (security_invoker = true) as
 select
   rss.research_cohort,
   rss.app_version,
@@ -215,7 +226,8 @@ group by
   rss.condition;
 
 -- Privacy exception export: dashboard/table should normally be empty.
-create or replace view research_privacy_exception_export as
+create or replace view research_privacy_exception_export
+with (security_invoker = true) as
 select
   log_id,
   participant_code,

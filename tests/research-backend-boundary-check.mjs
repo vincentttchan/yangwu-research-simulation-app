@@ -40,6 +40,8 @@ assert.match(logsBatchApi, /resolveLogBatchResult/, 'Log batch API should expose
 assert.match(logsBatchApi, /RESEARCH_BACKEND_ENABLED[^]*dry_run/, 'Log batch API should only connect in dry_run mode');
 assert.match(logsBatchApi, /from\(['"]event_logs['"]\)/, 'Log batch API should write accepted events to event_logs');
 assert.match(logsBatchApi, /SAFE_PAYLOAD_KEYS/, 'Log batch API should sanitize payload fields before insert');
+assert.match(logsBatchApi, /checkpoint_type/, 'Log batch API should allow controlled checkpoint metadata');
+assert.match(logsBatchApi, /checkpoint_correct/, 'Log batch API should allow controlled checkpoint result metadata');
 assert.match(logsBatchApi, /events/, 'Log batch API should name events');
 assert.match(logsBatchApi, /session/, 'Log batch API should name session');
 assert.match(serverSupabase, /@supabase\/supabase-js/, 'Server helper should own the Supabase SDK import');
@@ -107,7 +109,7 @@ sessionModule.saveResearchSession({
   participant_code: 'YW-001',
   class_id: 'LKKC-S4A',
   condition: 'scaffolded',
-  app_version: 'dev-v0.1',
+  app_version: 'lkkc-pilot-v1.0',
   research_cohort: 'lkkc-may-june-2026'
 });
 assert.equal(sessionModule.loadResearchSession().session_id, 'session-test');

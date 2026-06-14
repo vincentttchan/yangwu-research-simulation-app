@@ -117,9 +117,12 @@ Before exporting for analysis:
 - RQ2 can use process logs directly if phrased as engagement/exposure.
 - RQ3 requires focus group or perception evidence; process logs only contextualise sampling and interpretation.
 
-## Next Implementation Candidate
+## Implemented Follow-up
 
-Task 18 can choose one of two routes:
+Task 18 implements the first route:
 
-1. Supabase export implementation: apply the SQL views, run QA, and export CSVs.
-2. Researcher dashboard prototype: build a private researcher dashboard using the export views after enough real gameplay rows exist.
+- Supabase export implementation guide;
+- researcher CSV export manifest;
+- local CSV export QA script.
+
+The private researcher dashboard prototype should wait until enough real gameplay rows exist and Task 18 CSV QA passes on a dry-run or pilot export package.

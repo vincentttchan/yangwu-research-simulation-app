@@ -17,7 +17,7 @@ const logger = await import('../src/research/logger.js?flush-test=' + Date.now()
 const session = {
   session_id: 'session-001',
   participant_code: 'YW-001',
-  app_version: 'dev-v0.1',
+  app_version: 'lkkc-pilot-v1.0',
   research_cohort: 'lkkc-may-june-2026',
   content_map_version: 'content-freeze-lite-v0.1'
 };
