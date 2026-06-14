@@ -486,3 +486,21 @@ First implementation scope:
 - keeps visible prompt text, option labels, written responses, names, student IDs, emails, phones, and name-to-code data out of event logs.
 
 Task 23A improves RQ2 process coverage. It does not implement `journal_opened` or `technical_recovery`, and it does not change RQ1 outcome scoring.
+
+## Task 24 Pilot Export Package / Research Data Handoff
+
+Task 24 records the first complete dry-run researcher export package after Task 23B.
+
+First implementation scope:
+
+- adds `docs/task-24-pilot-export-package-handoff.md`;
+- adds `tests/task24-pilot-export-handoff-check.mjs`;
+- adds `check:pilot-export-handoff`;
+- records the export folder `exports/task23b-2026-06-15`;
+- records the six researcher CSV files and QA row counts;
+- confirms `dataset_event_log_long.csv` includes Task 23A columns: `source`, `task_type`, `checkpoint_type`, `checkpoint_correct`, and `attempt_index`;
+- confirms `dataset_assessment_scores.csv` and `dataset_privacy_exceptions.csv` have 0 data rows in this dry-run package;
+- keeps the package classified as dry-run QA data, not formal student data;
+- keeps the name-to-code mapping outside Supabase and outside export files.
+
+Task 24 closes the export-pipeline rehearsal for the dry-run path. It does not approve formal research analysis, replace HEA/HNET/Transfer Task/PAQ scoring, replace focus group evidence, or clear Task 22 device and school-network QA.
