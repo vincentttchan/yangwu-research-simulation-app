@@ -48,10 +48,41 @@ assert.equal(failed.error, 'backend_unavailable', 'Failed flush should surface t
 assert.equal(logger.getQueuedResearchEvents().length, 1, 'Failed flush should keep queued events for retry');
 
 logger.clearQueuedResearchEvents();
+logger.logResearchEvent('event_opened', { event_id: 'e_zongli_yamen' });
+const overlap = await logger.flushQueuedResearchEvents(session, async () => {
+  logger.logResearchEvent('decision_selected', { choice_id: 'a' });
+  return { ok: true, status: 200, data: { accepted: true, inserted_count: 1 } };
+});
+assert.equal(overlap.flushed, true, 'Successful flush should still report flushed=true');
+assert.deepEqual(
+  logger.getQueuedResearchEvents().map((event) => event.event_type),
+  ['decision_selected'],
+  'Events queued during an in-flight flush should remain queued for the next flush'
+);
+
+logger.clearQueuedResearchEvents();
 const empty = await logger.flushQueuedResearchEvents(session, async () => {
   throw new Error('submitter should not be called for empty queue');
 });
 assert.equal(empty.flushed, true, 'Empty queue should be treated as already flushed');
 assert.equal(empty.inserted_count, 0, 'Empty queue should report zero inserted events');
+
+logger.clearQueuedResearchEvents();
+let autoSubmitted = null;
+logger.configureResearchEventFlush({
+  session,
+  submitLogBatch: async (events, passedSession) => {
+    autoSubmitted = { events, session: passedSession };
+    return { ok: true, status: 200, data: { accepted: true, inserted_count: events.length } };
+  },
+  debounceMs: 0
+});
+
+logger.logResearchEvent('city_entered', { route_id: 'lihongzhang', city_id: 'beijing' });
+await new Promise((resolve) => setTimeout(resolve, 5));
+assert.equal(autoSubmitted.session.session_id, 'session-001', 'Configured auto flush should use the active research session');
+assert.deepEqual(autoSubmitted.events.map((event) => event.event_type), ['city_entered']);
+assert.equal(logger.getQueuedResearchEvents().length, 0, 'Successful auto flush should clear the queue after gameplay events');
+logger.stopResearchEventFlush();
 
 console.log('research log flush checks passed');

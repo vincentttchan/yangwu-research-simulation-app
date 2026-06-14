@@ -70,10 +70,11 @@ function closeGate(gate) {
 
 async function flushQueuedLogs(session) {
   try {
-    const [{ flushQueuedResearchEvents }, { submitLogBatch }] = await Promise.all([
+    const [{ configureResearchEventFlush, flushQueuedResearchEvents }, { submitLogBatch }] = await Promise.all([
       import('./logger.js'),
       import('./api.js')
     ]);
+    configureResearchEventFlush({ session, submitLogBatch });
     const result = await flushQueuedResearchEvents(session, submitLogBatch);
     document.documentElement.dataset.researchLogFlush = result.flushed ? 'ok' : 'pending';
   } catch (error) {
