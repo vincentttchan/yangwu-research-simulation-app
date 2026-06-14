@@ -2,7 +2,7 @@
 
 Date: 2026-06-14  
 Operator: Codex with Vincent  
-Status: production deployment verified; production API event insert verified; Supabase SQL row inspection pending in dashboard
+Status: production deployment verified; production API event insert verified; Supabase export views re-applied; Supabase row inspection and privacy QA passed
 
 ## Deployment Result
 
@@ -70,7 +70,7 @@ Important boundary:
 - This API insert confirms production server allowlisting and Supabase insert path.
 - A full UI gameplay click-through for opening a real hotspot and submitting a real checkpoint should still be done once manually or with a longer browser automation script before formal student use.
 
-## Supabase SQL To Confirm These Rows
+## Supabase SQL Row Verification
 
 Run:
 
@@ -104,6 +104,15 @@ Expected result:
 - one `source_opened`;
 - one `checkpoint_submitted`;
 - no `response_text`, `choice_label`, `student_id`, or `email` keys remain in payload.
+
+Observed result on 2026-06-14:
+
+- `2 rows`.
+- `source_opened` row visible through `research_event_log_long_export`.
+- `checkpoint_submitted` row visible through `research_event_log_long_export`.
+- `source_opened` exposed `source = 'hotspot'` and `task_type = 'qa_source_opened'`.
+- `checkpoint_submitted` exposed `checkpoint_type = 'event_challenge'`, `checkpoint_correct = true`, and `attempt_index = 1`.
+- Both rows showed `app_version = 'lkkc-pilot-v1.0'`.
 
 ## Export View SQL Still Required
 
@@ -140,7 +149,13 @@ Expected result:
 - query runs without missing-column errors;
 - Task 23A columns are visible.
 
-## Privacy QA Still Required
+Observed result on 2026-06-14:
+
+- corrected export SQL ran successfully.
+- Supabase returned `Success. No rows returned`.
+- The earlier `42P16` view-column rename error was resolved by preserving the original `research_event_log_long_export` column order and appending Task 23A columns at the end.
+
+## Privacy QA
 
 Run:
 
@@ -154,12 +169,15 @@ Expected result:
 
 - `0 rows`.
 
+Observed result on 2026-06-14:
+
+- `Success. No rows returned`.
+- `0 row`.
+
 ## Current Decision
 
-Task 23B deployment path is functioning. Before this is treated as fully complete for pilot readiness, Vincent should:
+Task 23B deployment and Supabase export-view QA are complete for the dry-run path. Before this is treated as fully complete for pilot readiness, Vincent should:
 
-1. re-run export views in Supabase;
-2. inspect the marked rows above;
-3. run privacy QA and confirm zero rows;
-4. complete one front-end UI evidence/checkpoint dry-run if possible;
-5. re-export CSVs and run CSV QA.
+1. complete one front-end UI evidence/checkpoint dry-run if possible;
+2. re-export CSVs and run CSV QA;
+3. keep these rows labelled as dry-run QA, not formal student data.
