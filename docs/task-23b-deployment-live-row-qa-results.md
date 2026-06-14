@@ -174,10 +174,35 @@ Observed result on 2026-06-14:
 - `Success. No rows returned`.
 - `0 row`.
 
+## CSV Export Package
+
+Export date: 2026-06-15  
+Export folder: `exports/task23b-2026-06-15`
+
+Files prepared:
+
+- `dataset_session_summary.csv`: 16 data rows in QA output
+- `dataset_event_log_long.csv`: 17 data rows in QA output
+- `dataset_complexity_exposure.csv`: 16 data rows in QA output
+- `dataset_assessment_scores.csv`: 0 data rows in QA output
+- `dataset_dashboard_overview.csv`: 2 data rows in QA output
+- `dataset_privacy_exceptions.csv`: 0 data rows in QA output
+
+Notes:
+
+- `dataset_event_log_long.csv` includes the Task 23A columns appended after the original export columns: `source`, `task_type`, `checkpoint_type`, `checkpoint_correct`, and `attempt_index`.
+- `research_assessment_scores_export` and `research_privacy_exception_export` were confirmed as zero-row views before preparing header-only CSVs.
+- The export folder is ignored by git because it contains research data outputs.
+
+CSV QA passed:
+
+```bash
+npm run check:research-csv-export -- exports/task23b-2026-06-15
+```
+
 ## Current Decision
 
-Task 23B deployment and Supabase export-view QA are complete for the dry-run path. Before this is treated as fully complete for pilot readiness, Vincent should:
+Task 23B deployment, Supabase export-view QA, privacy QA, and CSV export QA are complete for the dry-run path. Before this is treated as fully complete for pilot readiness, Vincent should:
 
 1. complete one front-end UI evidence/checkpoint dry-run if possible;
-2. re-export CSVs and run CSV QA;
-3. keep these rows labelled as dry-run QA, not formal student data.
+2. keep these rows labelled as dry-run QA, not formal student data.
