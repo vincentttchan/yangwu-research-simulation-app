@@ -519,4 +519,21 @@ Dry-run scope:
 - confirms the production API can return `200` with `inserted_count = 1` for a UI-generated log batch;
 - records a deployment-environment finding: the checked Supabase project `yangwu-research-lkkc-2026` returned `0 row` for the Task 25 session in `research_event_log_long_export` and raw `event_logs`.
 
-Task 25 therefore confirms front-end event generation but does not yet clear the intended Supabase export-visibility gate. Before formal student data collection, Vercel Production environment variables must be aligned with the intended Supabase project and the same Task 25 verification must be repeated.
+Task 26 supersedes the initial Task 25 export-visibility concern. Clean SQL verification confirmed that the Task 25 `source_opened` and `checkpoint_submitted` rows are visible in `research_event_log_long_export`. The initial `0 row` finding was caused by stale SQL content remaining in the Supabase SQL Editor, not by a Vercel / Supabase environment mismatch.
+
+## Task 26 Vercel / Supabase Environment Alignment
+
+Task 26 investigates and resolves the apparent Vercel / Supabase mismatch from Task 25.
+
+First implementation scope:
+
+- adds `api/research-env-diagnostic.js`;
+- adds `tests/task26-env-diagnostic-check.mjs`;
+- adds `check:env-alignment`;
+- confirms Vercel Production metadata points to Supabase project ref `zjmuydbuskxouqlkcspy`;
+- confirms `RESEARCH_BACKEND_ENABLED = dry_run`, `SUPABASE_SCHEMA = public`, `APP_VERSION = lkkc-pilot-v1.0`, and `RESEARCH_COHORT = lkkc-may-june-2026`;
+- confirms a fresh production login writes a visible `game_sessions` row;
+- confirms Task 25 `source_opened` and `checkpoint_submitted` rows are visible in `research_event_log_long_export`;
+- records the corrected SQL Editor QA method: full select, delete, paste, run, and check for syntax-error notifications before trusting row counts.
+
+Task 26 clears the production data-path alignment gate for dry-run QA. It does not clear Task 22 device/school-network QA or formal student data collection. The temporary diagnostic endpoint should be removed or protected before formal public deployment.
