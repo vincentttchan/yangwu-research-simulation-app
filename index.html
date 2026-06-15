@@ -55,7 +55,6 @@
         </span>
         <span class="coord-stamp reveal-item" data-reveal="0">
           <span class="line">大 清 · 一 八 六 一 — 一 八 九 五</span>
-          <span class="line">DSE 中 國 歷 史 · 洋 務 運 動</span>
         </span>
       </header>
 
@@ -631,6 +630,10 @@
       <h3 class="pm-name" id="pmName"></h3>
       <p class="pm-rel" id="pmRel"></p>
       <p class="pm-bio" id="pmBio"></p>
+      <div class="pm-epi" id="pmEpi" hidden>
+        <span class="pm-epi-label">後 日 談</span>
+        <p class="pm-epi-text" id="pmEpiText"></p>
+      </div>
     </div>
   </div>
 
@@ -788,6 +791,10 @@
 
   <!-- SUNO 地圖配樂槽（缺檔則退回程序生成底床；受 靜/聲 鈕控制）-->
   <audio id="mapTheme" src="assets/audio/map-theme.mp3" loop preload="auto"></audio>
+  <!-- 序章《劫餘》：登陸頁＋擇路 -->
+  <audio id="bgmPrologue" src="assets/audio/bgm-prologue.mp3" loop preload="metadata"></audio>
+  <!-- 轉場《受命·啟程》：四頁過場 -->
+  <audio id="bgmCutscene" src="assets/audio/bgm-cutscene.mp3" loop preload="metadata"></audio>
 
   <!-- 新手引導 coachmark（首玩自動·分步·可略過） -->
   <div class="coachmark" id="coachmark" hidden aria-hidden="true">

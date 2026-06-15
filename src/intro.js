@@ -118,8 +118,8 @@
     }
     if (isLayerOpen('evidenceTaskModal')) return true;
     if (isLayerOpen('achievementGallery')) { hideManagedModal('achievementGallery'); return true; }
-    if (isLayerOpen('personGallery')) { hideManagedModal('personGallery'); return true; }
     if (isLayerOpen('personModal')) { hideManagedModal('personModal'); return true; }
+    if (isLayerOpen('personGallery')) { hideManagedModal('personGallery'); return true; }
     if (isLayerOpen('hotspotModal')) { dismissHotspotModal(); return true; }
     if (isLayerOpen('letterModal')) { hideManagedModal('letterModal'); return true; }
     if (isLayerOpen('setbackModal')) { hideManagedModal('setbackModal'); return true; }
@@ -212,10 +212,26 @@
   }
 
   btnOpen && btnOpen.addEventListener('click', () => {
-    try { BGM.start(); } catch (e) {}
+    try { BGM.start(); BGM.setScene('prologue'); } catch (e) {}
     gotoSelection();
   });
-  btnBack && btnBack.addEventListener('click', gotoIntro);
+  btnBack && btnBack.addEventListener('click', () => { try { BGM.setScene('prologue'); } catch (e) {} gotoIntro(); });
+
+  // 序章 BGM《劫餘》：瀏覽器 autoplay 受限，於首次互動啟動（聲/靜鈕仍可關）
+  (function primePrologue() {
+    let done = false;
+    const kick = () => {
+      if (done) return; done = true;
+      try {
+        if (!BGM.isOn()) BGM.start();
+        if (!(stage && stage.classList.contains('is-on-map'))) BGM.setScene('prologue');
+      } catch (e) {}
+      window.removeEventListener('pointerdown', kick, true);
+      window.removeEventListener('keydown', kick, true);
+    };
+    window.addEventListener('pointerdown', kick, true);
+    window.addEventListener('keydown', kick, true);
+  })();
 
   // ---------- 5. 路線選擇 ----------
   const ROUTE_NAMES = {
@@ -408,64 +424,46 @@
   // 測試用：解鎖全部路線
   window.__unlockRoutes = () => { try { localStorage.setItem(ROUTES_DONE_KEY, JSON.stringify(['lihongzhang', 'yixin', 'rongheng', 'free'])); } catch (e) {} location.reload(); };
 
+  // 告身點將 C：主卷大人物 + 旁卷候選（保留選人／解鎖／開局邏輯）
   function renderCarousel() {
-    if (!s2Stage || !s2Dots) return;
+    if (!s2Stage) return;
     s2Stage.innerHTML = '';
-    s2Dots.innerHTML  = '';
-    CAROUSEL_DATA.forEach((c, i) => {
-      // slide
+    s2Stage.classList.add('is-deck');
+    s2Stage.classList.add('is-showcase');
+    if (s2Dots) s2Dots.innerHTML = '';
+    CAROUSEL_DATA.forEach((c, idx) => {
       const unlocked = routeUnlocked(c.key);
       const slide = document.createElement('article');
-      slide.className = 's2c-slide' + (i === 0 ? ' is-active' : '') + (c.isFree ? ' is-free' : '') + (unlocked ? '' : ' is-locked');
+      slide.className = 's2c-slide warrant' + (idx === s2CurIdx ? ' is-active' : '') + (c.isFree ? ' is-free' : '') + (unlocked ? '' : ' is-locked');
       slide.dataset.routeKey = c.key;
+      slide.dataset.idx = String(idx);
+      slide.tabIndex = 0;
 
       const starsHtml = c.difficulty > 0
-        ? `<span class="s2c-stars" aria-label="難度 ${c.difficulty}">${'★'.repeat(c.difficulty)}${'☆'.repeat(5 - c.difficulty)}</span>`
-        : '';
-      const recBadge = c.recommended
-        ? `<span class="s2c-rec">✦ 首 卷 路 線</span>`
-        : '';
-      const tagsHtml = c.tags.map(t => `<span class="s2c-tag">${t}</span>`).join('');
-      const portraitHtml = `<img class="s2c-portrait" src="${c.portrait}" alt="" aria-hidden="true" draggable="false">`;
-      const abilityHtml = buildAbilityPanel(c);
+        ? `${'★'.repeat(c.difficulty)}<span class="off">${'★'.repeat(5 - c.difficulty)}</span>`
+        : '<span class="off">自 由</span>';
+      const recBadge = c.recommended ? `<span class="w-rec">首 卷 路 線</span>` : '';
+      const tagsHtml = c.tags.map(t => `<span class="w-tag">${t}</span>`).join('');
 
       slide.innerHTML = `
-        <div class="s2c-portrait-wrap" aria-hidden="true">
-          <div class="s2c-portrait-card">
-            <div class="s2c-portrait-face">
-              ${portraitHtml}
-              <span class="s2c-flip-hint">能力</span>
-            </div>
-            ${abilityHtml}
-          </div>
-        </div>
-        <div class="s2c-overlay"></div>
-        <span class="s2c-bgnum" aria-hidden="true">${c.num}</span>
-        <div class="s2c-text">
-          ${recBadge}
-          <span class="s2c-num">${c.num}</span>
-          <h3 class="s2c-name">${c.name}</h3>
-          <p class="s2c-route-line">${c.routeLine || ''}</p>
-          <span class="s2c-line"></span>
-          <p class="s2c-bio">${c.bio}</p>
-          <div class="s2c-tags">${tagsHtml}${starsHtml}</div>
-          ${unlocked
-            ? `<button class="s2c-cta" type="button" data-route="${c.key}">
-            <span class="s2c-cta-label">擇 此 人 物</span>
-            <span class="s2c-cta-arrow">→</span>
-          </button>`
-            : `<div class="s2c-locked-cta"><span class="s2c-lock-seal">鎖</span><span class="s2c-lock-hint">${ROUTE_UNLOCK_HINT[c.key] || '尚 未 解 鎖'}</span></div>`}
-        </div>
+        <div class="w-num">${c.num}</div>
+        ${recBadge}
+        <div class="w-kicker">${c.routeLine || ''}</div>
+        <div class="w-portrait"><img class="s2c-portrait" src="${c.portrait}" alt="" draggable="false"></div>
+        <h3 class="w-name">${c.name}</h3>
+        <p class="w-en">${c.en || ''}</p>
+        <p class="w-bio">${c.bio}</p>
+        <div class="w-tags">${tagsHtml}</div>
+        <div class="w-foot"><span class="w-stars" aria-label="難度 ${c.difficulty}">${starsHtml}</span><span class="w-meta">${c.meta || ''}</span></div>
+        <div class="w-seal" aria-hidden="true">委任<br>之印</div>
+        ${unlocked
+          ? `<button class="s2c-cta" type="button" data-route="${c.key}">
+              <span class="s2c-cta-label">擇 此 人 物</span>
+              <span class="s2c-cta-arrow">→</span>
+            </button>`
+          : `<div class="s2c-locked-cta"><span class="s2c-lock-seal">鎖</span><span class="s2c-lock-hint">${ROUTE_UNLOCK_HINT[c.key] || '尚 未 解 鎖'}</span></div>`}
       `;
       s2Stage.appendChild(slide);
-
-      // dot
-      const dot = document.createElement('button');
-      dot.type = 'button';
-      dot.className = 's2c-dot' + (i === 0 ? ' is-active' : '');
-      dot.setAttribute('aria-label', `第 ${i + 1} 位見證者`);
-      dot.dataset.idx = i;
-      s2Dots.appendChild(dot);
     });
   }
 
@@ -486,6 +484,14 @@
     slides[idx]?.classList.add('is-active');
     dots[idx]?.classList.add('is-active');
     s2CurIdx = idx;
+    if (slides[idx]) {
+      const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      try {
+        slides[idx].scrollIntoView({ block: 'start', inline: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
+      } catch (e) {
+        slides[idx].scrollIntoView();
+      }
+    }
 
     setTimeout(() => { s2Busy = false; }, 620);
   }
@@ -515,6 +521,11 @@
     s2Stage?.addEventListener('click', (e) => {
       const portrait = e.target.closest('.s2c-portrait-wrap');
       if (portrait) return;
+      const slide = e.target.closest('.s2c-slide');
+      if (slide && !slide.classList.contains('is-active')) {
+        s2Goto(Number(slide.dataset.idx || 0));
+        return;
+      }
       const btn = e.target.closest('.s2c-cta');
       if (!btn || btn.disabled) return;
       const route = btn.dataset.route;
@@ -532,9 +543,10 @@
     });
     s2Stage?.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter' && e.key !== ' ') return;
-      const portrait = e.target.closest('.s2c-portrait-wrap');
-      if (!portrait) return;
+      const slide = e.target.closest('.s2c-slide');
+      if (!slide || slide.classList.contains('is-active')) return;
       e.preventDefault();
+      s2Goto(Number(slide.dataset.idx || 0));
     });
     // 啟程（底欄按鈕同樣走 D 過場）
     s2BarBtn?.addEventListener('click', () => {
@@ -547,6 +559,11 @@
   function s2Choose(routeKey) {
     // 第一段：選定此人物（第二段由 click handler 直接走 gotoMap）
     s2Chosen = routeKey;
+    // 告身：標記整張卡 + 牌組（蓋印、其餘變灰）
+    s2Stage?.classList.add('has-choice');
+    s2Stage?.querySelectorAll('.s2c-slide').forEach((sl) => {
+      sl.classList.toggle('is-chosen', sl.dataset.routeKey === routeKey);
+    });
     s2Stage?.querySelectorAll('.s2c-cta').forEach((b) => {
       const isThis = b.dataset.route === routeKey;
       b.classList.toggle('is-chosen', isThis);
@@ -653,6 +670,8 @@
 
   function showCutscene(route) {
     const cs = document.getElementById('cutscene');
+    // 轉場 BGM《受命·啟程》
+    try { if (BGM.isOn()) BGM.setScene('cutscene'); } catch (e) {}
     // 過場元素不存在時直接進入地圖（保全性回退）
     if (!cs) { gotoMap(route); return; }
     cs.dataset.route = route || 'free';
@@ -1449,10 +1468,19 @@
     let stepTimer = null;
     const tensionNodes = [];
     const mapTheme = document.getElementById('mapTheme');
+    const bgmPrologue = document.getElementById('bgmPrologue');   // 序章《劫餘》
+    const bgmCutscene = document.getElementById('bgmCutscene');   // 轉場《受命·啟程》
     let mapThemeReady = false;
     if (mapTheme) {
       mapTheme.addEventListener('canplaythrough', () => { mapThemeReady = true; if (enabled) applyScene(); }, { once: true });
       mapTheme.addEventListener('error', () => { mapThemeReady = false; });
+    }
+    // 依場景挑選主題曲（HTMLAudio）；無則回 null（退回程序底床）
+    function themeForScene() {
+      if (scene === 'prologue') return bgmPrologue;     // 登陸頁＋擇路
+      if (scene === 'cutscene') return bgmCutscene;     // 四頁過場
+      if (scene === 'map' || scene === 'city') return mapThemeReady ? mapTheme : null;
+      return null;
     }
     function playFootstep() {
       if (!ctx || !enabled) return;
@@ -1480,21 +1508,29 @@
       });
     }
     function stopTension() { while (tensionNodes.length) { const n = tensionNodes.pop(); try { n.stop(); } catch (e) {} } }
-    function syncMapTheme() {
-      if (!mapTheme) return;
-      const wantMusic = enabled && (scene === 'map' || scene === 'city') && mapThemeReady;
-      if (wantMusic) { mapTheme.volume = 0.5; const p = mapTheme.play(); if (p && p.catch) p.catch(() => {}); }
-      else { try { mapTheme.pause(); } catch (e) {} }
+    // 主題曲切換：播當前場景該首，暫停其餘（過場曲歸零、循環曲保留進度）
+    function syncThemes() {
+      const want = enabled ? themeForScene() : null;
+      [mapTheme, bgmPrologue, bgmCutscene].forEach((el) => {
+        if (!el) return;
+        if (el === want) {
+          el.volume = (el === mapTheme) ? 0.5 : 0.55;
+          const p = el.play(); if (p && p.catch) p.catch(() => {});
+        } else {
+          try { el.pause(); if (el !== mapTheme) el.currentTime = 0; } catch (e) {}
+        }
+      });
     }
     function applyScene() {
-      const mapMusic = mapThemeReady && (scene === 'map' || scene === 'city');
+      const themed = enabled ? themeForScene() : null;
+      const hasTheme = !!themed;
       if (scene === 'cityLoader') { startFootsteps(); stopTension(); }
       else if (scene === 'event') { stopFootsteps(); startTension(); }
       else { stopFootsteps(); stopTension(); }
-      // SUNO 地圖曲在場時，程序鈴音讓位、底床降音量（風聲/drone 仍作微底）
-      bellsMuted = (scene === 'cityLoader' || scene === 'event' || mapMusic);
-      if (masterGain) masterGain.gain.value = mapMusic ? 0.045 : 0.10;
-      syncMapTheme();
+      // 主題曲（序章/轉場/地圖）在場時，程序鈴音讓位、底床降音量（風聲/drone 仍作微底）
+      bellsMuted = (scene === 'cityLoader' || scene === 'event' || hasTheme);
+      if (masterGain) masterGain.gain.value = hasTheme ? 0.045 : 0.10;
+      syncThemes();
     }
     function setScene(name) {
       scene = name || 'map';
@@ -1505,7 +1541,7 @@
       enabled = false;
       if (bellTimer) { clearTimeout(bellTimer); bellTimer = null; }
       stopFootsteps(); stopTension();
-      try { if (mapTheme) mapTheme.pause(); } catch (e) {}
+      [mapTheme, bgmPrologue, bgmCutscene].forEach((el) => { try { if (el) el.pause(); } catch (e) {} });
       while (nodes.length) {
         const n = nodes.pop();
         try { n.stop(); } catch (e) {}
@@ -1554,19 +1590,24 @@
   window.__BGM = BGM;
 
   let introBgmRequested = false;
+  function introBgmSceneName() {
+    if (stage && stage.classList.contains('is-on-map')) return citySceneIsOpen() ? 'city' : 'map';
+    return 'prologue';
+  }
+
   function primeIntroBgm() {
     if (introBgmRequested) return;
     introBgmRequested = true;
     try {
       BGM.start();
-      BGM.setScene('map');
+      BGM.setScene('prologue');
     } catch (e) {}
 
     const unlock = () => {
       try {
         if (!BGM.isOn()) BGM.start();
         else if (typeof BGM.resume === 'function') BGM.resume();
-        BGM.setScene(citySceneIsOpen() ? 'city' : 'map');
+        BGM.setScene(introBgmSceneName());
       } catch (e) {}
       try { syncBgmToggles(); } catch (e) {}
       window.removeEventListener('pointerdown', unlock);
@@ -3192,12 +3233,13 @@
   }
 
   // 客棧對話：開一段 vignette，談畢方結識（重用插曲 modal）
-  function openInnVignette(city, person) {
+  function openInnVignette(city, person, facility) {
     const v = CITY_LOCAL_VIGNETTE[city];
     const modal = document.getElementById('interludeModal');
     if (!v || !modal || !person) { if (person) addToNetwork(person.key, person.name, person.relation); return; }
     const setText = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
-    setInterludeImage(city);
+    // 結識人物小圖：用結識所在「設施」的圖，而非城市圖
+    setInterludeImage(facility && facility.id ? ('assets/facility/' + facility.id + '.webp') : city);
     setText('ilKicker', v.kicker || '聽 街 知 巷 聞');
     setText('ilTitle', person.name);
     setText('ilText', v.text);
@@ -3372,7 +3414,7 @@
       const cityNow = gameState.currentCity;
       const p = CITY_LOCAL_PERSON[cityNow];
       if (p && !(gameState.network || []).some((x) => x.key === p.key)) {
-        if (CITY_LOCAL_VIGNETTE[cityNow]) setTimeout(() => openInnVignette(cityNow, p), 450);
+        if (CITY_LOCAL_VIGNETTE[cityNow]) setTimeout(() => openInnVignette(cityNow, p, f), 450);
         else addToNetwork(p.key, p.name, p.relation);
       }
     }
@@ -5857,7 +5899,10 @@
   function openPerson(key) {
     const modal = document.getElementById('personModal');
     if (!modal) return;
-    const person = (gameState.network || []).find((p) => p.key === key);
+    // 來源優先：本局已結識 → 已識存檔（名帖冊／結算亦可查）
+    const seen = (typeof loadPersonsSeen === 'function') ? loadPersonsSeen() : {};
+    const person = (gameState.network || []).find((p) => p.key === key)
+      || (seen[key] ? { key: key, name: seen[key].name, relation: seen[key].relation } : null);
     if (!person) return;
     const setHtml = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
     const img = document.getElementById('pmPortrait');
@@ -5872,7 +5917,16 @@
     setHtml('pmName', person.name || '');
     setHtml('pmRel', person.relation || '');
     setHtml('pmBio', PERSON_BIO[key] || '——');
-    openManagedModal('personModal');
+    // 後日談（結局後續）
+    const epiWrap = document.getElementById('pmEpi');
+    const epi = PERSON_EPILOGUE[key];
+    if (epiWrap) {
+      if (epi) { setHtml('pmEpiText', epi); epiWrap.removeAttribute('hidden'); }
+      else epiWrap.setAttribute('hidden', '');
+    }
+    // 若名帖冊正開著，疊在其上（關閉後返回名帖冊）
+    const galleryOpen = isLayerOpen && isLayerOpen('personGallery');
+    openManagedModal('personModal', galleryOpen ? { keep: ['personGallery'] } : undefined);
   }
 
   // 得着（轉場幕六）：依本局見識傾向與結識人物，動態生成「火種」一句
@@ -6122,7 +6176,7 @@
           '<span class="pg-info"><span class="pg-name">未 識</span><span class="pg-rel">緣 慳 一 面</span></span></div>';
       }
       const initial = (s.name || '？').trim().charAt(0);
-      return '<div class="pg-item is-got" title="' + escapeHTML(PERSON_BIO[k] || '') + '">' +
+      return '<div class="pg-item is-got" role="button" tabindex="0" data-person="' + k + '" aria-label="' + escapeHTML(s.name || '') + ' 詳介">' +
         '<span class="pg-portrait"><img src="assets/portrait/' + k + '.webp" alt="" draggable="false" ' +
         'onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
         '<span class="pg-seal" style="display:none">' + initial + '</span></span>' +
@@ -6276,6 +6330,16 @@
   document.getElementById('pgClose')?.addEventListener('click', () => hideManagedModal('personGallery'));
   document.getElementById('achievementGallery')?.addEventListener('click', (e) => { if (e.target.id === 'achievementGallery') hideManagedModal('achievementGallery'); });
   document.getElementById('personGallery')?.addEventListener('click', (e) => { if (e.target.id === 'personGallery') hideManagedModal('personGallery'); });
+  // 名帖冊：點擊已識人物 → 開詳介（BIO ＋ 後日談）
+  document.getElementById('pgGrid')?.addEventListener('click', (e) => {
+    const item = e.target.closest?.('.pg-item.is-got[data-person]');
+    if (item) openPerson(item.dataset.person);
+  });
+  document.getElementById('pgGrid')?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const item = e.target.closest?.('.pg-item.is-got[data-person]');
+    if (item) { e.preventDefault(); openPerson(item.dataset.person); }
+  });
   document.addEventListener('click', (e) => {
     const achv = e.target.closest?.('#introAchv');
     const persons = e.target.closest?.('#introPersons');
