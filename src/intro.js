@@ -446,7 +446,7 @@
       const tagsHtml = c.tags.map(t => `<span class="w-tag">${t}</span>`).join('');
 
       slide.innerHTML = `
-        <div class="w-num">${c.num}</div>
+        <div class="w-num"><img class="w-num-img" src="assets/seals/seal-generic.webp" alt="" aria-hidden="true"><span class="w-num-ch">${c.num}</span></div>
         ${recBadge}
         <div class="w-kicker">${c.routeLine || ''}</div>
         <div class="w-portrait"><img class="s2c-portrait" src="${c.portrait}" alt="" draggable="false"></div>
@@ -455,7 +455,7 @@
         <p class="w-bio">${c.bio}</p>
         <div class="w-tags">${tagsHtml}</div>
         <div class="w-foot"><span class="w-stars" aria-label="難度 ${c.difficulty}">${starsHtml}</span><span class="w-meta">${c.meta || ''}</span></div>
-        <div class="w-seal" aria-hidden="true">委任<br>之印</div>
+        <div class="w-sig" aria-hidden="true"><span class="w-sig-text">委任　${c.name}　為書記隨員，啟程入局。</span><span class="w-seal">委任<br>之印</span></div>
         ${unlocked
           ? `<button class="s2c-cta" type="button" data-route="${c.key}">
               <span class="s2c-cta-label">擇 此 人 物</span>
