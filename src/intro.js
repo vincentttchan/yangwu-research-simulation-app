@@ -197,18 +197,34 @@
   const btnOpen = document.getElementById('btnOpen');
   const btnBack = document.getElementById('btnBack');
 
+  function resetHorizontalViewport() {
+    try {
+      window.scrollTo({ left: 0, top: window.scrollY || 0, behavior: 'instant' });
+      document.documentElement.scrollLeft = 0;
+      document.body.scrollLeft = 0;
+      requestAnimationFrame(() => {
+        document.documentElement.scrollLeft = 0;
+        document.body.scrollLeft = 0;
+      });
+    } catch (e) {}
+  }
+
   function gotoSelection() {
     if (!stage) return;
+    resetHorizontalViewport();
     stage.classList.add('is-on-selection');
     // 切換 aria-hidden
     document.getElementById('screen1')?.setAttribute('aria-hidden', 'true');
     document.getElementById('screen2')?.setAttribute('aria-hidden', 'false');
+    setTimeout(resetHorizontalViewport, 950);
   }
   function gotoIntro() {
     if (!stage) return;
+    resetHorizontalViewport();
     stage.classList.remove('is-on-selection');
     document.getElementById('screen1')?.setAttribute('aria-hidden', 'false');
     document.getElementById('screen2')?.setAttribute('aria-hidden', 'true');
+    setTimeout(resetHorizontalViewport, 950);
   }
 
   btnOpen && btnOpen.addEventListener('click', () => {
@@ -247,6 +263,7 @@
       key: 'lihongzhang',
       num: '壹',
       name: '李 鴻 章',
+      compactName: '李鴻章',
       en: 'Li Hongzhang · 1823–1901',
       routeLine: '自江南煙囪起筆，親歷自強盛衰',
       bio: '你將從上海啟程，見證船炮、官局、商辦與朝議如何一面推動自強，一面把更深的難題留到戰火之前。',
@@ -265,6 +282,7 @@
       key: 'yixin',
       num: '貳',
       name: '奕 　 訢',
+      compactName: '奕訢',
       en: 'Prince Gong · 1833–1898',
       routeLine: '在朝廷中樞推動外交與制度轉向',
       bio: '恭親王，1861 設總理衙門掌外交。你將立於朝廷風暴中央，見證每項改革如何被妥協、被抵抗、被緩慢推進。',
@@ -283,6 +301,7 @@
       key: 'rongheng',
       num: '參',
       name: '容 　 閎',
+      compactName: '容閎',
       en: 'Yung Wing · 1828–1912',
       routeLine: '以留學與人才培養打開近代視野',
       bio: '耶魯第一位中國畢業生。一生只做一件事：送三十個孩子渡洋。十年後，再親眼看著他們被召回。',
@@ -301,6 +320,7 @@
       key: 'free',
       num: '肆',
       name: '自 由 書 記',
+      compactName: '自由書記',
       en: 'The Drifting Brush',
       routeLine: '穿行各城，連結事件與人物線索',
       bio: '不屬於任何人，因此得以看見所有人。你遊走於官邸、課室、衙門之間，見證這三十年——但沒有人為你負責。',
@@ -424,12 +444,62 @@
   // 測試用：解鎖全部路線
   window.__unlockRoutes = () => { try { localStorage.setItem(ROUTES_DONE_KEY, JSON.stringify(['lihongzhang', 'yixin', 'rongheng', 'free'])); } catch (e) {} location.reload(); };
 
+  function dossierPaperSvg(className) {
+    return `<svg class="${className}" viewBox="0 0 1000 720" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+      <path class="svg-paper-edge" d="M18 18 C120 9 210 20 326 15 C455 9 548 23 676 14 C791 8 884 17 982 13 L988 702 C874 711 774 700 646 706 C502 714 386 696 240 704 C142 710 74 700 16 707 Z"/>
+      <path class="svg-paper-line" d="M44 42 C168 37 269 46 390 39 C520 32 637 47 762 38 C830 33 898 38 954 35 L958 675 C844 681 742 671 616 678 C486 685 362 670 236 677 C151 681 91 675 45 680 Z"/>
+      <path class="svg-paper-inner" d="M66 65 H932 V654 H66 Z"/>
+      <path class="svg-paper-wear" d="M34 38 C56 54 57 77 42 94 M940 35 C928 61 935 83 960 96 M55 657 C83 650 101 662 112 690 M915 662 C933 646 957 650 970 675"/>
+      <path class="svg-paper-scuff svg-paper-scuff-a" d="M142 84 C190 78 231 84 285 80 M714 82 C780 74 832 82 889 76 M103 625 C168 616 220 626 294 618"/>
+      <path class="svg-paper-scuff svg-paper-scuff-b" d="M67 151 C61 208 66 266 60 326 M936 166 C945 227 935 298 943 360 M514 655 C580 647 641 655 708 648"/>
+    </svg>`;
+  }
+
+  function portraitFrameSvg() {
+    return `<svg class="w-portrait-svg" viewBox="0 0 420 560" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+      <path class="svg-photo-paper" d="M18 16 C86 10 141 18 208 13 C287 8 351 17 402 14 L408 542 C334 551 279 540 202 548 C128 556 78 543 16 548 Z"/>
+      <path class="svg-photo-rule" d="M34 34 H386 V526 H34 Z"/>
+      <path class="svg-photo-corner" d="M48 78 V49 H78 M342 49 H372 V78 M48 482 V512 H78 M372 482 V512 H342"/>
+      <path class="svg-photo-crease" d="M42 42 C61 55 60 74 45 91 M376 38 C359 57 362 77 383 91 M44 510 C68 498 85 509 96 530 M354 514 C370 498 389 501 400 523"/>
+      <path class="svg-photo-nameplate" d="M58 478 H362 V523 H58 Z"/>
+    </svg>`;
+  }
+
+  function sideCardFrameSvg() {
+    return `<svg class="w-card-svg" viewBox="0 0 260 210" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+      <path class="svg-card-edge" d="M13 12 C44 8 75 14 112 10 C157 6 193 14 246 11 L250 199 C204 204 166 197 121 202 C82 206 45 199 11 203 Z"/>
+      <path class="svg-card-rule" d="M24 23 H236 V188 H24 Z"/>
+      <path class="svg-card-name" d="M42 162 H218 V192 H42 Z"/>
+      <path class="svg-card-wear" d="M28 28 C45 40 43 55 31 66 M221 25 C213 43 218 58 238 69 M35 181 C55 174 71 181 82 198 M206 182 C221 173 238 177 245 195"/>
+      <path class="svg-card-clip" d="M126 -2 C139 -2 145 6 145 19 V44 C145 56 137 64 126 64 C115 64 107 56 107 44 V18 C107 9 114 2 126 2"/>
+    </svg>`;
+  }
+
+  function sideRailSvg() {
+    return `<svg class="s2c-side-rail" viewBox="0 0 260 660" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+      <path class="svg-rail-board" d="M24 18 C74 8 124 20 178 13 C211 9 232 15 246 20 L244 640 C194 651 146 637 91 647 C61 652 38 646 18 639 Z"/>
+      <path class="svg-rail-line" d="M45 42 C94 35 143 46 190 40 C208 38 224 40 234 44 L232 615 C180 625 139 614 91 622 C68 626 50 622 34 615 Z"/>
+      <path class="svg-rail-thread" d="M54 56 C50 150 58 238 52 330 C47 426 58 520 51 604"/>
+      <path class="svg-rail-thread" d="M219 58 C223 154 214 247 220 342 C226 437 215 519 222 602"/>
+      <path class="svg-rail-slot" d="M76 129 H211 M75 330 H212 M75 531 H212"/>
+    </svg>`;
+  }
+
+  function sealSvg() {
+    return `<svg class="s2c-lock-seal-svg" viewBox="0 0 46 32" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+      <path class="svg-seal-edge" d="M5 4 C13 1 20 5 27 3 C35 1 41 5 43 10 C45 18 40 25 42 29 C30 31 24 27 15 30 C8 32 4 28 3 22 C1 15 4 10 5 4 Z"/>
+      <path class="svg-seal-line" d="M10 8 C17 7 23 9 30 7 C36 6 39 9 40 14 C42 20 37 24 39 27 C30 27 24 24 16 26 C10 27 7 24 7 19 C6 14 9 11 10 8 Z"/>
+      <path class="svg-seal-chip" d="M12 12 C17 10 20 14 24 12 M26 20 C31 18 34 21 38 19"/>
+    </svg>`;
+  }
+
   // 告身點將 C：主卷大人物 + 旁卷候選（保留選人／解鎖／開局邏輯）
   function renderCarousel() {
     if (!s2Stage) return;
     s2Stage.innerHTML = '';
     s2Stage.classList.add('is-deck');
     s2Stage.classList.add('is-showcase');
+    s2Stage.insertAdjacentHTML('beforeend', sideRailSvg());
     if (s2Dots) s2Dots.innerHTML = '';
     CAROUSEL_DATA.forEach((c, idx) => {
       const unlocked = routeUnlocked(c.key);
@@ -444,13 +514,16 @@
         : '<span class="off">自 由</span>';
       const recBadge = c.recommended ? `<span class="w-rec">首 卷 路 線</span>` : '';
       const tagsHtml = c.tags.map(t => `<span class="w-tag">${t}</span>`).join('');
+      const compactName = c.compactName || c.name.replace(/\s+/g, '');
 
       slide.innerHTML = `
+        ${dossierPaperSvg('w-paper-svg')}
+        ${sideCardFrameSvg()}
         <div class="w-num"><img class="w-num-img" src="assets/seals/seal-generic.webp" alt="" aria-hidden="true"><span class="w-num-ch">${c.num}</span></div>
         ${recBadge}
         <div class="w-kicker">${c.routeLine || ''}</div>
-        <div class="w-portrait"><img class="s2c-portrait" src="${c.portrait}" alt="" draggable="false"></div>
-        <h3 class="w-name">${c.name}</h3>
+        <div class="w-portrait">${portraitFrameSvg()}<img class="s2c-portrait" src="${c.portrait}" alt="" draggable="false"><span class="w-portrait-name" aria-hidden="true">${c.name}</span></div>
+        <h3 class="w-name"><span class="w-name-full">${c.name}</span><span class="w-name-compact">${compactName}</span></h3>
         <p class="w-en">${c.en || ''}</p>
         <p class="w-bio">${c.bio}</p>
         <div class="w-tags">${tagsHtml}</div>
@@ -458,10 +531,12 @@
         <div class="w-sig" aria-hidden="true"><span class="w-sig-text">委任　${c.name}　為書記隨員，啟程入局。</span><span class="w-seal">委任<br>之印</span></div>
         ${unlocked
           ? `<button class="s2c-cta" type="button" data-route="${c.key}">
-              <span class="s2c-cta-label">擇 此 人 物</span>
+              <span class="s2c-cta-label">選擇此人物</span>
               <span class="s2c-cta-arrow">→</span>
             </button>`
-          : `<div class="s2c-locked-cta"><span class="s2c-lock-seal">鎖</span><span class="s2c-lock-hint">${ROUTE_UNLOCK_HINT[c.key] || '尚 未 解 鎖'}</span></div>`}
+          : `<div class="s2c-locked-cta"><span class="s2c-lock-seal">${sealSvg()}<span class="s2c-lock-seal-text">封存</span></span><span class="s2c-lock-hint">${ROUTE_UNLOCK_HINT[c.key] || '尚 未 解 鎖'}</span></div>`}
+        <span class="w-liezhuan" aria-hidden="true">列傳</span>
+        <div class="w-ships" aria-hidden="true"></div>
       `;
       s2Stage.appendChild(slide);
     });
@@ -569,7 +644,7 @@
       b.classList.toggle('is-chosen', isThis);
       b.disabled = false;
       const label = b.querySelector('.s2c-cta-label');
-      if (label) label.textContent = isThis ? '啟 程 入 局' : '擇 此 人 物';
+      if (label) label.textContent = isThis ? '啟程入局' : '選擇此人物';
       // 選中時清空箭嘴文字，確保任何字型都不會顯示 →；未選中則還原
       const arrow = b.querySelector('.s2c-cta-arrow');
       if (arrow) {
@@ -6491,7 +6566,7 @@
       b.disabled = false;
       const label = b.querySelector('.s2c-cta-label');
       const arrow = b.querySelector('.s2c-cta-arrow');
-      if (label) label.textContent = '擇 此 人 物';
+      if (label) label.textContent = '選擇此人物';
       if (arrow) { arrow.textContent = '→'; arrow.style.removeProperty('display'); }
     });
   }
