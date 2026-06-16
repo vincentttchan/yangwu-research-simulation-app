@@ -12572,3 +12572,51 @@ body:has(.city-scene:not([hidden])) .dev-stamp {
     transform: translateX(-50%) !important;
   }
 }
+
+/* ============================================================
+   手機真機修正（≤640）：序章 / 選角 / 轉場 / 地圖
+   ============================================================ */
+@media (max-width: 640px) {
+  /* #1 序章：引文收一行、隱左側裝飾直字 */
+  .screen--intro .intro-epigraph {
+    font-size: 12px !important; letter-spacing: 0.01em !important; word-spacing: -0.12em !important;
+    white-space: nowrap !important; max-width: 96vw !important; overflow: hidden !important;
+  }
+  .screen--intro .intro-epigraph .epi-src { display: block !important; white-space: normal !important; font-size: 10.5px !important; word-spacing: normal !important; margin-top: 8px !important; }
+  .screen--intro .intro-ribbon, .screen--intro .era-axis, .screen--intro .vertical-year { display: none !important; }
+
+  /* #4 地圖：頂部條收細、左對齊、降低遮擋；快捷膠囊更緊湊 */
+  .map-topbar { top: calc(env(safe-area-inset-top,0px) + 8px) !important; left: 10px !important; right: 10px !important; padding: 6px 12px !important; max-width: none !important; }
+  .map-quickjump, .map-topbar .topbar-side { gap: 6px !important; }
+}
+
+/* #2 選角（≤600）：頂部讓出瀏海＋返回鍵、縮主卡讓肖像磚露出 */
+@media (max-width: 600px) {
+  .screen--selection .s2-carousel { padding-top: calc(env(safe-area-inset-top,0px) + 46px) !important; }
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-portrait { width: min(52%, 184px) !important; margin-bottom: 4px !important; }
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-bio { font-size: 13px !important; line-height: 1.7 !important; }
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active { padding: 14px 16px 16px !important; gap: 2px !important; }
+  /* 候選肖像磚加一行提示，並確保露出 */
+  .s2c-stage.is-showcase { padding-bottom: 14px !important; }
+}
+
+/* #3 轉場：文字一律移到下方 */
+@media (max-width: 640px) {
+  .cs-page { justify-content: flex-end !important; align-items: stretch !important; }
+  .cs-char-text, .cs-text-card {
+    margin-top: auto !important; align-self: stretch !important;
+    padding: 22px 22px calc(env(safe-area-inset-bottom,0px) + 96px) !important;
+    background: linear-gradient(to top, rgba(10,7,4,0.92), rgba(10,7,4,0.66) 64%, transparent) !important;
+  }
+  .cs-page--character .cs-char-text { text-align: left !important; }
+}
+
+/* 主卡肖像對齊外框（全斷點，修手機/平板留空帶） */
+.s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-portrait { position: relative; overflow: hidden; }
+.s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-portrait-svg {
+  position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; z-index: 2;
+}
+.s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-portrait img.s2c-portrait {
+  position: absolute !important; left: 8.5% !important; top: 6.5% !important;
+  width: 83% !important; height: 77.5% !important; object-fit: cover !important; object-position: center top !important; z-index: 1;
+}
