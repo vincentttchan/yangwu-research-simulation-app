@@ -13345,3 +13345,98 @@ body:has(.city-scene:not([hidden])) .dev-stamp {
     margin-top: 10px !important;
   }
 }
+
+/* ============================================================
+   方案2 · 鎖定人物半封：剪影＋火漆封＋姓名「？」＋路線原型鈎子
+   ============================================================ */
+/* 剪影肖像 + 壓暗罩 */
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-portrait img.s2c-portrait {
+  filter: grayscale(1) brightness(0.17) contrast(1.18) !important;
+}
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-portrait::after {
+  content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(ellipse 72% 62% at 50% 42%, rgba(20,14,8,0.15), rgba(18,12,7,0.66) 100%);
+}
+/* 「？」姓名：神秘描金 */
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-name,
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-portrait-name {
+  color: rgba(202,164,92,0.82) !important; letter-spacing: 0.32em !important; text-indent: 0.32em !important;
+}
+/* 火漆封 + 路線原型鈎子 */
+.s2c-lock-meta { display: flex; flex-direction: column; align-items: center; gap: 2px; line-height: 1.3; }
+.s2c-lock-arch { font-family: var(--font-chapter, serif); font-size: 11.5px; letter-spacing: 0.16em; color: rgba(202,164,92,0.78); }
+.s2c-lock-hint { font-family: var(--font-chapter, serif); font-size: 10px; letter-spacing: 0.1em; color: rgba(180,150,108,0.62); }
+
+/* ---- 方案2 精修：小磚乾淨（剪影＋火漆＋？），鈎子留 featured/hover ---- */
+/* 肖像加深成剪影（高特異性壓過響應式 img 規則） */
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-portrait img.s2c-portrait {
+  filter: grayscale(1) brightness(0.13) contrast(1.25) !important;
+}
+/* 名帖磚（非 active 鎖定）：隱鈎子，火漆封置中為神秘信號 */
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active) .s2c-lock-meta { display: none !important; }
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active) .s2c-locked-cta {
+  position: absolute !important; left: 50% !important; top: 42% !important; right: auto !important; bottom: auto !important;
+  transform: translate(-50%, -50%) !important; width: auto !important; padding: 0 !important;
+  background: none !important; border: 0 !important; z-index: 4 !important; flex-direction: column !important; gap: 4px !important;
+}
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active) .s2c-lock-seal {
+  position: relative !important; width: 52px !important; height: 52px !important; background: none !important;
+}
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active) .s2c-lock-seal-svg {
+  display: block !important; width: 100% !important; height: 100% !important; opacity: 0.95;
+}
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active) .s2c-lock-seal-text {
+  position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%,-50%) rotate(-4deg) !important;
+  display: block !important; color: #f3d9b0 !important; font-family: var(--font-chapter,serif) !important; font-size: 11px !important; letter-spacing: 0.04em !important;
+}
+.s2c-lock-seal-svg .svg-seal-edge { fill: rgba(150,42,30,0.9) !important; }
+.s2c-lock-seal-svg .svg-seal-line { stroke: rgba(247,236,219,0.5) !important; }
+/* featured 鎖定卡：顯示完整鈎子（路線原型＋解鎖條件） */
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked.is-active .s2c-lock-meta { display: flex !important; }
+
+/* ---- 方案2 修：剪影 filter 提權 + 單一「？」 ---- */
+.screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-portrait img.s2c-portrait {
+  filter: grayscale(1) brightness(0.16) contrast(1.32) !important;
+}
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-name .w-name-compact { display: none !important; }
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-name .w-name-full { display: inline !important; }
+
+/* ============================================================
+   拆封：新解鎖人物的封緘 overlay + 揭曉動畫 + 選角 toast（D 回饋）
+   ============================================================ */
+.s2c-stage.is-showcase .warrant.just-unlocked { position: relative; }
+.warrant.just-unlocked .w-unseal {
+  position: absolute; inset: 0; z-index: 40; display: grid; place-items: center;
+  background: linear-gradient(155deg, #281a10, #18100a); overflow: hidden;
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.2,1,.3,1);
+}
+.warrant.just-unlocked .w-unseal-seal {
+  position: relative; width: 56px; height: 56px; display: grid; place-items: center;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+.warrant.just-unlocked .w-unseal-seal .s2c-lock-seal-svg { width: 100%; height: 100%; }
+.warrant.just-unlocked .w-unseal-seal .s2c-lock-seal-svg .svg-seal-edge { fill: rgba(150,42,30,0.92) !important; }
+.warrant.just-unlocked .w-unseal-text {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%) rotate(-5deg);
+  color: #f3d9b0; font-family: var(--font-chapter,serif); font-size: 12px; letter-spacing: 0.04em;
+}
+.warrant.just-unlocked .w-unseal-crack {
+  position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; transform: translateX(-50%) scaleY(0);
+  background: linear-gradient(rgba(247,236,219,0), rgba(247,236,219,0.85), rgba(247,236,219,0));
+}
+.warrant.just-unlocked.is-unsealing .w-unseal-crack { animation: unseal-crack 0.45s ease forwards; }
+.warrant.just-unlocked.is-unsealing .w-unseal-seal { transform: scale(1.3); opacity: 0; transition-delay: 0.3s; }
+.warrant.just-unlocked.is-unsealing .w-unseal { opacity: 0; transform: scale(1.03); transition-delay: 0.45s; pointer-events: none; }
+@keyframes unseal-crack { 0%{transform:translateX(-50%) scaleY(0);opacity:0} 30%{opacity:1} 100%{transform:translateX(-50%) scaleY(1);opacity:0} }
+
+.unseal-toast {
+  position: absolute; left: 50%; top: calc(env(safe-area-inset-top,0px) + 20px); transform: translateX(-50%) translateY(-8px);
+  z-index: 80; background: linear-gradient(168deg, rgba(40,26,16,0.96), rgba(26,16,9,0.96));
+  border: 1px solid rgba(202,164,92,0.42); border-radius: 6px; padding: 10px 24px; text-align: center;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.55); opacity: 0; animation: unseal-toast-in 0.4s ease forwards; pointer-events: none;
+}
+.unseal-toast em { display: block; font-family: var(--font-chapter,serif); font-style: normal; font-size: 11px; letter-spacing: 0.3em; text-indent: 0.3em; color: rgba(202,164,92,0.82); }
+.unseal-toast span { display: block; margin-top: 4px; font-family: var(--font-chapter,serif); font-size: 18px; letter-spacing: 0.16em; text-indent: 0.16em; color: #f3e7cd; }
+.unseal-toast.is-out { animation: unseal-toast-out 0.5s ease forwards; }
+@keyframes unseal-toast-in { to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@keyframes unseal-toast-out { to { opacity: 0; transform: translateX(-50%) translateY(-8px); } }

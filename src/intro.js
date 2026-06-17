@@ -430,6 +430,14 @@
   function markRouteDone(r) {
     try { const d = loadRoutesDone(); if (r && d.indexOf(r) === -1) { d.push(r); localStorage.setItem(ROUTES_DONE_KEY, JSON.stringify(d)); } } catch (e) {}
   }
+  // 拆封：記錄玩家已「親見解封」的路線，用以偵測新解鎖
+  const SEEN_UNLOCKED_KEY = 'tansuo_seen_unlocked_v1';
+  function loadSeenUnlocked() {
+    try { return JSON.parse(localStorage.getItem(SEEN_UNLOCKED_KEY)) || ['lihongzhang']; } catch (e) { return ['lihongzhang']; }
+  }
+  function saveSeenUnlocked(arr) {
+    try { localStorage.setItem(SEEN_UNLOCKED_KEY, JSON.stringify(arr)); } catch (e) {}
+  }
   const ROUTE_UNLOCK = {
     lihongzhang: () => true,
     yixin:       () => loadRoutesDone().length >= 1,
@@ -502,10 +510,14 @@
     s2Stage.classList.add('is-showcase');
     s2Stage.insertAdjacentHTML('beforeend', sideRailSvg());
     if (s2Dots) s2Dots.innerHTML = '';
+    const seenUnlocked = loadSeenUnlocked();
+    const newlyUnlocked = [];
     CAROUSEL_DATA.forEach((c, idx) => {
       const unlocked = routeUnlocked(c.key);
+      const isNew = unlocked && seenUnlocked.indexOf(c.key) === -1;
+      if (isNew) newlyUnlocked.push(c.key);
       const slide = document.createElement('article');
-      slide.className = 's2c-slide warrant' + (idx === s2CurIdx ? ' is-active' : '') + (c.isFree ? ' is-free' : '') + (unlocked ? '' : ' is-locked');
+      slide.className = 's2c-slide warrant' + (idx === s2CurIdx ? ' is-active' : '') + (c.isFree ? ' is-free' : '') + (unlocked ? '' : ' is-locked') + (isNew ? ' just-unlocked' : '');
       slide.dataset.routeKey = c.key;
       slide.dataset.idx = String(idx);
       slide.tabIndex = 0;
@@ -516,6 +528,11 @@
       const recBadge = c.recommended ? `<span class="w-rec">首 卷 路 線</span>` : '';
       const tagsHtml = c.tags.map(t => `<span class="w-tag">${t}</span>`).join('');
       const compactName = c.compactName || c.name.replace(/\s+/g, '');
+      // 方案2 半封：鎖定時姓名作「？」，保留路線原型作鈎子
+      const arch = (c.tags && c.tags[0]) || '';
+      const lockHint = ROUTE_UNLOCK_HINT[c.key] || '尚 未 解 鎖';
+      const dispName = unlocked ? c.name : (arch || '？');
+      const dispCompact = unlocked ? compactName : (arch || '？');
 
       slide.innerHTML = `
         ${dossierPaperSvg('w-paper-svg')}
@@ -523,8 +540,8 @@
         <div class="w-num"><img class="w-num-img" src="assets/seals/seal-generic.webp" alt="" aria-hidden="true"><span class="w-num-ch">${c.num}</span></div>
         ${recBadge}
         <div class="w-kicker">${c.routeLine || ''}</div>
-        <div class="w-portrait">${portraitFrameSvg()}<img class="s2c-portrait" src="${c.portrait}" alt="" draggable="false"><span class="w-portrait-name" aria-hidden="true">${c.name}</span></div>
-        <h3 class="w-name"><span class="w-name-full">${c.name}</span><span class="w-name-compact">${compactName}</span></h3>
+        <div class="w-portrait">${portraitFrameSvg()}<img class="s2c-portrait" src="${c.portrait}" alt="" draggable="false"><span class="w-portrait-name" aria-hidden="true">${dispName}</span></div>
+        <h3 class="w-name"><span class="w-name-full">${dispName}</span><span class="w-name-compact">${dispCompact}</span></h3>
         <p class="w-en">${c.en || ''}</p>
         <p class="w-bio">${c.bio}</p>
         <div class="w-tags">${tagsHtml}</div>
@@ -535,12 +552,39 @@
               <span class="s2c-cta-label">選擇此人物</span>
               <span class="s2c-cta-arrow">→</span>
             </button>`
-          : `<div class="s2c-locked-cta"><span class="s2c-lock-seal">${sealSvg()}<span class="s2c-lock-seal-text">封存</span></span><span class="s2c-lock-hint">${ROUTE_UNLOCK_HINT[c.key] || '尚 未 解 鎖'}</span></div>`}
+          : `<div class="s2c-locked-cta"><span class="s2c-lock-seal">${sealSvg()}<span class="s2c-lock-seal-text">封存</span></span><span class="s2c-lock-meta"><span class="s2c-lock-arch">${arch}</span><span class="s2c-lock-hint">${lockHint}</span></span></div>`}
         <span class="w-liezhuan" aria-hidden="true">列傳</span>
         <div class="w-ships" aria-hidden="true"></div>
+        ${isNew ? `<div class="w-unseal" aria-hidden="true"><span class="w-unseal-seal">${sealSvg()}<span class="w-unseal-text">封存</span></span><span class="w-unseal-crack"></span></div>` : ''}
       `;
       s2Stage.appendChild(slide);
     });
+    // 拆封：偵測到新解鎖人物 → 封條裂開揭曉 + 選角 toast，並記為已見
+    if (newlyUnlocked.length) {
+      newlyUnlocked.forEach((key, i) => {
+        const card = s2Stage.querySelector('.warrant.just-unlocked[data-route-key="' + key + '"]');
+        const data = CAROUSEL_DATA.find((c) => c.key === key);
+        setTimeout(() => {
+          if (card) card.classList.add('is-unsealing');
+          showUnsealToast(data ? data.name : '新 人 物');
+        }, 600 + i * 1400);
+      });
+      // 全部已解鎖路線記為已見（避免下次重播）
+      const allUnlocked = CAROUSEL_DATA.filter((c) => routeUnlocked(c.key)).map((c) => c.key);
+      saveSeenUnlocked(Array.from(new Set(loadSeenUnlocked().concat(allUnlocked))));
+    }
+  }
+
+  // 拆封 toast（選角 #screen2，避免與地圖 showUnlockToast 衝突）
+  function showUnsealToast(name) {
+    const s2 = document.getElementById('screen2');
+    if (!s2) return;
+    const t = document.createElement('div');
+    t.className = 'unseal-toast';
+    t.innerHTML = '<em>列 傳 拆 封</em><span>' + name + '</span>';
+    s2.appendChild(t);
+    setTimeout(() => { t.classList.add('is-out'); }, 2600);
+    setTimeout(() => { try { t.remove(); } catch (e) {} }, 3200);
   }
 
   function s2Goto(nextIdx) {
