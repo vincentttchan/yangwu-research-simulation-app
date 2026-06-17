@@ -78,6 +78,7 @@
   function openManagedModal(id, options = {}) {
     const el = document.getElementById(id);
     if (!el) return null;
+    try { hideHotspotObservation(); } catch (e) {}
     if (options.exclusive !== false) {
       closeManagedModals({
         except: id,
@@ -528,7 +529,7 @@
         <p class="w-bio">${c.bio}</p>
         <div class="w-tags">${tagsHtml}</div>
         <div class="w-foot"><span class="w-stars" aria-label="難度 ${c.difficulty}">${starsHtml}</span><span class="w-meta">${c.meta || ''}</span></div>
-        <div class="w-sig" aria-hidden="true"><span class="w-sig-text">委任　${c.name}　為書記隨員，啟程入局。</span><span class="w-seal">委任<br>之印</span></div>
+        <div class="w-sig" aria-hidden="true"><span class="w-sig-text">委任　${c.name}　為書記隨員，啟程入局。</span><span class="w-seal"></span></div>
         ${unlocked
           ? `<button class="s2c-cta" type="button" data-route="${c.key}">
               <span class="s2c-cta-label">選擇此人物</span>
@@ -637,7 +638,15 @@
     // 告身：標記整張卡 + 牌組（蓋印、其餘變灰）
     s2Stage?.classList.add('has-choice');
     s2Stage?.querySelectorAll('.s2c-slide').forEach((sl) => {
-      sl.classList.toggle('is-chosen', sl.dataset.routeKey === routeKey);
+      const isChosen = sl.dataset.routeKey === routeKey;
+      sl.classList.toggle('is-chosen', isChosen);
+      sl.classList.remove('choice-pulse');
+      if (isChosen) {
+        // Re-trigger the short commissioning pulse when the same route is selected again.
+        void sl.offsetWidth;
+        sl.classList.add('choice-pulse');
+        window.setTimeout(() => sl.classList.remove('choice-pulse'), 900);
+      }
     });
     s2Stage?.querySelectorAll('.s2c-cta').forEach((b) => {
       const isThis = b.dataset.route === routeKey;
@@ -645,10 +654,10 @@
       b.disabled = false;
       const label = b.querySelector('.s2c-cta-label');
       if (label) label.textContent = isThis ? '啟程入局' : '選擇此人物';
-      // 選中時清空箭嘴文字，確保任何字型都不會顯示 →；未選中則還原
+      // 選定後保留箭嘴，讓「啟程入局」仍然明確是一個可再點擊的行動。
       const arrow = b.querySelector('.s2c-cta-arrow');
       if (arrow) {
-        arrow.textContent = isThis ? '' : '→';
+        arrow.textContent = '→';
         arrow.style.removeProperty('display');
       }
     });
@@ -1123,11 +1132,13 @@
 
   // ---------- 城市 hover 展品標籤卡 ----------
   let hoverCardHideTimer = null;
+  let hoverCardAutoHideTimer = null;
   function showCityHoverCard(key, group, st) {
     const card = document.getElementById('cityHoverCard');
     const c = CITIES[key];
     if (!card || !c) return;
     if (hoverCardHideTimer) { clearTimeout(hoverCardHideTimer); hoverCardHideTimer = null; }
+    if (hoverCardAutoHideTimer) { clearTimeout(hoverCardAutoHideTimer); hoverCardAutoHideTimer = null; }
     const nameEl = document.getElementById('chcName');
     const descEl = document.getElementById('chcDesc');
     const statusEl = document.getElementById('chcStatus');
@@ -1144,10 +1155,12 @@
     card.style.top = r.top + 'px';
     card.setAttribute('aria-hidden', 'false');
     card.classList.add('is-on');
+    hoverCardAutoHideTimer = setTimeout(hideCityHoverCard, 2400);
   }
   function hideCityHoverCard() {
     const card = document.getElementById('cityHoverCard');
     if (!card) return;
+    if (hoverCardAutoHideTimer) { clearTimeout(hoverCardAutoHideTimer); hoverCardAutoHideTimer = null; }
     hoverCardHideTimer = setTimeout(() => {
       card.classList.remove('is-on');
       card.setAttribute('aria-hidden', 'true');
@@ -1776,7 +1789,7 @@
       tagline: '「天朝中樞 · 制度與守舊之爭」',
       actionEvents: ['e_bj_wall', 'e_bj_envoy', 'e_bj_woren'],
       hotspots: [
-        { id: 'bj-wall',  type: 'clue', unlocks: 'e_bj_wall',  appearFromYear: 1861, x: '49%', y: '12%',
+        { id: 'bj-wall',  type: 'clue', unlocks: 'e_bj_wall',  appearFromYear: 1861, x: '49%', y: '24%',
           name: '紫禁城牆', axis: 'system',
           desc: '灰磚高牆巍然，是「天朝上國」千年自尊的象徵。牆內仍以舊禮視天下，牆外的世界卻已換了規則——【天朝舊夢】。' },
         { id: 'bj-envoy', type: 'clue', unlocks: 'e_bj_envoy', appearFromYear: 1861, x: '54%', y: '62%',
@@ -2861,7 +2874,17 @@
     return (scene?.hotspots || []).filter((hs) => (hs.appearFromYear || 0) <= gameState.currentYear);
   }
 
+  let hotspotObservationTimer = null;
+
+  function clearHotspotObservationTimer() {
+    if (hotspotObservationTimer) {
+      clearTimeout(hotspotObservationTimer);
+      hotspotObservationTimer = null;
+    }
+  }
+
   function hideHotspotObservation() {
+    clearHotspotObservationTimer();
     const obs = document.getElementById('hotspotObservation');
     if (obs) {
       obs.setAttribute('hidden', '');
@@ -2875,6 +2898,11 @@
     document.querySelectorAll('#cityHotspots .hotspot.is-observation-open').forEach((node) => {
       node.classList.remove('is-observation-open');
     });
+  }
+
+  function scheduleHotspotObservationHide(ms = 2200) {
+    clearHotspotObservationTimer();
+    hotspotObservationTimer = setTimeout(hideHotspotObservation, ms);
   }
 
   function shortObservationCopy(text) {
@@ -2901,6 +2929,7 @@
   }
 
   function showHotspotObservation(hs, spot) {
+    clearHotspotObservationTimer();
     const obs = document.getElementById('hotspotObservation');
     const text = document.getElementById('hoText');
     const canvas = document.getElementById('cityCanvas');
@@ -2925,6 +2954,9 @@
     spot.classList.add('is-observation-open');
     obs.removeAttribute('hidden');
     obs.classList.add('is-visible');
+    if (typeof window.matchMedia === 'function' && window.matchMedia('(hover: none)').matches) {
+      scheduleHotspotObservationHide(2600);
+    }
   }
 
   function renderCityHotspots(scene) {
@@ -2946,24 +2978,32 @@
         btn.dataset.type = hs.type || 'observation';
         btn.setAttribute('data-observation', hs.desc || hs.name || '');
         btn.innerHTML = '<span class="hotspot-label">' + hs.name + '</span>';
-        btn.addEventListener('pointerenter', () => showHotspotObservation(hs, btn));
+        btn.addEventListener('pointerenter', (e) => {
+          if (e.pointerType === 'touch') return;
+          showHotspotObservation(hs, btn);
+        });
         btn.addEventListener('focus', () => showHotspotObservation(hs, btn));
-        btn.addEventListener('pointerleave', () => {
-          if (!btn.classList.contains('is-observation-open')) hideHotspotObservation();
+        btn.addEventListener('pointerleave', (e) => {
+          if (e.pointerType === 'touch') return;
+          hideHotspotObservation();
         });
         btn.addEventListener('blur', hideHotspotObservation);
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const touchLike = typeof window.matchMedia === 'function' && window.matchMedia('(hover: none)').matches;
-          if (touchLike && !btn.classList.contains('is-observation-open')) {
-            showHotspotObservation(hs, btn);
-            return;
-          }
           hideHotspotObservation();
           openHotspot(hs, btn);
         });
         hotspotsEl.appendChild(btn);
       });
+      const canvas = document.getElementById('cityCanvas');
+      if (canvas && !canvas.dataset.hotspotDismissBound) {
+        canvas.dataset.hotspotDismissBound = 'true';
+        canvas.addEventListener('pointerdown', (e) => {
+          if (e.target && e.target.closest && e.target.closest('.hotspot')) return;
+          hideHotspotObservation();
+        });
+      }
     }
     return renderedHotspots;
   }
@@ -3112,6 +3152,7 @@
       };
       cityBg.src = imageSrc;
     }
+    try { resetResponsiveCityPan(); } catch (e) {}
 
     // 注入會隨年份/事件變動的城市內容
     setMissionSheetExpanded(false);
@@ -4399,8 +4440,24 @@
     showEvidenceFlash(hs);
     finishEvidenceReveal(hs);
   }
+  let uiFeedbackQueue = Promise.resolve();
+
+  function enqueueUiFeedback(run, duration = 1800) {
+    uiFeedbackQueue = uiFeedbackQueue
+      .then(() => new Promise((resolve) => {
+        try { run(); } catch (e) {}
+        setTimeout(resolve, duration);
+      }))
+      .catch(() => Promise.resolve());
+    return uiFeedbackQueue;
+  }
+
   // 證據收錄輕量提示（朱砂「證」印，自動消失）
-  function showEvidenceFlash(hs) {
+  function showEvidenceFlash(hs, options = {}) {
+    if (!options.immediate) {
+      enqueueUiFeedback(() => showEvidenceFlash(hs, { immediate: true }), 1900);
+      return;
+    }
     const name = (hs && hs.name) ? hs.name : '線索';
     const t = document.createElement('div');
     t.className = 'evidence-flash';
@@ -4497,8 +4554,12 @@
   }
 
   // 軸獲得視覺反饋（飄字 toast + 軸條閃光）
-  function showAxisGain(axis) {
+  function showAxisGain(axis, options = {}) {
     if (!axis || !AXIS_NAMES[axis]) return;
+    if (!options.immediate) {
+      enqueueUiFeedback(() => showAxisGain(axis, { immediate: true }), 1750);
+      return;
+    }
     const s3 = document.getElementById('screen3');
     if (!s3) return;
     // toast
@@ -6602,7 +6663,7 @@
     const btnTab = document.getElementById('eventsTab');
     if (!aside || !btnCollapse || !btnTab) return;
     const KEY = 'yangwu_events_collapsed';
-    const mobileQuery = window.matchMedia ? window.matchMedia('(max-width: 700px)') : null;
+    const mobileQuery = window.matchMedia ? window.matchMedia('(max-width: 1180px), (hover: none) and (pointer: coarse)') : null;
     function apply(collapsed, persist) {
       aside.classList.toggle('is-collapsed', collapsed);
       btnCollapse.setAttribute('aria-expanded', String(!collapsed));
@@ -6633,11 +6694,80 @@
     });
   })();
 
+  let resetResponsiveCityPan = function () {};
+
+  function bindTouchPanSurface(config) {
+    const surface = config.surface;
+    const target = config.target || surface;
+    const query = config.query;
+    if (!surface || !target || !query) return function () {};
+
+    let dragging = false;
+    let startX = 0;
+    let startY = 0;
+    let originX = 0;
+    let originY = 0;
+    let panX = config.initialX || 0;
+    let panY = config.initialY || 0;
+
+    const shouldSkip = (node) => {
+      if (!node || !node.closest) return false;
+      return !!node.closest(config.skipSelector || 'button, a, input, textarea, select, .hotspot, .facility, .seal-panel, .event-modal, .interlude-modal, .coachmark');
+    };
+    const clamp = (value, limit) => Math.max(-limit, Math.min(limit, value));
+    const limits = () => ({
+      x: Math.max(24, window.innerWidth * (config.maxXRatio || 0.22)),
+      y: Math.max(18, window.innerHeight * (config.maxYRatio || 0.12))
+    });
+    const applyPan = () => {
+      target.style.setProperty(config.xVar || '--pan-x', panX.toFixed(1) + 'px');
+      target.style.setProperty(config.yVar || '--pan-y', panY.toFixed(1) + 'px');
+    };
+    const reset = () => {
+      panX = config.initialX || 0;
+      panY = config.initialY || 0;
+      applyPan();
+    };
+    const enabled = () => query.matches;
+
+    surface.addEventListener('pointerdown', (e) => {
+      if (!enabled() || e.button !== 0 || shouldSkip(e.target)) return;
+      dragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      originX = panX;
+      originY = panY;
+      surface.classList.add('is-touch-panning');
+      try { surface.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    surface.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const max = limits();
+      panX = clamp(originX + e.clientX - startX, max.x);
+      panY = clamp(originY + e.clientY - startY, max.y);
+      applyPan();
+    });
+    const end = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      surface.classList.remove('is-touch-panning');
+      try { surface.releasePointerCapture(e.pointerId); } catch (err) {}
+    };
+    surface.addEventListener('pointerup', end);
+    surface.addEventListener('pointercancel', end);
+
+    const onQueryChange = () => reset();
+    if (query.addEventListener) query.addEventListener('change', onQueryChange);
+    else if (query.addListener) query.addListener(onQueryChange);
+    reset();
+    return reset;
+  }
+
   (function bindMobileStatsDrawer() {
     const panel = document.getElementById('mapStats');
     const tab = document.getElementById('mapStatsTab');
     if (!panel || !tab) return;
-    const mobileQuery = window.matchMedia ? window.matchMedia('(max-width: 700px)') : null;
+    const mobileQuery = window.matchMedia ? window.matchMedia('(max-width: 1180px), (hover: none) and (pointer: coarse)') : null;
     const isMobile = () => !!(mobileQuery && mobileQuery.matches);
     function apply(open) {
       panel.classList.toggle('is-mobile-open', open);
@@ -6666,6 +6796,53 @@
     });
   })();
 
+  (function bindResponsiveMapFraming() {
+    const compactQuery = window.matchMedia ? window.matchMedia('(max-width: 700px)') : null;
+    const overlay = document.querySelector('.map-overlay');
+    const bg = document.querySelector('.map-bg-img');
+    const mapStage = document.querySelector('.map-stage');
+    const mapPan = document.getElementById('mapPan');
+    const cityCanvas = document.getElementById('cityCanvas');
+    if (!compactQuery || !overlay) return;
+    function apply(event) {
+      const compact = !!(event && event.matches !== undefined ? event.matches : compactQuery.matches);
+      overlay.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+      if (bg) {
+        bg.style.objectFit = '';
+        bg.style.objectPosition = '';
+      }
+      document.documentElement.classList.toggle('is-compact-map', compact);
+    }
+    apply(compactQuery);
+    if (compactQuery.addEventListener) compactQuery.addEventListener('change', apply);
+    else if (compactQuery.addListener) compactQuery.addListener(apply);
+
+    bindTouchPanSurface({
+      surface: mapStage,
+      target: mapPan,
+      query: compactQuery,
+      xVar: '--map-pan-x',
+      yVar: '--map-pan-y',
+      initialX: 0,
+      initialY: 0,
+      maxXRatio: 0.28,
+      maxYRatio: 0.10,
+      skipSelector: 'button, a, input, textarea, select, .city-seal, .map-topbar, .map-seal-nav, .map-events, .map-axes, .map-stats, .map-stats-tab, .seal-panel, .coachmark'
+    });
+    resetResponsiveCityPan = bindTouchPanSurface({
+      surface: cityCanvas,
+      target: cityCanvas,
+      query: compactQuery,
+      xVar: '--city-pan-x',
+      yVar: '--city-pan-y',
+      initialX: 0,
+      initialY: 0,
+      maxXRatio: 0.20,
+      maxYRatio: 0.16,
+      skipSelector: 'button, a, input, textarea, select, .hotspot, .facility, .city-topbar, .city-mission-sheet, .event-modal, .interlude-modal, .coachmark'
+    });
+  })();
+
   if (btnBgmToggle) {
     // 開啟印面板時同步當前狀態
     document.querySelector('.seal-btn[data-panel="yin"]')?.addEventListener('click', () => {
@@ -6690,15 +6867,19 @@
     delete hotspotModal.dataset.pendingAxis;
     delete hotspotModal.dataset.pendingUnlock;
     delete hotspotModal.dataset.pendingEvidence;
-    if (pending) setTimeout(() => showAxisGain(pending), 180);
-    if (evidence) setTimeout(() => showEvidenceToast(evidence), 240);
+    if (pending) showAxisGain(pending);
+    if (evidence) showEvidenceToast(evidence);
     if (unlocked) {
       const ev = EVENTS[unlocked];
-      if (ev) setTimeout(() => showUnlockToast(ev.title), 320);
+      if (ev) showUnlockToast(ev.title);
     }
   }
 
-  function showEvidenceToast(title) {
+  function showEvidenceToast(title, options = {}) {
+    if (!options.immediate) {
+      enqueueUiFeedback(() => showEvidenceToast(title, { immediate: true }), 2600);
+      return;
+    }
     const s3 = document.getElementById('screen3');
     if (!s3) return;
     const toast = document.createElement('div');
@@ -6708,7 +6889,11 @@
     setTimeout(() => { try { toast.remove(); } catch (e) {} }, 3000);
   }
 
-  function showUnlockToast(title) {
+  function showUnlockToast(title, options = {}) {
+    if (!options.immediate) {
+      enqueueUiFeedback(() => showUnlockToast(title, { immediate: true }), 2800);
+      return;
+    }
     const s3 = document.getElementById('screen3');
     if (!s3) return;
     const toast = document.createElement('div');

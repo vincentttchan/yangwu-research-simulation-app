@@ -12620,3 +12620,728 @@ body:has(.city-scene:not([hidden])) .dev-stamp {
   position: absolute !important; left: 8.5% !important; top: 6.5% !important;
   width: 83% !important; height: 77.5% !important; object-fit: cover !important; object-position: center top !important; z-index: 1;
 }
+
+/* ============================================================
+   Task 39 · Tablet responsive stabilisation
+   Keep the dossier layout visible on iPad without forcing vertical scroll.
+   ============================================================ */
+@media (min-width: 761px) and (max-width: 1080px) {
+  .screen--selection .s2-carousel {
+    width: min(94vw, 840px) !important;
+    max-height: calc(100vh - 34px) !important;
+    overflow: hidden !important;
+  }
+
+  .s2c-stage.is-showcase {
+    gap: 12px !important;
+    padding: 12px 10px 10px !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active {
+    display: grid !important;
+    grid-template-columns: minmax(220px, 0.42fr) minmax(320px, 0.58fr) !important;
+    grid-template-rows: auto auto 1fr auto !important;
+    column-gap: clamp(24px, 4vw, 42px) !important;
+    align-items: center !important;
+    padding: clamp(22px, 3.2vh, 28px) clamp(28px, 4vw, 42px) !important;
+    max-height: min(58vh, 440px) !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-portrait {
+    grid-row: 1 / -1 !important;
+    width: min(100%, 260px) !important;
+    height: clamp(292px, 45vh, 360px) !important;
+    align-self: center !important;
+    margin: 0 auto !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-name {
+    font-size: clamp(40px, 5vw, 54px) !important;
+    margin-top: 0 !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-bio {
+    font-size: clamp(14px, 1.8vw, 16px) !important;
+    line-height: 1.75 !important;
+    margin-top: 8px !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .s2c-cta {
+    min-height: 52px !important;
+    margin-top: 10px !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant:not(.is-active) {
+    aspect-ratio: auto !important;
+    height: clamp(142px, 20vh, 166px) !important;
+    min-height: 0 !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant:not(.is-active) .w-portrait img.s2c-portrait {
+    object-position: center 18% !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant:not(.is-active) .w-name {
+    height: 34px !important;
+    padding: 6px 6px !important;
+    font-size: 15px !important;
+  }
+}
+
+/* Task 43 · Short landscape guard
+   Prevent the tablet dossier layout from clipping the portrait/title on phones
+   or iPads used in shallow landscape viewports. */
+@media (max-width: 1080px) and (max-height: 520px) and (orientation: landscape) {
+  .screen--selection .s2-carousel {
+    width: min(96vw, 820px) !important;
+    max-height: calc(100dvh - 18px) !important;
+    overflow: hidden !important;
+    padding: 0 0 8px !important;
+  }
+
+  .s2c-stage.is-showcase {
+    gap: 8px !important;
+    padding: 8px 10px 6px !important;
+    max-width: 820px !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active {
+    grid-template-columns: minmax(150px, 0.32fr) minmax(0, 0.68fr) !important;
+    grid-template-rows: auto auto 1fr auto !important;
+    column-gap: clamp(18px, 3.2vw, 28px) !important;
+    align-items: center !important;
+    max-height: min(64dvh, 250px) !important;
+    padding: 14px clamp(22px, 4vw, 34px) !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-portrait {
+    width: min(100%, 168px) !important;
+    height: clamp(156px, 47dvh, 188px) !important;
+    margin: 0 auto !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-name {
+    font-size: clamp(30px, 4.7vw, 40px) !important;
+    line-height: 1.05 !important;
+    margin-top: 0 !important;
+    padding-bottom: 7px !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-kicker {
+    margin-top: 6px !important;
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-bio {
+    font-size: 12.5px !important;
+    line-height: 1.55 !important;
+    margin-top: 6px !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant.is-active .s2c-cta {
+    width: min(100%, 260px) !important;
+    min-height: 44px !important;
+    margin-top: 6px !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant:not(.is-active) {
+    height: clamp(104px, 29dvh, 120px) !important;
+  }
+
+  .s2c-stage.is-showcase .s2c-slide.warrant:not(.is-active) .w-name {
+    height: 30px !important;
+    padding: 5px 6px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* ============================================================
+   Task 44 · Map / City interaction stabilisation
+   Keep map/city clues tappable and sequence overlays for iPad/mobile.
+   ============================================================ */
+.map-topbar,
+.city-topbar {
+  pointer-events: none;
+}
+
+.city-topbar {
+  z-index: 12;
+}
+
+.map-topbar :is(button, a, .side-chip),
+.city-topbar .city-back {
+  pointer-events: auto;
+}
+
+.city-hotspots {
+  z-index: 8;
+}
+
+.hotspot-observation {
+  z-index: 10;
+}
+
+@media (max-width: 1180px), (hover: none) and (pointer: coarse) {
+  #mapStatsTab.map-stats-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    right: 14px;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    min-width: 142px;
+    min-height: 48px;
+    padding: 8px 12px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .screen--map[data-phase="6"] #mapStatsTab.map-stats-tab {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .screen--map[data-phase="6"] .map-stats {
+    position: fixed;
+    right: 14px;
+    top: auto;
+    bottom: calc(max(14px, env(safe-area-inset-bottom)) + 62px);
+    z-index: 9;
+    width: min(300px, calc(100vw - 28px));
+    max-height: min(46dvh, 360px);
+    padding: 13px 14px;
+    overflow-y: auto;
+    background: rgba(20, 16, 12, 0.7);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity 0.22s var(--ease), transform 0.22s var(--ease);
+  }
+
+  .screen--map[data-phase="6"] .map-stats.is-mobile-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 700px) {
+  .map-stage {
+    touch-action: none;
+  }
+
+  .screen--map[data-phase="6"] .map-pan {
+    left: 50%;
+    top: 46%;
+    width: max(190vw, 102dvh);
+    height: max(119vw, 64dvh);
+    right: auto;
+    bottom: auto;
+    transform:
+      translate3d(calc(-50% + var(--map-pan-x, 0px)), calc(-50% + var(--map-pan-y, 0px)), 0)
+      scale(1);
+    animation: none !important;
+  }
+
+  .screen--map[data-phase="6"] .map-bg-img {
+    object-fit: cover !important;
+    object-position: center center !important;
+    transform: none !important;
+  }
+
+  .screen--map[data-phase="6"] .map-overlay {
+    width: 100%;
+    height: 100%;
+  }
+
+  .screen--map[data-phase="6"] .map-vignette-right {
+    opacity: 0.36;
+  }
+
+  .map-topbar {
+    max-height: min(22dvh, 142px);
+    overflow: hidden;
+  }
+
+  .map-topbar .topbar-side {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    padding-bottom: 2px;
+    pointer-events: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .map-topbar .side-lead {
+    flex: 0 0 auto;
+    width: auto;
+    font-size: 8px;
+  }
+
+  .map-topbar .side-chip {
+    flex: 0 0 auto;
+    min-height: 34px;
+    padding: 5px 8px;
+    font-size: 8.8px;
+  }
+
+  .city-topbar {
+    padding-bottom: 18px;
+  }
+
+  .city-canvas {
+    touch-action: none;
+    --city-pan-x: 0px;
+    --city-pan-y: 0px;
+  }
+
+  .city-bg,
+  .city-hotspots,
+  .city-facilities {
+    transform:
+      translate3d(var(--city-pan-x, 0px), var(--city-pan-y, 0px), 0)
+      scale(1.08);
+    transform-origin: center center;
+  }
+
+  .city-canvas .hotspot-observation.is-visible,
+  .city-canvas .hotspot-observation[style*="opacity: 1"],
+  .city-canvas .hotspot-observation.is-show {
+    transform: translateX(-50%) !important;
+  }
+}
+
+/* ============================================================
+   Task 45 · Device-first responsive polish
+   iPhone is supported as a compact/dragging experience; iPad and
+   desktop remain the recommended full-reading layouts.
+   ============================================================ */
+@media (hover: none), (max-width: 1180px) {
+  .hotspot::before {
+    width: 17px;
+    height: 17px;
+    box-shadow: 0 0 0 5px rgba(166, 58, 42, 0.11), 0 6px 14px rgba(25, 18, 10, 0.22);
+  }
+
+  .hotspot::after {
+    width: 28px;
+    height: 28px;
+    opacity: 0.82;
+  }
+
+  .hotspot-label,
+  .hotspot:hover .hotspot-label {
+    opacity: 0;
+  }
+
+  .hotspot-observation {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1180px), (hover: none) and (pointer: coarse) {
+  .screen--map[data-phase="6"] .map-stats:not(.is-mobile-open) {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  .screen--map[data-phase="6"] #mapStatsTab.map-stats-tab {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .map-stats-tab {
+    border-color: rgba(214, 178, 108, 0.24);
+    background: rgba(20, 16, 12, 0.68);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
+  }
+
+  .map-stats-tab:hover {
+    border-color: rgba(214, 178, 108, 0.46);
+  }
+
+  .panel-card--juan .panel-title {
+    white-space: nowrap;
+    letter-spacing: clamp(0.12em, 1.2vw, 0.24em);
+  }
+}
+
+@media (min-width: 701px) and (max-width: 1180px) {
+  .map-topbar {
+    max-width: min(620px, calc(100vw - 210px));
+  }
+
+  .city-title {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+
+  .ct-zh {
+    letter-spacing: 0.22em;
+  }
+
+  .city-tagline {
+    margin-top: 4px;
+    letter-spacing: 0.22em;
+  }
+}
+
+@media (max-width: 640px) {
+  .cs-title {
+    font-size: clamp(1.42rem, 9vw, 2.08rem) !important;
+    line-height: 1.25 !important;
+    letter-spacing: 0.22em !important;
+  }
+
+  .cs-body,
+  .cs-cap-body {
+    font-size: clamp(0.82rem, 4.5vw, 0.96rem) !important;
+    line-height: 1.82 !important;
+    letter-spacing: 0.06em !important;
+  }
+
+  .cs-caption {
+    width: min(88vw, 360px) !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 92px) !important;
+    padding-left: 18px !important;
+  }
+
+  .cs-cap-title {
+    font-size: clamp(1.24rem, 7.2vw, 1.55rem) !important;
+    letter-spacing: 0.26em !important;
+  }
+
+  .cs-btn-next {
+    min-width: 130px;
+    justify-content: center;
+  }
+
+  .map-topbar {
+    max-height: min(18dvh, 128px);
+  }
+
+  .topbar-year {
+    line-height: 1.45;
+  }
+
+  .map-events {
+    max-height: 32dvh;
+  }
+
+  .city-topbar {
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) 14px 16px;
+    background: linear-gradient(to bottom, rgba(16, 12, 8, 0.86), rgba(16, 12, 8, 0.46) 68%, transparent);
+  }
+
+  .city-back {
+    min-height: 42px;
+  }
+
+  .city-title {
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    gap: 5px;
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  .ct-zh {
+    font-size: 15px;
+    letter-spacing: 0.12em;
+  }
+
+  .ct-en {
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+  }
+
+  .ct-year {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  .city-tagline {
+    grid-column: 1 / -1;
+    margin-top: 2px;
+    letter-spacing: 0.12em;
+    line-height: 1.5;
+  }
+
+  .facility {
+    padding: 4px 7px;
+  }
+
+  .fc-icon {
+    font-size: 21px;
+  }
+
+  .fc-name {
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+  }
+
+  .panel-card--juan .panel-title {
+    font-size: clamp(18px, 6vw, 22px);
+    letter-spacing: 0.08em;
+  }
+}
+
+/* ============================================================
+   Task 46 · Selection card fit + commissioning feedback
+   Keep the existing dossier layout, but make side portraits sit inside
+   their frames and make the first route selection visibly become an
+   "embark" state.
+   ============================================================ */
+@media (min-width: 701px) {
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant:not(.is-active) .w-portrait {
+    position: absolute !important;
+    left: 50% !important;
+    top: 15px !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: min(60%, 118px) !important;
+    height: calc(100% - 56px) !important;
+    min-height: 0 !important;
+    transform: translateX(-50%) !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(91, 64, 35, 0.34) !important;
+    border-radius: 2px !important;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 35%, rgba(236, 223, 190, 0.72), rgba(182, 158, 110, 0.26) 72%),
+      linear-gradient(180deg, rgba(241, 229, 198, 0.64), rgba(160, 132, 88, 0.22)) !important;
+    box-shadow:
+      inset 0 0 0 4px rgba(229, 209, 162, 0.34),
+      inset 0 -18px 24px rgba(94, 66, 35, 0.16) !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant:not(.is-active) .w-portrait img.s2c-portrait {
+    position: absolute !important;
+    left: 5px !important;
+    top: 5px !important;
+    width: calc(100% - 10px) !important;
+    height: calc(100% - 5px) !important;
+    margin: 0 !important;
+    object-fit: cover !important;
+    object-position: center 14% !important;
+    filter: sepia(0.24) contrast(1.08) brightness(1.01) grayscale(0.08) !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant[data-route-key="yixin"]:not(.is-active) .w-portrait img.s2c-portrait {
+    object-position: center 10% !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant[data-route-key="rongheng"]:not(.is-active) .w-portrait img.s2c-portrait {
+    object-position: center 16% !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant[data-route-key="free"]:not(.is-active) .w-portrait img.s2c-portrait {
+    object-position: center 12% !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant:not(.is-active) .w-name {
+    left: 18px !important;
+    right: 18px !important;
+    bottom: 12px !important;
+    height: 33px !important;
+    padding: 5px 6px 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    letter-spacing: 0.08em !important;
+  }
+}
+
+.s2c-stage.is-showcase .s2c-slide.warrant.is-active.is-chosen {
+  box-shadow:
+    0 22px 42px rgba(0,0,0,0.46),
+    7px 7px 0 -2px rgba(186,157,104,0.82),
+    13px 13px 0 -5px rgba(116,86,52,0.7),
+    inset 0 0 0 1px rgba(255,237,196,0.5),
+    inset 0 0 0 12px rgba(126,42,30,0.08),
+    inset 0 0 44px rgba(126,42,30,0.12) !important;
+}
+
+.s2c-stage.is-showcase .s2c-slide.warrant.is-active.is-chosen .w-sig {
+  display: flex !important;
+  opacity: 0.9 !important;
+}
+
+.s2c-stage.is-showcase .s2c-slide.warrant.is-active.choice-pulse .w-portrait,
+.s2c-stage.is-showcase .s2c-slide.warrant.is-active.choice-pulse .s2c-cta {
+  animation: dossier-commission-pulse 0.72s var(--ease) both;
+}
+
+@keyframes dossier-commission-pulse {
+  0% { filter: brightness(1); }
+  36% { filter: brightness(1.12) saturate(1.08); }
+  100% { filter: brightness(1); }
+}
+
+.s2c-stage.is-showcase .s2c-slide.warrant.is-active .s2c-cta.is-chosen {
+  background:
+    linear-gradient(180deg, rgba(255,232,176,0.28), transparent 48%),
+    linear-gradient(168deg, #aa3a2b, #711f15) !important;
+  border-color: rgba(246, 213, 139, 0.98) !important;
+  color: #f7e5bc !important;
+  box-shadow:
+    0 13px 22px rgba(84,28,16,0.4),
+    0 0 0 1px rgba(246, 213, 139, 0.22),
+    inset 0 0 0 2px rgba(93,25,18,0.62),
+    inset 0 0 0 4px rgba(246,213,139,0.25),
+    inset 0 1px 0 rgba(255,238,196,0.42) !important;
+}
+
+.s2c-stage.is-showcase .s2c-slide.warrant.is-active .s2c-cta.is-chosen .s2c-cta-arrow {
+  display: inline-block !important;
+  opacity: 1 !important;
+  margin-left: 0.5em;
+  transform: translateX(0);
+  transition: transform 0.22s var(--ease), opacity 0.22s var(--ease);
+}
+
+.s2c-stage.is-showcase .s2c-slide.warrant.is-active .s2c-cta.is-chosen:hover .s2c-cta-arrow {
+  transform: translateX(4px);
+}
+
+/* ============================================================
+   Task 47 · Selection final alignment pass
+   Fix side-card badges, locked route plaque, and iPad visual rhythm.
+   ============================================================ */
+.screen--selection .s2c-stage.is-showcase .s2c-slide.warrant:not(.is-active) .w-rec {
+  display: none !important;
+}
+
+.screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active.is-locked .s2c-locked-cta {
+  position: relative !important;
+  width: min(100%, 360px) !important;
+  min-height: 52px !important;
+  margin-top: 12px !important;
+  padding: 8px 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  overflow: hidden !important;
+  border: 1px dashed rgba(92, 66, 42, 0.38) !important;
+  border-radius: 3px !important;
+  background:
+    linear-gradient(180deg, rgba(95, 84, 66, 0.22), rgba(55, 48, 38, 0.18)),
+    rgba(188, 176, 150, 0.18) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(236, 216, 173, 0.12),
+    0 8px 16px rgba(54, 37, 20, 0.12) !important;
+}
+
+.screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active.is-locked .s2c-lock-seal {
+  position: relative !important;
+  inset: auto !important;
+  flex: 0 0 34px !important;
+  width: 34px !important;
+  height: 30px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  transform: rotate(-6deg) !important;
+  opacity: 0.78 !important;
+  background: none !important;
+  box-shadow: none !important;
+}
+
+.screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active.is-locked .s2c-lock-seal-svg {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active.is-locked .s2c-lock-seal-text {
+  position: relative !important;
+  z-index: 1 !important;
+  display: inline !important;
+  color: rgba(248, 221, 166, 0.86) !important;
+  font-family: var(--font-seal) !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.06em !important;
+}
+
+.screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active.is-locked .s2c-lock-hint {
+  position: static !important;
+  display: block !important;
+  transform: none !important;
+  min-width: 0 !important;
+  color: rgba(76, 58, 39, 0.78) !important;
+  background: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+  font-family: var(--font-chapter) !important;
+  font-size: clamp(12px, 1.55vw, 14px) !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0.12em !important;
+  text-align: center !important;
+  white-space: normal !important;
+}
+
+@media (min-width: 761px) and (max-width: 1080px) {
+  .screen--selection .s2-carousel {
+    max-height: calc(100dvh - 28px) !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active {
+    grid-template-columns: minmax(220px, 0.4fr) minmax(0, 0.6fr) !important;
+    grid-template-rows: auto auto auto auto !important;
+    align-content: center !important;
+    align-items: start !important;
+    row-gap: 0 !important;
+    column-gap: clamp(24px, 3.6vw, 38px) !important;
+    max-height: min(54dvh, 410px) !important;
+    padding: clamp(18px, 2.7vh, 24px) clamp(30px, 4vw, 44px) !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-portrait {
+    grid-row: 1 / 5 !important;
+    width: min(100%, 252px) !important;
+    height: clamp(286px, 41dvh, 332px) !important;
+    align-self: center !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-rec {
+    top: 14px !important;
+    right: 18px !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-name {
+    align-self: end !important;
+    margin: 0 0 8px !important;
+    padding-bottom: 8px !important;
+    line-height: 1.05 !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-kicker {
+    margin: 0 0 8px !important;
+    line-height: 1.35 !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active .w-bio {
+    margin: 8px 0 0 !important;
+    padding-top: 10px !important;
+    line-height: 1.62 !important;
+  }
+
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active .s2c-cta,
+  .screen--selection .s2c-stage.is-showcase .s2c-slide.warrant.is-active.is-locked .s2c-locked-cta {
+    grid-column: 2 !important;
+    grid-row: 4 !important;
+    align-self: start !important;
+    width: min(100%, 320px) !important;
+    min-height: 48px !important;
+    margin-top: 10px !important;
+  }
+}
