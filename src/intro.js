@@ -446,8 +446,8 @@
   };
   const ROUTE_UNLOCK_HINT = {
     yixin:    '完 成 一 局 後 解 鎖',
-    rongheng: '完 成 兩 條 路 線 後 解 鎖',
-    free:     '完 成 三 條 路 線 後 解 鎖'
+    rongheng: '完 成 二 局 後 解 鎖',
+    free:     '完 成 三 局 後 解 鎖'
   };
   function routeUnlocked(key) { try { return (ROUTE_UNLOCK[key] || (() => true))(); } catch (e) { return true; } }
   // 測試用：解鎖全部路線
@@ -531,8 +531,8 @@
       // 方案2 半封：鎖定時姓名作「？」，保留路線原型作鈎子
       const arch = (c.tags && c.tags[0]) || '';
       const lockHint = ROUTE_UNLOCK_HINT[c.key] || '尚 未 解 鎖';
-      const dispName = unlocked ? c.name : (arch || '？');
-      const dispCompact = unlocked ? compactName : (arch || '？');
+      const dispName = unlocked ? c.name : lockHint;
+      const dispCompact = unlocked ? compactName : lockHint;
 
       slide.innerHTML = `
         ${dossierPaperSvg('w-paper-svg')}
@@ -552,7 +552,7 @@
               <span class="s2c-cta-label">選擇此人物</span>
               <span class="s2c-cta-arrow">→</span>
             </button>`
-          : `<div class="s2c-locked-cta"><img class="s2c-lock-img" src="assets/seals/lock-bronze.webp" alt="封存" draggable="false"><span class="s2c-lock-meta"><span class="s2c-lock-arch">${arch}</span><span class="s2c-lock-hint">${lockHint}</span></span></div>`}
+          : `<div class="s2c-locked-cta"><img class="s2c-lock-img" src="assets/seals/lock-bronze.webp" alt="未解鎖" draggable="false"></div>`}
         <span class="w-liezhuan" aria-hidden="true">列傳</span>
         <div class="w-ships" aria-hidden="true"></div>
         ${isNew ? `<div class="w-unseal" aria-hidden="true"><img class="w-unseal-lock w-unseal-closed" src="assets/seals/lock-bronze.webp" alt=""><img class="w-unseal-lock w-unseal-open" src="assets/seals/lock-bronze-open.webp" alt=""></div>` : ''}

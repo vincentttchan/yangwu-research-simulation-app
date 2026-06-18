@@ -13476,3 +13476,15 @@ body:has(.city-scene:not([hidden])) .dev-stamp {
 @keyframes unseal-fade { to { opacity: 0; } }
 @keyframes unseal-pop { 0%{opacity:0;transform:translateY(0) rotate(0)} 18%{opacity:1;transform:translateY(0)} 48%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(66px) rotate(7deg)} }
 @keyframes unseal-bg { to { opacity: 0; transform: scale(1.03); } }
+
+/* 鎖定 caption 路線原型：單行（修「自由探索」換行） */
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-name {
+  white-space: nowrap !important; letter-spacing: 0.12em !important; text-indent: 0 !important;
+  font-size: clamp(12.5px, 1.05vw, 15px) !important;
+}
+
+/* 鎖定 caption ＝解鎖指引：羊皮紙上易讀（取代神秘金的低對比） */
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-name,
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-portrait-name {
+  color: rgba(96, 72, 44, 0.92) !important;
+}
