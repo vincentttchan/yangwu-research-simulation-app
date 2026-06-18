@@ -1,9 +1,9 @@
 # Yangwu Research Data Dictionary
 
-Version: `task-16-dataset-qa-v0.1`  
-App baseline: `lkkc-pilot-v1.0`  
-Content map baseline: `content-freeze-lite-v0.1`  
-Formal research data collection status: not ready
+Version: `task-16-dataset-qa-v0.1`
+App baseline: `lkkc-formal-ui-freeze-v1.0`
+Content map baseline: `content-freeze-formal-v1.0`
+Formal research data collection status: ready after production smoke test
 
 ## Research Question Alignment
 

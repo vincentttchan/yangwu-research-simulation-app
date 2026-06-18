@@ -1,15 +1,17 @@
-# Research ID Map / Content Freeze Lite
+# Research ID Map / Formal Content Freeze
 
-Version: `content-freeze-lite-v0.1`  
-App baseline: `lkkc-pilot-v1.0`  
-Logger queue: `yangwu_research_event_queue_v1`  
-Updated: 2026-06-10
+Version: `content-freeze-formal-v1.0`
+App baseline: `lkkc-formal-ui-freeze-v1.0`
+Logger queue: `yangwu_research_event_queue_v1`
+Updated: 2026-06-18
 
 ## Purpose
 
-This document defines the stable research-facing IDs used by the Self-Strengthening Movement simulation. It supports later logging, Supabase export, and research analysis without preventing continued game design work.
+This document defines the stable research-facing IDs used by the Self-Strengthening Movement simulation. It supports logging, Supabase export, and research analysis during the formal collection cycle.
 
-Content Freeze Lite freezes IDs only. It does not freeze wording, images, layout, or visual polish. Event prose, illustrations, modal design, mobile layout, interaction feel, and teaching language may continue to improve as long as the stable IDs below are not casually renamed.
+Formal Content Freeze freezes wording, images, layout, and visual polish for the approved collection build. After this freeze, event prose, illustrations, modal design, mobile layout, interaction feel, and teaching language should not change unless the app version and, where relevant, content map version are intentionally bumped and recorded.
+
+Current source of truth: use the header values above and `src/research/content-map.js` for the formal collection build. Later task notes in this file retain earlier pilot and dry-run version values as historical process records only.
 
 ## Current Coverage
 
@@ -22,13 +24,13 @@ The executable source of truth is `src/research/content-map.js`. This document i
 
 ## ID Policy
 
-| Area | Stable ID rule | Can still change |
+| Area | Stable ID rule | Post-freeze rule |
 |---|---|---|
-| Route | Keep route keys such as `lihongzhang`, `yixin`, `rongheng`, `free` | Character wording, portrait treatment, route introduction |
-| City | Keep city keys such as `beijing`, `shanghai`, `fuzhou` | City artwork, tagline, layout, tooltip copy |
-| Event | Keep event IDs such as `e_zongli_yamen` and `e_yellow_sea_battle` | Event prose, choice wording, result style |
-| Evidence task | Keep `city:hotspot` IDs such as `beijing:bj-wall` | Task instruction wording, reveal flow, visual design |
-| Research construct | Keep construct labels in `RESEARCH_CONSTRUCTS` | Interpretation notes and later coding refinements |
+| Route | Keep route keys such as `lihongzhang`, `yixin`, `rongheng`, `free` | Changes to character wording, portrait treatment, or route introduction require a recorded version decision. |
+| City | Keep city keys such as `beijing`, `shanghai`, `fuzhou` | Changes to city artwork, tagline, layout, or tooltip copy require a recorded version decision. |
+| Event | Keep event IDs such as `e_zongli_yamen` and `e_yellow_sea_battle` | Changes to event prose, choice wording, or result style require a recorded version decision. |
+| Evidence task | Keep `city:hotspot` IDs such as `beijing:bj-wall` | Changes to task instruction wording, reveal flow, or visual design require a recorded version decision. |
+| Research construct | Keep construct labels in `RESEARCH_CONSTRUCTS` | Coding refinements must be documented in the scoring workbook or analysis memo. |
 
 If an ID must be renamed, keep a migration note before collecting research data. During development this is acceptable; after research freeze it should be treated as a schema change.
 

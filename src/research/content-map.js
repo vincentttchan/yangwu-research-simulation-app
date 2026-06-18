@@ -18,11 +18,11 @@ export const RESEARCH_COMPLEXITY_DIMENSIONS = Object.freeze({
 });
 
 export const RESEARCH_ID_POLICY = Object.freeze({
-  version: 'content-freeze-lite-v0.1',
-  freezesIdsOnly: true,
-  freezesWordingOrVisuals: false,
+  version: 'content-freeze-formal-v1.0',
+  freezesIdsOnly: false,
+  freezesWordingOrVisuals: true,
   loggerQueueKey: 'yangwu_research_event_queue_v1',
-  appVersionBaseline: 'lkkc-pilot-v1.0'
+  appVersionBaseline: 'lkkc-formal-ui-freeze-v1.0'
 });
 
 const C = RESEARCH_CONSTRUCTS;

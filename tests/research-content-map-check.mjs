@@ -43,9 +43,9 @@ const introCities = objectKeys('CITY_SCENES');
 const introEvents = objectKeys('EVENTS');
 const introEvidenceTasks = objectKeys('EVIDENCE_TASKS');
 
-assert.equal(RESEARCH_ID_POLICY.version, 'content-freeze-lite-v0.1', 'Research ID map should have a clear freeze-lite version');
-assert.equal(RESEARCH_ID_POLICY.freezesIdsOnly, true, 'Freeze-lite should freeze IDs only');
-assert.equal(RESEARCH_ID_POLICY.freezesWordingOrVisuals, false, 'Freeze-lite should not freeze wording or visuals');
+assert.equal(RESEARCH_ID_POLICY.version, 'content-freeze-formal-v1.0', 'Research ID map should have a clear formal freeze version');
+assert.equal(RESEARCH_ID_POLICY.freezesIdsOnly, false, 'Formal freeze should cover more than IDs only');
+assert.equal(RESEARCH_ID_POLICY.freezesWordingOrVisuals, true, 'Formal freeze should cover wording or visuals');
 
 assert.deepEqual(Object.keys(RESEARCH_CONTENT_MAP.routes).sort(), introRoutes, 'Every game route should be registered in the research map');
 assert.deepEqual(Object.keys(RESEARCH_CONTENT_MAP.cities).sort(), introCities, 'Every city scene should be registered in the research map');
@@ -77,8 +77,8 @@ for (const [taskId, task] of Object.entries(RESEARCH_CONTENT_MAP.evidenceTasks))
 
 assert.equal(existsSync(docsPath), true, 'Research ID map documentation should exist');
 const docs = readFileSync(docsPath, 'utf8');
-assert.match(docs, /Content Freeze Lite/, 'Documentation should name the freeze-lite policy');
-assert.match(docs, /does not freeze wording, images, layout, or visual polish/i, 'Documentation should keep design iteration open');
+assert.match(docs, /Formal Content Freeze/, 'Documentation should name the formal freeze policy');
+assert.match(docs, /freezes wording, images, layout, and visual polish/i, 'Documentation should record formal UI and content freeze');
 assert.match(docs, /yangwu_research_event_queue_v1/, 'Documentation should connect the map to the current local research logger');
 assert.match(docs, new RegExp(`Routes: ${introRoutes.length}`), 'Documentation should report route count');
 assert.match(docs, new RegExp(`Cities: ${introCities.length}`), 'Documentation should report city count');

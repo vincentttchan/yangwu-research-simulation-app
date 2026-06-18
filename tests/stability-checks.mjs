@@ -211,7 +211,7 @@ assert.match(main, /import '\.\/research\/instrumentation\.js';/, 'main.js shoul
 assert.match(main, /import '\.\/research\/session\.js';/, 'main.js should load research session helper before game code');
 assert.match(main, /import '\.\/research\/login-gate\.js';/, 'main.js should load research login gate after session helper');
 assert.doesNotMatch(main, /research\/api\.js/, 'main.js should not reference backend API helper before login/submission UI exists');
-assert.match(version, /APP_VERSION\s*=\s*'lkkc-pilot-v1\.0'/, 'APP_VERSION should be frozen to the current LKKC pilot marker');
+assert.match(version, /APP_VERSION\s*=\s*'lkkc-formal-ui-freeze-v1\.0'/, 'APP_VERSION should be frozen to the current LKKC formal UI freeze marker');
 assert.match(version, /RESEARCH_COHORT\s*=\s*'lkkc-may-june-2026'/, 'Research cohort should match the planned school period');
 assert.match(version, /window\.__APP_VERSION\s*=\s*APP_VERSION/, 'APP_VERSION should be exposed for QA and future logging');
 assert.match(version, /document\.documentElement\.dataset\.appVersion\s*=\s*APP_VERSION/, 'APP_VERSION should also be exposed as an HTML data attribute');

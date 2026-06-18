@@ -117,7 +117,7 @@ function logRowFromEvent(event, session, env) {
     constructs: cleanArray(event?.constructs || payload.constructs),
     complexity_dimensions: cleanArray(event?.complexity_dimensions || payload.complexity_dimensions),
     client_time: cleanText(event?.client_time, 80),
-    app_version: cleanText(event?.app_version) || cleanText(session.app_version) || env.APP_VERSION || 'lkkc-pilot-v1.0',
+    app_version: cleanText(event?.app_version) || cleanText(session.app_version) || env.APP_VERSION || 'lkkc-formal-ui-freeze-v1.0',
     research_cohort: cleanText(event?.research_cohort) || cleanText(session.research_cohort) || env.RESEARCH_COHORT || 'lkkc-may-june-2026',
     content_map_version: cleanText(event?.content_map_version) || cleanText(session.content_map_version)
   };
