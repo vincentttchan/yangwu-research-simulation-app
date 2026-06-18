@@ -552,10 +552,10 @@
               <span class="s2c-cta-label">選擇此人物</span>
               <span class="s2c-cta-arrow">→</span>
             </button>`
-          : `<div class="s2c-locked-cta"><span class="s2c-lock-seal">${sealSvg()}<span class="s2c-lock-seal-text">封存</span></span><span class="s2c-lock-meta"><span class="s2c-lock-arch">${arch}</span><span class="s2c-lock-hint">${lockHint}</span></span></div>`}
+          : `<div class="s2c-locked-cta"><img class="s2c-lock-img" src="assets/seals/lock-bronze.webp" alt="封存" draggable="false"><span class="s2c-lock-meta"><span class="s2c-lock-arch">${arch}</span><span class="s2c-lock-hint">${lockHint}</span></span></div>`}
         <span class="w-liezhuan" aria-hidden="true">列傳</span>
         <div class="w-ships" aria-hidden="true"></div>
-        ${isNew ? `<div class="w-unseal" aria-hidden="true"><span class="w-unseal-seal">${sealSvg()}<span class="w-unseal-text">封存</span></span><span class="w-unseal-crack"></span></div>` : ''}
+        ${isNew ? `<div class="w-unseal" aria-hidden="true"><img class="w-unseal-lock w-unseal-closed" src="assets/seals/lock-bronze.webp" alt=""><img class="w-unseal-lock w-unseal-open" src="assets/seals/lock-bronze-open.webp" alt=""></div>` : ''}
       `;
       s2Stage.appendChild(slide);
     });

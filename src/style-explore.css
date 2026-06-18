@@ -13440,3 +13440,39 @@ body:has(.city-scene:not([hidden])) .dev-stamp {
 .unseal-toast.is-out { animation: unseal-toast-out 0.5s ease forwards; }
 @keyframes unseal-toast-in { to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 @keyframes unseal-toast-out { to { opacity: 0; transform: translateX(-50%) translateY(-8px); } }
+
+/* ============================================================
+   銅鎖取代封存火漆 + 兩態拆封（開鎖墜落→肖像浮現）
+   ============================================================ */
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked .s2c-lock-img {
+  display: block; width: 72px; height: auto; pointer-events: none;
+  filter: brightness(1.42) contrast(1.06) drop-shadow(0 5px 12px rgba(0,0,0,0.55));
+}
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active) .s2c-lock-img { width: 62px; }
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked.is-active .s2c-lock-img { width: 92px; }
+
+/* 拆封 overlay（蓋住已解鎖卡，演完揭曉）two-state */
+.s2c-stage.is-showcase .warrant.just-unlocked { position: relative; }
+.warrant.just-unlocked .w-unseal {
+  position: absolute; inset: 0; z-index: 40; display: grid; place-items: center; overflow: hidden;
+  background: linear-gradient(155deg, #281a10, #16100a);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.warrant.just-unlocked .w-unseal-lock {
+  grid-area: 1 / 1; width: 74px; height: auto;
+  filter: brightness(1.4) drop-shadow(0 5px 12px rgba(0,0,0,0.55));
+}
+.warrant.just-unlocked .w-unseal-open { opacity: 0; }
+/* 序列：closed→open(0.18s)→鎖墜落淡出(0.45s)→overlay 淡出揭曉(0.6s) */
+.warrant.just-unlocked.is-unsealing .w-unseal-closed { opacity: 0; transition: opacity 0.18s ease; }
+.warrant.just-unlocked.is-unsealing .w-unseal-open  { opacity: 1; transition: opacity 0.2s ease 0.16s; }
+.warrant.just-unlocked.is-unsealing .w-unseal-open  { transform: translateY(64px) rotate(7deg); opacity: 0; transition: transform 0.55s cubic-bezier(.4,0,.85,1) 0.5s, opacity 0.45s ease 0.6s; }
+.warrant.just-unlocked.is-unsealing .w-unseal { opacity: 0; transform: scale(1.03); transition-delay: 0.7s; pointer-events: none; }
+
+/* 拆封序列修正：用 keyframe（closed 淡出→open 浮現→墜落→overlay 揭曉） */
+.warrant.just-unlocked.is-unsealing .w-unseal-closed { animation: unseal-fade 0.2s ease forwards; }
+.warrant.just-unlocked.is-unsealing .w-unseal-open { animation: unseal-pop 0.95s ease forwards; transform: none; opacity: 0; transition: none; }
+.warrant.just-unlocked.is-unsealing .w-unseal { animation: unseal-bg 0.55s ease 0.64s forwards; transform: none; opacity: 1; transition: none; }
+@keyframes unseal-fade { to { opacity: 0; } }
+@keyframes unseal-pop { 0%{opacity:0;transform:translateY(0) rotate(0)} 18%{opacity:1;transform:translateY(0)} 48%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(66px) rotate(7deg)} }
+@keyframes unseal-bg { to { opacity: 0; transform: scale(1.03); } }
