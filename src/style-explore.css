@@ -13488,3 +13488,8 @@ body:has(.city-scene:not([hidden])) .dev-stamp {
 .s2c-stage.is-showcase .s2c-slide.warrant.is-locked .w-portrait-name {
   color: rgba(96, 72, 44, 0.92) !important;
 }
+
+/* 鎖定磚不可互動（暗示不可點選、不揭曉） */
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active) { cursor: default !important; }
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active):hover { transform: none !important; }
+.s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active):hover .s2c-lock-img { filter: brightness(1.58) contrast(1.06) drop-shadow(0 5px 12px rgba(0,0,0,0.55)) !important; }

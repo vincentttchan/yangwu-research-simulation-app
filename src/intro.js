@@ -590,7 +590,15 @@
   function s2Goto(nextIdx) {
     if (s2Busy) return;
     const total = CAROUSEL_DATA.length;
-    const idx = ((nextIdx % total) + total) % total;
+    let idx = ((nextIdx % total) + total) % total;
+    // 跳過鎖定人物（導航只在已解鎖之間）
+    const dir = (nextIdx >= s2CurIdx) ? 1 : -1;
+    let guard = 0;
+    while (!routeUnlocked(CAROUSEL_DATA[idx].key) && guard < total) {
+      idx = (((idx + dir) % total) + total) % total;
+      guard++;
+    }
+    if (!routeUnlocked(CAROUSEL_DATA[idx].key)) return;
     if (idx === s2CurIdx) return;
     s2Busy = true;
 
@@ -643,6 +651,8 @@
       if (portrait) return;
       const slide = e.target.closest('.s2c-slide');
       if (slide && !slide.classList.contains('is-active')) {
+        // 鎖定人物不可點選、不揭曉描述（保留神秘，僅銅鎖＋解鎖條件）
+        if (slide.classList.contains('is-locked')) return;
         s2Goto(Number(slide.dataset.idx || 0));
         return;
       }
