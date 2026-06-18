@@ -403,7 +403,7 @@ First implementation scope:
 - adds `check:pilot-version-freeze`;
 - requires Vercel env update, redeployment, Supabase row verification, privacy QA, and CSV re-export before real student use.
 
-Task 20.2 fixes the versioning layer only. It does not replace device QA, consent confirmation, classroom runbook preparation, real participant/session code setup, or final student-pilot sign-off.
+Task 20.2 fixes the versioning layer only. It does not replace device QA, consent confirmation, private operational readiness, or final student-pilot sign-off.
 
 ## Task 20.3 Vercel Redeploy / Live Row Verification
 
@@ -418,7 +418,7 @@ First implementation result:
 - `research_cohort` remains `lkkc-may-june-2026`;
 - `content_map_version` remains `content-freeze-lite-v0.1`.
 
-Task 20.3 clears the pilot-version deployment gate. It does not clear device QA, school network QA, real participant/session code preparation, consent confirmation, classroom runbook, privacy QA re-export, or final student-pilot sign-off.
+Task 20.3 clears the pilot-version deployment gate. It does not clear device QA, network QA, private operational readiness, consent confirmation, privacy QA re-export, or final student-pilot sign-off.
 
 ## Task 21 Teacher / Classroom Pilot Runbook
 
@@ -436,7 +436,7 @@ First implementation scope:
 - defines classroom timing, support rules, fallback actions, and stop conditions;
 - defines post-lesson Supabase row checks, privacy QA, CSV export, and field-note procedure.
 
-Task 21 closes the classroom-procedure planning gap. It does not clear final iPad/phone/school-network QA, real participant/session code preparation, consent confirmation, privacy QA re-export, CSV export QA, or final student-pilot sign-off.
+Task 21 closes the classroom-procedure planning gap. It does not clear final device/network QA, private operational readiness, consent confirmation, privacy QA re-export, CSV export QA, or final student-pilot sign-off.
 
 ## Task 22 Device / School Network QA
 
@@ -454,7 +454,7 @@ First implementation scope:
 - defines privacy QA through `research_privacy_exception_export`;
 - defines pass, partial, and fail criteria for device/network readiness.
 
-Task 22 clears the device/network QA gate only after the results template is completed and reviewed. It does not clear real participant/session code preparation, consent confirmation, final CSV export QA, or final student-pilot sign-off.
+Task 22 clears the device/network QA gate only after the results template is completed and reviewed. It does not clear private operational readiness, consent confirmation, final CSV export QA, or final student-pilot sign-off.
 
 ## Task 23 More Event Coverage
 
@@ -539,3 +539,54 @@ First implementation scope:
 - records the corrected SQL Editor QA method: full select, delete, paste, run, and check for syntax-error notifications before trusting row counts.
 
 Task 26 clears the production data-path alignment gate for dry-run QA. It does not clear Task 22 device/school-network QA or formal student data collection. The temporary diagnostic endpoint should be removed or protected before formal public deployment.
+
+## Task 27 to Task 34 Public Technical QA Addendum
+
+Tasks 27, 28, 30, 31, 31B, and 34 extend the public technical QA record after the Supabase/Vercel alignment work.
+
+Public-safe scope:
+
+- records dry-run production data-path checks;
+- records device/network QA checklists without real student identifiers;
+- records mobile and iPad responsive-readiness criteria;
+- records route-to-map and asset-render QA criteria;
+- keeps QA screenshots and large generated artifacts out of Git;
+- keeps formal collection operations, active code-distribution materials, formal seed materials, and scoring workbooks outside the public app repository.
+
+Task 27 repeats the production front-end dry-run after the SQL Editor QA method was corrected.
+Task 28 documents the real-device/network QA checklist, now limited to dry-run technical rehearsal.
+Task 30 defines the mobile/iPad UI stabilisation gate.
+Task 31 and Task 31B record rendered responsive and route-to-map handoff readiness.
+Task 34 records asset-render QA for map, city, evidence, and event image surfaces.
+
+These tasks do not approve formal student data collection and do not provide evidence of learning outcomes.
+
+## Private Research Operations Boundary
+
+Formal collection readiness, participant/session-code operations, seed preparation, code slips, collection-day packets, post-collection export QA, scoring workbooks, instrument packet preparation, researcher pre-print review, and supervisor-facing research-paper materials are treated as private research operations.
+
+Those materials should remain outside the public GitHub/Vercel app repository. The public repository may record that a private workflow exists, but it should not expose:
+
+- operational participant/session-code ranges;
+- formal seed files or generated SQL;
+- code slips or printable student packets;
+- raw responses, written notes, focus group materials, or scoring sheets;
+- real Supabase exports;
+- name-to-code or identity-matching materials;
+- private research folder paths.
+
+The first repository hygiene pass is documented in `docs/task-61b-research-ops-privacy-triage.md`.
+
+## Task 61C Tracked Legacy Docs Sanitisation
+
+Task 61C sanitises tracked legacy documents that predated the public/private split.
+
+Sanitisation rules:
+
+- keep public technical QA documentation focused on dry-run, device, UI, and data-path readiness;
+- summarise private research operations without operational account details;
+- remove formal collection code ranges and active checking-account details from public docs;
+- keep dry-run QA identifiers only where they are already part of public technical tests;
+- keep reminders that no names, student IDs, contact details, school accounts, raw responses, or identity mappings should be committed.
+
+Task 61C does not change the production app, Supabase schema, or deployed environment.

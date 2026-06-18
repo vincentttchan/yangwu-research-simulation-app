@@ -1,4 +1,4 @@
-# Task 22 Device / School Network QA Results Template
+# Task 22A Device / School Network QA Results Template
 
 Formal research data collection status: not approved until this result sheet is completed and reviewed
 
@@ -13,8 +13,10 @@ Formal research data collection status: not approved until this result sheet is 
 - APP_VERSION: `lkkc-pilot-v1.0`
 - RESEARCH_COHORT: `lkkc-may-june-2026`
 - content_map_version: `content-freeze-lite-v0.1`
-- Dry-run participant code(s):
+- Dry-run participant code(s): `YW-001`, `YW-002`
 - Dry-run session code: `LKKC-2026-DRYRUN`
+- School Wi-Fi tested:
+- Hotspot fallback tested:
 
 ## Device Matrix
 
@@ -28,6 +30,26 @@ Formal research data collection status: not approved until this result sheet is 
 
 Use `Pass`, `Partial`, or `Fail` in the Result column.
 
+## Per-Device Checklist
+
+For each device, record `Yes`, `No`, or `Partial`.
+
+| Check | Desktop/laptop | iPad | Phone | School Wi-Fi device | Notes |
+|---|---:|---:|---:|---:|---|
+| Research URL opens |  |  |  |  |  |
+| Research login appears |  |  |  |  |  |
+| `YW-001` or `YW-002` login works |  |  |  |  |  |
+| Wrong code/session rejection works, if tested |  |  |  |  |  |
+| Map loads and fills viewport |  |  |  |  |  |
+| City entry works |  |  |  |  |  |
+| Evidence task works |  |  |  |  |  |
+| Historical event opens |  |  |  |  |  |
+| Decision selection works |  |  |  |  |  |
+| Journal opens/closes |  |  |  |  |  |
+| Event modal height usable |  |  |  |  |  |
+| No horizontal scrolling / major overlap |  |  |  |  |  |
+| Refresh/recovery acceptable |  |  |  |  |  |
+
 ## Supabase Row Verification
 
 - Latest `game_sessions` checked:
@@ -35,6 +57,7 @@ Use `Pass`, `Partial`, or `Fail` in the Result column.
 - `app_version = lkkc-pilot-v1.0` confirmed:
 - `research_cohort = lkkc-may-june-2026` confirmed:
 - `content_map_version = content-freeze-lite-v0.1` confirmed:
+- Device fields populated:
 - Event coverage observed:
 - Multiple sessions created by refresh?:
 - Notes:
@@ -59,6 +82,7 @@ Expected result: zero data rows.
 | Journal |  |  |  |  |
 | Image/audio loading |  |  |  |  |
 | Horizontal scrolling / overlap |  |  |  |  |
+| Refresh/recovery |  |  |  |  |
 
 ## Network Notes
 
@@ -68,7 +92,17 @@ Expected result: zero data rows.
 - Event log API blocked?:
 - Images/audio unusually slow?:
 - Hotspot fallback needed?:
+- VPN, teacher login, or student account required?:
 - Notes:
+
+## Evidence
+
+- Screenshots taken:
+- Supabase row screenshots/notes:
+- Privacy QA screenshot/note:
+- Device issue screenshots/notes:
+
+Do not include student names, student IDs, emails, phone numbers, school account identifiers, Supabase secrets, or the name-to-code list.
 
 ## Decision
 
