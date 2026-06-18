@@ -494,13 +494,6 @@
     </svg>`;
   }
 
-  function sealSvg() {
-    return `<svg class="s2c-lock-seal-svg" viewBox="0 0 46 32" aria-hidden="true" focusable="false" preserveAspectRatio="none">
-      <path class="svg-seal-edge" d="M5 4 C13 1 20 5 27 3 C35 1 41 5 43 10 C45 18 40 25 42 29 C30 31 24 27 15 30 C8 32 4 28 3 22 C1 15 4 10 5 4 Z"/>
-      <path class="svg-seal-line" d="M10 8 C17 7 23 9 30 7 C36 6 39 9 40 14 C42 20 37 24 39 27 C30 27 24 24 16 26 C10 27 7 24 7 19 C6 14 9 11 10 8 Z"/>
-      <path class="svg-seal-chip" d="M12 12 C17 10 20 14 24 12 M26 20 C31 18 34 21 38 19"/>
-    </svg>`;
-  }
 
   // 告身點將 C：主卷大人物 + 旁卷候選（保留選人／解鎖／開局邏輯）
   function renderCarousel() {
