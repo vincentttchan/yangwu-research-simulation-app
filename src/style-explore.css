@@ -13458,3 +13458,82 @@ body:has(.city-scene:not([hidden])) .dev-stamp {
 .s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active) { cursor: default !important; }
 .s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active):hover { transform: none !important; }
 .s2c-stage.is-showcase .s2c-slide.warrant.is-locked:not(.is-active):hover .s2c-lock-img { filter: brightness(1.58) contrast(1.06) drop-shadow(0 5px 12px rgba(0,0,0,0.55)) !important; }
+
+/* ============================================================
+   Task 48 · Responsive interaction fix pass
+   Touch devices use tap-to-open clues, not hover cards. The map/city
+   stage stays draggable without letting panels cover primary targets.
+   ============================================================ */
+@media (max-width: 1180px), (hover: none) and (pointer: coarse) {
+  .city-canvas .hotspot-observation,
+  .city-canvas .hotspot-observation.is-visible,
+  .city-canvas .hotspot-observation[style*="opacity: 1"],
+  .city-canvas .hotspot-observation.is-show {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  .map-stage,
+  .city-canvas {
+    touch-action: none;
+    overscroll-behavior: contain;
+    user-select: none;
+  }
+
+  .map-stage.is-touch-panning,
+  .city-canvas.is-touch-panning {
+    cursor: grabbing;
+  }
+
+  .map-topbar,
+  .city-topbar {
+    pointer-events: none;
+  }
+
+  .map-topbar :is(button, a, .side-chip),
+  .city-topbar .city-back,
+  .city-mission-sheet,
+  .city-mission-sheet * {
+    pointer-events: auto;
+  }
+
+  .hotspot {
+    touch-action: manipulation;
+  }
+
+  .city-mission-sheet {
+    z-index: 15;
+  }
+}
+
+@media (max-width: 700px) {
+  .screen--map[data-phase="6"] .map-pan {
+    width: max(205vw, 110dvh);
+    height: max(128vw, 68dvh);
+  }
+
+  .map-topbar .side-chip {
+    min-height: 40px;
+    padding: 7px 10px;
+  }
+
+  .map-topbar .topbar-side {
+    scrollbar-width: none;
+  }
+
+  .map-topbar .topbar-side::-webkit-scrollbar {
+    display: none;
+  }
+
+  .facility--tl,
+  .facility--tr {
+    top: clamp(108px, 17dvh, 142px);
+  }
+
+  .facility--bl,
+  .facility--br {
+    bottom: calc(max(84px, env(safe-area-inset-bottom, 0px) + 84px));
+  }
+}

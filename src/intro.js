@@ -1836,7 +1836,7 @@
       tagline: '「天朝中樞 · 制度與守舊之爭」',
       actionEvents: ['e_bj_wall', 'e_bj_envoy', 'e_bj_woren'],
       hotspots: [
-        { id: 'bj-wall',  type: 'clue', unlocks: 'e_bj_wall',  appearFromYear: 1861, x: '49%', y: '24%',
+        { id: 'bj-wall',  type: 'clue', unlocks: 'e_bj_wall',  appearFromYear: 1861, x: '49%', y: '31%',
           name: '紫禁城牆', axis: 'system',
           desc: '灰磚高牆巍然，是「天朝上國」千年自尊的象徵。牆內仍以舊禮視天下，牆外的世界卻已換了規則——【天朝舊夢】。' },
         { id: 'bj-envoy', type: 'clue', unlocks: 'e_bj_envoy', appearFromYear: 1861, x: '54%', y: '62%',
@@ -2975,7 +2975,16 @@
     };
   }
 
+  function isTouchFirstViewport() {
+    if (typeof window.matchMedia !== 'function') return false;
+    return window.matchMedia('(hover: none), (pointer: coarse), (max-width: 1180px)').matches;
+  }
+
   function showHotspotObservation(hs, spot) {
+    if (isTouchFirstViewport()) {
+      hideHotspotObservation();
+      return;
+    }
     clearHotspotObservationTimer();
     const obs = document.getElementById('hotspotObservation');
     const text = document.getElementById('hoText');
@@ -3001,9 +3010,6 @@
     spot.classList.add('is-observation-open');
     obs.removeAttribute('hidden');
     obs.classList.add('is-visible');
-    if (typeof window.matchMedia === 'function' && window.matchMedia('(hover: none)').matches) {
-      scheduleHotspotObservationHide(2600);
-    }
   }
 
   function renderCityHotspots(scene) {
@@ -3029,7 +3035,10 @@
           if (e.pointerType === 'touch') return;
           showHotspotObservation(hs, btn);
         });
-        btn.addEventListener('focus', () => showHotspotObservation(hs, btn));
+        btn.addEventListener('focus', () => {
+          if (isTouchFirstViewport()) return;
+          showHotspotObservation(hs, btn);
+        });
         btn.addEventListener('pointerleave', (e) => {
           if (e.pointerType === 'touch') return;
           hideHotspotObservation();
@@ -6762,10 +6771,18 @@
       return !!node.closest(config.skipSelector || 'button, a, input, textarea, select, .hotspot, .facility, .seal-panel, .event-modal, .interlude-modal, .coachmark');
     };
     const clamp = (value, limit) => Math.max(-limit, Math.min(limit, value));
-    const limits = () => ({
-      x: Math.max(24, window.innerWidth * (config.maxXRatio || 0.22)),
-      y: Math.max(18, window.innerHeight * (config.maxYRatio || 0.12))
-    });
+    const limits = () => {
+      const surfaceRect = surface.getBoundingClientRect();
+      const targetRect = target.getBoundingClientRect();
+      const ratioX = window.innerWidth * (config.maxXRatio || 0.22);
+      const ratioY = window.innerHeight * (config.maxYRatio || 0.12);
+      const contentX = Math.max(0, (targetRect.width - surfaceRect.width) / 2) + (config.edgePadX || 24);
+      const contentY = Math.max(0, (targetRect.height - surfaceRect.height) / 2) + (config.edgePadY || 18);
+      return {
+        x: Math.max(24, ratioX, contentX),
+        y: Math.max(18, ratioY, contentY)
+      };
+    };
     const applyPan = () => {
       target.style.setProperty(config.xVar || '--pan-x', panX.toFixed(1) + 'px');
       target.style.setProperty(config.yVar || '--pan-y', panY.toFixed(1) + 'px');
@@ -6872,8 +6889,10 @@
       yVar: '--map-pan-y',
       initialX: 0,
       initialY: 0,
-      maxXRatio: 0.28,
-      maxYRatio: 0.10,
+      maxXRatio: 0.42,
+      maxYRatio: 0.18,
+      edgePadX: 36,
+      edgePadY: 24,
       skipSelector: 'button, a, input, textarea, select, .city-seal, .map-topbar, .map-seal-nav, .map-events, .map-axes, .map-stats, .map-stats-tab, .seal-panel, .coachmark'
     });
     resetResponsiveCityPan = bindTouchPanSurface({
@@ -6884,8 +6903,10 @@
       yVar: '--city-pan-y',
       initialX: 0,
       initialY: 0,
-      maxXRatio: 0.20,
-      maxYRatio: 0.16,
+      maxXRatio: 0.34,
+      maxYRatio: 0.24,
+      edgePadX: 28,
+      edgePadY: 24,
       skipSelector: 'button, a, input, textarea, select, .hotspot, .facility, .city-topbar, .city-mission-sheet, .event-modal, .interlude-modal, .coachmark'
     });
   })();
