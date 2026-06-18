@@ -36,6 +36,12 @@
     "check:pilot-export-handoff": "node tests/task24-pilot-export-handoff-check.mjs",
     "check:frontend-ui-dryrun": "node tests/task25-frontend-ui-dryrun-check.mjs",
     "check:env-alignment": "node tests/task26-env-diagnostic-check.mjs",
+    "check:task27-dryrun": "node tests/task27-frontend-dryrun-repeat-check.mjs",
+    "check:task28-real-device-qa": "node tests/task28-real-device-qa-check.mjs",
+    "check:mobile-ipad-ui-gate": "node tests/task30-mobile-ipad-ui-stabilisation-check.mjs",
+    "check:rendered-responsive-ui": "node tests/task31-rendered-responsive-ui-readiness-check.mjs",
+    "check:route-to-map-mobile-handoff": "node tests/task31b-route-to-map-mobile-handoff-check.mjs",
+    "check:new-asset-render-qa": "node tests/task34-new-asset-render-qa-check.mjs",
     "check:live-dryrun": "node tests/live-dryrun-qa-check.mjs",
     "check:task13-docs": "node tests/task13-docs-check.mjs"
   },

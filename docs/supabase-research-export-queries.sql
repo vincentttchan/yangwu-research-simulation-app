@@ -33,6 +33,8 @@ select
 from game_sessions gs
 join participants p on p.participant_code = gs.participant_code
 left join event_logs el on el.session_id = gs.session_id
+where p.consent_status = 'included'
+  and coalesce(p.notes, '') not ilike 'formal check account%'
 group by
   gs.participant_code,
   gs.session_id,
@@ -85,7 +87,8 @@ select
 from event_logs el
 join participants p on p.participant_code = el.participant_code
 where el.event_type <> 'live_dryrun_qa'
-  and p.consent_status = 'included';
+  and p.consent_status = 'included'
+  and coalesce(p.notes, '') not ilike 'formal check account%';
 
 -- Complexity/process indicator export: one row per participant/session.
 create or replace view research_complexity_exposure_export
@@ -173,7 +176,8 @@ from game_sessions gs
 join participants p on p.participant_code = gs.participant_code
 left join dimension_summary ds on ds.session_id = gs.session_id
 left join event_summary es on es.session_id = gs.session_id
-where p.consent_status = 'included';
+where p.consent_status = 'included'
+  and coalesce(p.notes, '') not ilike 'formal check account%';
 
 -- Assessment/scores export: will be sparse until approved instruments and coding are entered.
 create or replace view research_assessment_scores_export
@@ -195,7 +199,8 @@ select
 from research_scores rs
 join participants p on p.participant_code = rs.participant_code
 left join assessment_responses ar on ar.response_id = rs.response_id
-where p.consent_status = 'included';
+where p.consent_status = 'included'
+  and coalesce(p.notes, '') not ilike 'formal check account%';
 
 -- Dashboard overview export: compact monitoring surface.
 create or replace view research_dashboard_overview_export
