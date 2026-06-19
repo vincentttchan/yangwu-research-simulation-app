@@ -42,6 +42,7 @@
     "check:rendered-responsive-ui": "node tests/task31-rendered-responsive-ui-readiness-check.mjs",
     "check:route-to-map-mobile-handoff": "node tests/task31b-route-to-map-mobile-handoff-check.mjs",
     "check:new-asset-render-qa": "node tests/task34-new-asset-render-qa-check.mjs",
+    "check:normal-flow-route-to-map-qa": "node tests/task35-normal-flow-route-to-map-qa-check.mjs",
     "check:live-dryrun": "node tests/live-dryrun-qa-check.mjs",
     "check:task13-docs": "node tests/task13-docs-check.mjs"
   },
